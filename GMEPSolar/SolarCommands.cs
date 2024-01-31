@@ -9,6 +9,8 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.Runtime;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace GMEPSolar
 {
@@ -110,6 +112,239 @@ namespace GMEPSolar
             }
 
             SaveDataToJsonFile(data, "data.json");
+        }
+
+        [CommandMethod("CreateDCSolarObject")]
+        public static void CreateDCSolarObject()
+        {
+            var json = File.ReadAllText("../../DCSolarBlock.json");
+            var data = JArray.Parse(json).ToObject<List<Dictionary<string, object>>>();
+
+            Editor ed = Autodesk
+                .AutoCAD
+                .ApplicationServices
+                .Application
+                .DocumentManager
+                .MdiActiveDocument
+                .Editor;
+            PromptPointOptions pointOptions = new PromptPointOptions("Select a point: ");
+            PromptPointResult pointResult = ed.GetPoint(pointOptions);
+
+            if (pointResult.Status == PromptStatus.OK)
+            {
+                Point3d selectedPoint = pointResult.Value;
+
+                foreach (var objData in data)
+                {
+                    var objectType = objData.Keys.First();
+
+                    switch (objectType)
+                    {
+                        case "polyline":
+                            selectedPoint = CreatePolyline(ed, selectedPoint, objData);
+                            break;
+
+                        case "line":
+                            selectedPoint = CreateLine(ed, selectedPoint, objData);
+                            break;
+
+                        case "mtext":
+                            selectedPoint = CreateMText(ed, selectedPoint, objData);
+                            break;
+
+                        case "circle":
+                            selectedPoint = CreateCircle(ed, selectedPoint, objData);
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+
+        private static Point3d CreateCircle(
+            Editor ed,
+            Point3d selectedPoint,
+            Dictionary<string, object> objData
+        )
+        {
+            var circleData = objData["circle"] as Dictionary<string, object>;
+            var circle = new Circle();
+
+            // Set circle properties
+            circle.Layer = circleData["layer"].ToString();
+
+            var centerData = circleData["center"] as Dictionary<string, object>;
+            var centerX = Convert.ToDouble(centerData["x"]) + selectedPoint.X;
+            var centerY = Convert.ToDouble(centerData["y"]) + selectedPoint.Y;
+            var centerZ = Convert.ToDouble(centerData["z"]) + selectedPoint.Z;
+            circle.Center = new Point3d(centerX, centerY, centerZ);
+
+            circle.Radius = Convert.ToDouble(circleData["radius"]);
+
+            // Add circle to the drawing
+            using (var transaction = ed.Document.Database.TransactionManager.StartTransaction())
+            {
+                var blockTable =
+                    transaction.GetObject(ed.Document.Database.BlockTableId, OpenMode.ForRead)
+                    as BlockTable;
+                var blockTableRecord =
+                    transaction.GetObject(
+                        blockTable[BlockTableRecord.ModelSpace],
+                        OpenMode.ForWrite
+                    ) as BlockTableRecord;
+                blockTableRecord.AppendEntity(circle);
+                transaction.AddNewlyCreatedDBObject(circle, true);
+                transaction.Commit();
+            }
+
+            return selectedPoint;
+        }
+
+        private static Point3d CreateMText(
+            Editor ed,
+            Point3d selectedPoint,
+            Dictionary<string, object> objData
+        )
+        {
+            var mtextData = objData["mtext"] as Dictionary<string, object>;
+            var mtext = new MText();
+
+            // Set mtext properties
+            mtext.Layer = mtextData["layer"].ToString();
+            SetMTextStyleByName(mtext, mtextData["style"].ToString());
+            mtext.Attachment = (AttachmentPoint)
+                Enum.Parse(typeof(AttachmentPoint), mtextData["justification"].ToString());
+            mtext.Contents = mtextData["text"].ToString();
+            mtext.TextHeight = Convert.ToDouble(mtextData["height"]);
+            mtext.LineSpaceDistance = Convert.ToDouble(mtextData["lineSpaceDistance"]);
+
+            var locationData = mtextData["location"] as Dictionary<string, object>;
+            var locX = Convert.ToDouble(locationData["x"]) + selectedPoint.X;
+            var locY = Convert.ToDouble(locationData["y"]) + selectedPoint.Y;
+            var locZ = Convert.ToDouble(locationData["z"]) + selectedPoint.Z;
+            mtext.Location = new Point3d(locX, locY, locZ);
+
+            // Add mtext to the drawing
+            using (var transaction = ed.Document.Database.TransactionManager.StartTransaction())
+            {
+                var blockTable =
+                    transaction.GetObject(ed.Document.Database.BlockTableId, OpenMode.ForRead)
+                    as BlockTable;
+                var blockTableRecord =
+                    transaction.GetObject(
+                        blockTable[BlockTableRecord.ModelSpace],
+                        OpenMode.ForWrite
+                    ) as BlockTableRecord;
+                blockTableRecord.AppendEntity(mtext);
+                transaction.AddNewlyCreatedDBObject(mtext, true);
+                transaction.Commit();
+            }
+
+            return selectedPoint;
+        }
+
+        private static Point3d CreateLine(
+            Editor ed,
+            Point3d selectedPoint,
+            Dictionary<string, object> objData
+        )
+        {
+            var lineData = objData["line"] as Dictionary<string, object>;
+            var line = new Line();
+
+            // Set line properties
+            line.Layer = lineData["layer"].ToString();
+
+            var startPointData = lineData["startPoint"] as Dictionary<string, object>;
+            var startPtX = Convert.ToDouble(startPointData["x"]) + selectedPoint.X;
+            var startPtY = Convert.ToDouble(startPointData["y"]) + selectedPoint.Y;
+            var startPtZ = Convert.ToDouble(startPointData["z"]) + selectedPoint.Z;
+            line.StartPoint = new Point3d(startPtX, startPtY, startPtZ);
+
+            var endPointData = lineData["endPoint"] as Dictionary<string, object>;
+            var endPtX = Convert.ToDouble(endPointData["x"]) + selectedPoint.X;
+            var endPtY = Convert.ToDouble(endPointData["y"]) + selectedPoint.Y;
+            var endPtZ = Convert.ToDouble(endPointData["z"]) + selectedPoint.Z;
+            line.EndPoint = new Point3d(endPtX, endPtY, endPtZ);
+
+            // Add line to the drawing
+            using (var transaction = ed.Document.Database.TransactionManager.StartTransaction())
+            {
+                var blockTable =
+                    transaction.GetObject(ed.Document.Database.BlockTableId, OpenMode.ForRead)
+                    as BlockTable;
+                var blockTableRecord =
+                    transaction.GetObject(
+                        blockTable[BlockTableRecord.ModelSpace],
+                        OpenMode.ForWrite
+                    ) as BlockTableRecord;
+                blockTableRecord.AppendEntity(line);
+                transaction.AddNewlyCreatedDBObject(line, true);
+                transaction.Commit();
+            }
+
+            return selectedPoint;
+        }
+
+        private static Point3d CreatePolyline(
+            Editor ed,
+            Point3d selectedPoint,
+            Dictionary<string, object> objData
+        )
+        {
+            var polylineData = objData["polyline"] as Dictionary<string, object>;
+            var polyline = new Polyline();
+
+            // Set polyline properties
+            polyline.Layer = polylineData["layer"].ToString();
+
+            var vertices = polylineData["vertices"] as List<object>;
+            foreach (var vertex in vertices)
+            {
+                var vertexData = vertex as Dictionary<string, object>;
+                var x = Convert.ToDouble(vertexData["x"]) + selectedPoint.X;
+                var y = Convert.ToDouble(vertexData["y"]) + selectedPoint.Y;
+                var z = Convert.ToDouble(vertexData["z"]) + selectedPoint.Z;
+                polyline.AddVertexAt(polyline.NumberOfVertices, new Point2d(x, y), z, 0, 0);
+            }
+
+            // Add polyline to the drawing
+            using (var transaction = ed.Document.Database.TransactionManager.StartTransaction())
+            {
+                var blockTable =
+                    transaction.GetObject(ed.Document.Database.BlockTableId, OpenMode.ForRead)
+                    as BlockTable;
+                var blockTableRecord =
+                    transaction.GetObject(
+                        blockTable[BlockTableRecord.ModelSpace],
+                        OpenMode.ForWrite
+                    ) as BlockTableRecord;
+                blockTableRecord.AppendEntity(polyline);
+                transaction.AddNewlyCreatedDBObject(polyline, true);
+                transaction.Commit();
+            }
+
+            return selectedPoint;
+        }
+
+        private static void SetMTextStyleByName(MText mtext, string styleName)
+        {
+            Database db = HostApplicationServices.WorkingDatabase;
+            using (Transaction tr = db.TransactionManager.StartTransaction())
+            {
+                TextStyleTable textStyleTable =
+                    tr.GetObject(db.TextStyleTableId, OpenMode.ForRead) as TextStyleTable;
+                if (textStyleTable.Has(styleName))
+                {
+                    TextStyleTableRecord textStyle =
+                        tr.GetObject(textStyleTable[styleName], OpenMode.ForRead)
+                        as TextStyleTableRecord;
+                    mtext.TextStyleId = textStyle.ObjectId;
+                }
+                tr.Commit();
+            }
         }
 
         private static void SaveDataToJsonFile(
@@ -247,43 +482,6 @@ namespace GMEPSolar
             data.Add(encapsulate);
 
             return data;
-        }
-
-        private static dynamic GetTemplate()
-        {
-            var template = new
-            {
-                polyline = new { layer = "", vertices = new List<object>() },
-                line = new { layer = "", vertices = new List<object>() },
-                mtext = new
-                {
-                    layer = "",
-                    style = "",
-                    justification = "",
-                    text = "",
-                    height = 0.0,
-                    lineSpaceDistance = 0.0,
-                    location = new
-                    {
-                        x = 0.0,
-                        y = 0.0,
-                        z = 0.0
-                    }
-                },
-                circle = new
-                {
-                    layer = "",
-                    center = new
-                    {
-                        x = 0.0,
-                        y = 0.0,
-                        z = 0.0
-                    },
-                    radius = 0.0
-                }
-            };
-
-            return template;
         }
     }
 }
