@@ -58,6 +58,7 @@ namespace GMEPSolar
                 Double STARTLINE_LENGTH = 1.25;
                 Double CELL_SPACING = 0.1621;
                 Point3d selectedPoint = pointResult.Value;
+                var mpptEndPoints = new List<List<Dictionary<string, double>>>();
 
                 var startPoint = new Dictionary<string, double>
                 {
@@ -80,6 +81,7 @@ namespace GMEPSolar
                 foreach (var mpptData in formData)
                 {
                     var enabled = Convert.ToBoolean(mpptData.Value["Enabled"]);
+                    var endPoints = new List<Dictionary<string, double>>();
 
                     if (!enabled)
                     {
@@ -87,6 +89,7 @@ namespace GMEPSolar
                     }
 
                     var isRegular = Convert.ToBoolean(mpptData.Value["Regular"]);
+                    var isParallel = Convert.ToBoolean(mpptData.Value["Parallel"]);
 
                     var moduleCount = 0;
                     if (
@@ -101,49 +104,152 @@ namespace GMEPSolar
                     {
                         if (isRegular)
                         {
-                            CreateRegularFirstLines(startPoint, endPoint, CELL_SPACING);
+                            endPoints = CreateRegularFirstLines(startPoint, endPoint, CELL_SPACING);
                         }
                         else
                         {
-                            CreateParallelFirstLines(startPoint, endPoint, CELL_SPACING);
+                            endPoints = CreateParallelFirstLines(
+                                startPoint,
+                                endPoint,
+                                CELL_SPACING
+                            );
                         }
                     }
+
+                    mpptEndPoints.Add(endPoints);
+
                     startPoint["x"] += 0.6484;
                     endPoint["x"] += 0.6484;
-                    if (isRegular)
+                    if (isRegular && enabled)
                     {
                         endPoint["y"] -= 0.1621;
                     }
-                    else
+                    else if (isParallel && enabled)
                     {
                         endPoint["y"] -= 0.3242;
                     }
                 }
 
+                CreateDesktopJsonFile(mpptEndPoints, "DCSolarEndPoints.json");
+
                 CreateObjectGivenData(data, ed, selectedPoint);
             }
         }
 
-        private static void CreateParallelFirstLines(
+        private static List<Dictionary<string, double>> CreateParallelFirstLines(
             Dictionary<string, double> startPoint,
             Dictionary<string, double> endPoint,
             double CELL_SPACING
         )
         {
-            Double ENDPOINT_INCREASE = -CELL_SPACING / 2;
-
+            var endPoints = new List<Dictionary<string, double>>();
             for (var i = 0; i < 4; i++)
             {
+                var startPointUpdated = new Dictionary<string, double>
+                {
+                    { "x", startPoint["x"] + (CELL_SPACING * i) },
+                    { "y", startPoint["y"] }
+                };
+                var endPointUpdated = new Dictionary<string, double>
+                {
+                    { "x", endPoint["x"] + (CELL_SPACING * i) },
+                    { "y", endPoint["y"] }
+                };
+
+                if (i == 1)
+                {
+                    var arcEndPoint = new Dictionary<string, double>
+                    {
+                        { "x", endPointUpdated["x"] },
+                        { "y", endPointUpdated["y"] - CELL_SPACING }
+                    };
+
+                    CreateArc(endPointUpdated, arcEndPoint, 90, 270);
+                }
+                else if (i == 2)
+                {
+                    endPointUpdated["y"] -= CELL_SPACING / 2;
+                }
+                else if (i == 3)
+                {
+                    endPointUpdated["y"] -= CELL_SPACING + CELL_SPACING / 2;
+                }
+
                 var line = new Line(
-                    new Point3d(startPoint["x"] + (CELL_SPACING * i), startPoint["y"], 0),
-                    new Point3d(
-                        endPoint["x"] + (CELL_SPACING * i),
-                        endPoint["y"] + (ENDPOINT_INCREASE * Math.Floor((double)i / 1)),
-                        0
-                    )
+                    new Point3d(startPointUpdated["x"], startPointUpdated["y"], 0),
+                    new Point3d(endPointUpdated["x"], endPointUpdated["y"], 0)
                 );
 
                 AddLineToPaperSpace(line);
+
+                if (i != 1)
+                {
+                    endPoints.Add(endPointUpdated);
+                }
+                else
+                {
+                    endPoints.Add(
+                        new Dictionary<string, double>
+                        {
+                            { "x", endPointUpdated["x"] },
+                            { "y", endPointUpdated["y"] - CELL_SPACING }
+                        }
+                    );
+                }
+            }
+            return endPoints;
+        }
+
+        private static void CreateArc(
+            Dictionary<string, double> startPoint,
+            Dictionary<string, double> endPoint,
+            int startDegrees,
+            int endDegrees
+        )
+        {
+            Editor ed = Autodesk
+                .AutoCAD
+                .ApplicationServices
+                .Application
+                .DocumentManager
+                .MdiActiveDocument
+                .Editor;
+
+            Point3d startPt = new Point3d(startPoint["x"], startPoint["y"], 0);
+            Point3d endPt = new Point3d(endPoint["x"], endPoint["y"], 0);
+
+            double radius = Math.Abs(endPt.Y - startPt.Y) / 2;
+
+            Point3d centerPt = new Point3d((startPt.X + endPt.X) / 2, (startPt.Y + endPt.Y) / 2, 0);
+
+            var data = new Dictionary<string, object>
+            {
+                { "startPoint", startPt },
+                { "endPoint", endPt },
+                { "centerPoint", centerPt },
+                { "radius", radius }
+            };
+
+            using (Transaction tr = ed.Document.Database.TransactionManager.StartTransaction())
+            {
+                BlockTable blockTable =
+                    tr.GetObject(ed.Document.Database.BlockTableId, OpenMode.ForRead) as BlockTable;
+                BlockTableRecord blockTableRecord =
+                    tr.GetObject(blockTable[BlockTableRecord.PaperSpace], OpenMode.ForWrite)
+                    as BlockTableRecord;
+
+                using (Arc arc = new Arc())
+                {
+                    arc.Normal = Vector3d.ZAxis;
+                    arc.Center = centerPt;
+                    arc.Radius = radius;
+                    arc.StartAngle = startDegrees * (Math.PI / 180);
+                    arc.EndAngle = endDegrees * (Math.PI / 180);
+                    blockTableRecord.AppendEntity(arc);
+                    tr.AddNewlyCreatedDBObject(arc, true);
+                }
+
+                tr.Commit();
             }
         }
 
@@ -195,12 +301,13 @@ namespace GMEPSolar
             }
         }
 
-        private static void CreateRegularFirstLines(
+        private static List<Dictionary<string, double>> CreateRegularFirstLines(
             Dictionary<string, double> startPoint,
             Dictionary<string, double> endPoint,
             double CELL_SPACING
         )
         {
+            var endPoints = new List<Dictionary<string, double>>();
             Double ENDPOINT_INCREASE = -CELL_SPACING / 2;
 
             for (var i = 0; i < 4; i++)
@@ -234,8 +341,12 @@ namespace GMEPSolar
                     CreateFilledCircleInPaperSpace(endPointUpdatedPoint, 0.05);
                 }
 
+                endPoints.Add(endPointUpdated);
+
                 AddLineToPaperSpace(line);
             }
+
+            return endPoints;
         }
 
         private static void AddLineToPaperSpace(Line line)
