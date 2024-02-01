@@ -22,8 +22,11 @@ namespace GMEPSolar
             NUMBER_ALL_MODULES_TEXTBOX.KeyDown += NUMBER_ALL_MODULES_TEXTBOX_KeyDown;
         }
 
-        public static void CreateDCSolarObject(Dictionary<string, object> formData)
+        public static void CreateDCSolarObject(
+            Dictionary<string, Dictionary<string, object>> formData
+        )
         {
+            CreateDesktopJsonFile(formData, "DCSolarFormData.json");
             var numberOfMPPTs = 0;
 
             foreach (var mppt in formData)
@@ -52,6 +55,8 @@ namespace GMEPSolar
 
             if (pointResult.Status == PromptStatus.OK)
             {
+                Double STARTLINE_LENGTH = 1.25;
+                Double CELL_SPACING = 0.1621;
                 Point3d selectedPoint = pointResult.Value;
 
                 var startPoint = new Dictionary<string, double>
@@ -60,82 +65,227 @@ namespace GMEPSolar
                     { "y", selectedPoint.Y - 0.6098 }
                 };
 
-                var cellSpacing = 0.1621;
-                var numberOfCellsPerMPPT = 4;
-                var totalNumberOfCells = numberOfMPPTs * numberOfCellsPerMPPT;
-                var startingLineLength = 1.25;
-
-                for (int i = 0; i <= totalNumberOfCells - 1; i++)
+                var endPoint = new Dictionary<string, double>
                 {
-                    var lineLength = startingLineLength + (i * cellSpacing / 2);
-                    var currentPoint = new Point3d(
-                        startPoint["x"] + (i * cellSpacing),
-                        startPoint["y"],
-                        selectedPoint.Z
-                    );
-                    var line = CreateVerticalLine(currentPoint, lineLength);
+                    { "x", selectedPoint.X - (0.5673 + (0.6484 * (numberOfMPPTs - 1))) },
+                    { "y", selectedPoint.Y - 0.6098 - STARTLINE_LENGTH }
+                };
+
+                if (numberOfMPPTs == 1)
+                {
+                    startPoint["x"] = selectedPoint.X - 0.7944;
+                    endPoint["x"] = selectedPoint.X - 0.7944;
                 }
 
-                foreach (var objData in data)
+                foreach (var mpptData in formData)
                 {
-                    var objectType = objData.Keys.First();
+                    var enabled = Convert.ToBoolean(mpptData.Value["Enabled"]);
 
-                    switch (objectType)
+                    if (!enabled)
                     {
-                        case "polyline":
-                            selectedPoint = CreatePolyline(ed, selectedPoint, objData);
-                            break;
+                        continue;
+                    }
 
-                        case "line":
-                            selectedPoint = CreateLine(ed, selectedPoint, objData);
-                            break;
+                    var isRegular = Convert.ToBoolean(mpptData.Value["Regular"]);
 
-                        case "mtext":
-                            selectedPoint = CreateMText(ed, selectedPoint, objData);
-                            break;
+                    var moduleCount = 0;
+                    if (
+                        mpptData.Value["Input"] != null
+                        && int.TryParse(mpptData.Value["Input"].ToString(), out int count)
+                    )
+                    {
+                        moduleCount = count;
+                    }
 
-                        case "circle":
-                            selectedPoint = CreateCircle(ed, selectedPoint, objData);
-                            break;
-
-                        default:
-                            break;
+                    if (enabled && moduleCount > 0)
+                    {
+                        if (isRegular)
+                        {
+                            CreateRegularFirstLines(startPoint, endPoint, CELL_SPACING);
+                        }
+                        else
+                        {
+                            CreateParallelFirstLines(startPoint, endPoint, CELL_SPACING);
+                        }
+                    }
+                    startPoint["x"] += 0.6484;
+                    endPoint["x"] += 0.6484;
+                    if (isRegular)
+                    {
+                        endPoint["y"] -= 0.1621;
+                    }
+                    else
+                    {
+                        endPoint["y"] -= 0.3242;
                     }
                 }
+
+                CreateObjectGivenData(data, ed, selectedPoint);
             }
         }
 
-        private static object CreateVerticalLine(Point3d currentPoint, double lineLength)
+        private static void CreateParallelFirstLines(
+            Dictionary<string, double> startPoint,
+            Dictionary<string, double> endPoint,
+            double CELL_SPACING
+        )
         {
-            var startPoint = currentPoint;
-            var endPoint = new Point3d(currentPoint.X, currentPoint.Y - lineLength, currentPoint.Z);
+            Double ENDPOINT_INCREASE = -CELL_SPACING / 2;
 
-            using (
-                var transaction =
-                    HostApplicationServices.WorkingDatabase.TransactionManager.StartTransaction()
-            )
+            for (var i = 0; i < 4; i++)
             {
-                var blockTable =
-                    transaction.GetObject(
-                        HostApplicationServices.WorkingDatabase.BlockTableId,
-                        OpenMode.ForRead
-                    ) as BlockTable;
+                var line = new Line(
+                    new Point3d(startPoint["x"] + (CELL_SPACING * i), startPoint["y"], 0),
+                    new Point3d(
+                        endPoint["x"] + (CELL_SPACING * i),
+                        endPoint["y"] + (ENDPOINT_INCREASE * Math.Floor((double)i / 1)),
+                        0
+                    )
+                );
 
-                var blockTableRecord =
-                    transaction.GetObject(
-                        blockTable[BlockTableRecord.PaperSpace],
-                        OpenMode.ForWrite
-                    ) as BlockTableRecord;
-
-                var line = new Line(startPoint, endPoint);
-                line.Layer = "0";
-                line.Color = Color.FromColorIndex(ColorMethod.ByAci, 4);
-                blockTableRecord.AppendEntity(line);
-                transaction.AddNewlyCreatedDBObject(line, true);
-                transaction.Commit();
+                AddLineToPaperSpace(line);
             }
+        }
 
-            return currentPoint;
+        private static void CreateFilledCircleInPaperSpace(Point3d center, double radius)
+        {
+            Document acDoc = Autodesk
+                .AutoCAD
+                .ApplicationServices
+                .Application
+                .DocumentManager
+                .MdiActiveDocument;
+            Database acCurDb = acDoc.Database;
+
+            using (Transaction acTrans = acCurDb.TransactionManager.StartTransaction())
+            {
+                BlockTable acBlkTbl;
+                BlockTableRecord acBlkTblRec;
+
+                acBlkTbl = acTrans.GetObject(acCurDb.BlockTableId, OpenMode.ForRead) as BlockTable;
+                acBlkTblRec =
+                    acTrans.GetObject(acBlkTbl[BlockTableRecord.PaperSpace], OpenMode.ForWrite)
+                    as BlockTableRecord;
+
+                // Create a circle
+                using (Circle acCircle = new Circle())
+                {
+                    acCircle.Center = center;
+                    acCircle.Radius = radius;
+                    acCircle.SetDatabaseDefaults();
+                    acBlkTblRec.AppendEntity(acCircle);
+                    acTrans.AddNewlyCreatedDBObject(acCircle, true);
+
+                    // Create a solid hatch
+                    using (Hatch acHatch = new Hatch())
+                    {
+                        acBlkTblRec.AppendEntity(acHatch);
+                        acTrans.AddNewlyCreatedDBObject(acHatch, true);
+                        acHatch.SetHatchPattern(HatchPatternType.PreDefined, "SOLID");
+                        acHatch.Associative = true;
+                        acHatch.AppendLoop(
+                            HatchLoopTypes.Outermost,
+                            new ObjectIdCollection() { acCircle.ObjectId }
+                        );
+                        acHatch.EvaluateHatch(true);
+                    }
+                }
+
+                acTrans.Commit();
+            }
+        }
+
+        private static void CreateRegularFirstLines(
+            Dictionary<string, double> startPoint,
+            Dictionary<string, double> endPoint,
+            double CELL_SPACING
+        )
+        {
+            Double ENDPOINT_INCREASE = -CELL_SPACING / 2;
+
+            for (var i = 0; i < 4; i++)
+            {
+                var endPointUpdated = new Dictionary<string, double>
+                {
+                    { "x", endPoint["x"] + (CELL_SPACING * i) },
+                    { "y", endPoint["y"] + (ENDPOINT_INCREASE * Math.Floor((double)i / 2)) }
+                };
+
+                var line = new Line(
+                    new Point3d(startPoint["x"] + (CELL_SPACING * i), startPoint["y"], 0),
+                    new Point3d(endPointUpdated["x"], endPointUpdated["y"], 0)
+                );
+
+                if (i == 0 || i == 2)
+                {
+                    Editor ed = Autodesk
+                        .AutoCAD
+                        .ApplicationServices
+                        .Application
+                        .DocumentManager
+                        .MdiActiveDocument
+                        .Editor;
+                    ed.WriteMessage("Creating hatched circle\n");
+                    Point3d endPointUpdatedPoint = new Point3d(
+                        endPointUpdated["x"],
+                        endPointUpdated["y"],
+                        0
+                    );
+                    CreateFilledCircleInPaperSpace(endPointUpdatedPoint, 0.05);
+                }
+
+                AddLineToPaperSpace(line);
+            }
+        }
+
+        private static void AddLineToPaperSpace(Line line)
+        {
+            Database db = HostApplicationServices.WorkingDatabase;
+            using (Transaction tr = db.TransactionManager.StartTransaction())
+            {
+                BlockTable blockTable =
+                    tr.GetObject(db.BlockTableId, OpenMode.ForRead) as BlockTable;
+                BlockTableRecord blockTableRecord =
+                    tr.GetObject(blockTable[BlockTableRecord.PaperSpace], OpenMode.ForWrite)
+                    as BlockTableRecord;
+                blockTableRecord.AppendEntity(line);
+                tr.AddNewlyCreatedDBObject(line, true);
+                tr.Commit();
+            }
+        }
+
+        private static void CreateObjectGivenData(
+            List<Dictionary<string, Dictionary<string, object>>> data,
+            Editor ed,
+            Point3d selectedPoint
+        )
+        {
+            foreach (var objData in data)
+            {
+                var objectType = objData.Keys.First();
+
+                switch (objectType)
+                {
+                    case "polyline":
+                        selectedPoint = CreatePolyline(ed, selectedPoint, objData);
+                        break;
+
+                    case "line":
+                        selectedPoint = CreateLine(ed, selectedPoint, objData);
+                        break;
+
+                    case "mtext":
+                        selectedPoint = CreateMText(ed, selectedPoint, objData);
+                        break;
+
+                    case "circle":
+                        selectedPoint = CreateCircle(ed, selectedPoint, objData);
+                        break;
+
+                    default:
+                        break;
+                }
+            }
         }
 
         private static void SetMTextStyleByName(MText mtext, string styleName)
@@ -339,48 +489,50 @@ namespace GMEPSolar
             return selectedPoint;
         }
 
-        private object GetFormData()
+        private static Dictionary<string, Dictionary<string, object>> GetFormData(
+            DC_SOLAR_INPUT form
+        )
         {
-            var data = new Dictionary<string, object>
+            var data = new Dictionary<string, Dictionary<string, object>>
             {
                 {
                     "MPPT1",
                     new Dictionary<string, object>
                     {
-                        { "Enabled", MPPT1_CHECKBOX.Checked },
-                        { "Regular", MPPT1_RADIO_REGULAR.Checked },
-                        { "Parallel", MPPT1_RADIO_PARALLEL.Checked },
-                        { "Input", MPPT1_INPUT.Text }
+                        { "Enabled", form.MPPT1_CHECKBOX.Checked },
+                        { "Regular", form.MPPT1_RADIO_REGULAR.Checked },
+                        { "Parallel", form.MPPT1_RADIO_PARALLEL.Checked },
+                        { "Input", form.MPPT1_INPUT.Text }
                     }
                 },
                 {
                     "MPPT2",
                     new Dictionary<string, object>
                     {
-                        { "Enabled", MPPT2_CHECKBOX.Checked },
-                        { "Regular", MPPT2_RADIO_REGULAR.Checked },
-                        { "Parallel", MPPT2_RADIO_PARALLEL.Checked },
-                        { "Input", MPPT2_INPUT.Text }
+                        { "Enabled", form.MPPT2_CHECKBOX.Checked },
+                        { "Regular", form.MPPT2_RADIO_REGULAR.Checked },
+                        { "Parallel", form.MPPT2_RADIO_PARALLEL.Checked },
+                        { "Input", form.MPPT2_INPUT.Text }
                     }
                 },
                 {
                     "MPPT3",
                     new Dictionary<string, object>
                     {
-                        { "Enabled", MPPT3_CHECKBOX.Checked },
-                        { "Regular", MPPT3_RADIO_REGULAR.Checked },
-                        { "Parallel", MPPT3_RADIO_PARALLEL.Checked },
-                        { "Input", MPPT3_INPUT.Text }
+                        { "Enabled", form.MPPT3_CHECKBOX.Checked },
+                        { "Regular", form.MPPT3_RADIO_REGULAR.Checked },
+                        { "Parallel", form.MPPT3_RADIO_PARALLEL.Checked },
+                        { "Input", form.MPPT3_INPUT.Text }
                     }
                 },
                 {
                     "MPPT4",
                     new Dictionary<string, object>
                     {
-                        { "Enabled", MPPT4_CHECKBOX.Checked },
-                        { "Regular", MPPT4_RADIO_REGULAR.Checked },
-                        { "Parallel", MPPT4_RADIO_PARALLEL.Checked },
-                        { "Input", MPPT4_INPUT.Text }
+                        { "Enabled", form.MPPT4_CHECKBOX.Checked },
+                        { "Regular", form.MPPT4_RADIO_REGULAR.Checked },
+                        { "Parallel", form.MPPT4_RADIO_PARALLEL.Checked },
+                        { "Input", form.MPPT4_INPUT.Text }
                     }
                 }
             };
@@ -443,8 +595,8 @@ namespace GMEPSolar
         private void CREATE_BUTTON_Click(object sender, EventArgs e)
         {
             Close();
-            var data = GetFormData();
-            CreateDCSolarObject((Dictionary<string, object>)data);
+            var data = GetFormData(this);
+            CreateDCSolarObject(data);
         }
     }
 }
