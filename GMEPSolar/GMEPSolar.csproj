@@ -74,6 +74,8 @@
     <None Include="block data\DCSolar2.json" />
     <None Include="block data\DCSolar3.json" />
     <None Include="block data\DCSolar4.json" />
+    <None Include="block data\String.json" />
+    <None Include="block data\StringDouble.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -103,6 +103,14 @@ namespace GMEPSolar
                                     origin
                                 );
                             }
+                            else if (obj is Autodesk.AutoCAD.DatabaseServices.Solid)
+                            {
+                                data = HandleSolid(
+                                    obj as Autodesk.AutoCAD.DatabaseServices.Solid,
+                                    data,
+                                    origin
+                                );
+                            }
 
                             // Commit the transaction
                             transaction.Commit();
@@ -130,6 +138,35 @@ namespace GMEPSolar
             File.WriteAllText(filePath, json);
         }
 
+        private static List<Dictionary<string, object>> HandleSolid(
+            Solid solid,
+            List<Dictionary<string, object>> data,
+            Point3d origin
+        )
+        {
+            var solidData = new Dictionary<string, object> { { "layer", solid.Layer } };
+
+            var vertices = new List<object>();
+            for (short i = 0; i < 4; i++)
+            {
+                var vertex = new Dictionary<string, object>
+                {
+                    { "x", solid.GetPointAt(i).X - origin.X },
+                    { "y", solid.GetPointAt(i).Y - origin.Y },
+                    { "z", solid.GetPointAt(i).Z - origin.Z }
+                };
+                vertices.Add(vertex);
+            }
+
+            solidData.Add("vertices", vertices);
+
+            var encapsulate = new Dictionary<string, object> { { "solid", solidData } };
+
+            data.Add(encapsulate);
+
+            return data;
+        }
+
         private static List<Dictionary<string, object>> HandlePolyline(
             Autodesk.AutoCAD.DatabaseServices.Polyline polyline,
             List<Dictionary<string, object>> data,
@@ -152,6 +189,8 @@ namespace GMEPSolar
             }
 
             polylineData.Add("vertices", vertices);
+
+            polylineData.Add("linetype", polyline.Linetype);
 
             if (polyline.Closed)
             {
@@ -194,6 +233,8 @@ namespace GMEPSolar
                 { "z", line.EndPoint.Z - origin.Z }
             };
             lineData.Add("endPoint", endPoint);
+
+            lineData.Add("linetype", line.Linetype);
 
             var encapsulate = new Dictionary<string, object>();
             encapsulate.Add("line", lineData);

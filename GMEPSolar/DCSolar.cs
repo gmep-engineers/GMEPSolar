@@ -39,7 +39,7 @@ namespace GMEPSolar
             }
 
             var json = File.ReadAllText($"../../block data/DCSolar{numberOfMPPTs}.json");
-            var data = JArray
+            var MPPTData = JArray
                 .Parse(json)
                 .ToObject<List<Dictionary<string, Dictionary<string, object>>>>();
 
@@ -55,84 +55,131 @@ namespace GMEPSolar
 
             if (pointResult.Status == PromptStatus.OK)
             {
-                Double STARTLINE_LENGTH = 1.25;
-                Double CELL_SPACING = 0.1621;
-                Point3d selectedPoint = pointResult.Value;
-                var mpptEndPoints = new List<List<Dictionary<string, double>>>();
+                Point3d selectedPoint;
+                List<List<Dictionary<string, double>>> mpptEndPoints;
 
-                var startPoint = new Dictionary<string, double>
-                {
-                    { "x", selectedPoint.X - (0.5673 + (0.6484 * (numberOfMPPTs - 1))) },
-                    { "y", selectedPoint.Y - 0.6098 }
-                };
+                CreateLinesOffMPPTs(
+                    formData,
+                    numberOfMPPTs,
+                    pointResult,
+                    out selectedPoint,
+                    out mpptEndPoints
+                );
 
-                var endPoint = new Dictionary<string, double>
-                {
-                    { "x", selectedPoint.X - (0.5673 + (0.6484 * (numberOfMPPTs - 1))) },
-                    { "y", selectedPoint.Y - 0.6098 - STARTLINE_LENGTH }
-                };
-
-                if (numberOfMPPTs == 1)
-                {
-                    startPoint["x"] = selectedPoint.X - 0.7944;
-                    endPoint["x"] = selectedPoint.X - 0.7944;
-                }
-
-                foreach (var mpptData in formData)
-                {
-                    var enabled = Convert.ToBoolean(mpptData.Value["Enabled"]);
-                    var endPoints = new List<Dictionary<string, double>>();
-
-                    if (!enabled)
-                    {
-                        continue;
-                    }
-
-                    var isRegular = Convert.ToBoolean(mpptData.Value["Regular"]);
-                    var isParallel = Convert.ToBoolean(mpptData.Value["Parallel"]);
-
-                    var moduleCount = 0;
-                    if (
-                        mpptData.Value["Input"] != null
-                        && int.TryParse(mpptData.Value["Input"].ToString(), out int count)
-                    )
-                    {
-                        moduleCount = count;
-                    }
-
-                    if (enabled && moduleCount > 0)
-                    {
-                        if (isRegular)
-                        {
-                            endPoints = CreateRegularFirstLines(startPoint, endPoint, CELL_SPACING);
-                        }
-                        else
-                        {
-                            endPoints = CreateParallelFirstLines(
-                                startPoint,
-                                endPoint,
-                                CELL_SPACING
-                            );
-                        }
-                    }
-
-                    mpptEndPoints.Add(endPoints);
-
-                    startPoint["x"] += 0.6484;
-                    endPoint["x"] += 0.6484;
-                    if (isRegular && enabled)
-                    {
-                        endPoint["y"] -= 0.1621;
-                    }
-                    else if (isParallel && enabled)
-                    {
-                        endPoint["y"] -= 0.3242;
-                    }
-                }
+                CreateObjectGivenData(MPPTData, ed, selectedPoint);
 
                 CreateDesktopJsonFile(mpptEndPoints, "DCSolarEndPoints.json");
 
-                CreateObjectGivenData(data, ed, selectedPoint);
+                CreateStringsOffMPPTS(formData, numberOfMPPTs, selectedPoint, mpptEndPoints);
+            }
+        }
+
+        private static void CreateStringsOffMPPTS(
+            Dictionary<string, Dictionary<string, object>> formData,
+            int numberOfMPPTs,
+            Point3d selectedPoint,
+            List<List<Dictionary<string, double>>> mpptEndPoints
+        )
+        {
+            var ed = Autodesk
+                .AutoCAD
+                .ApplicationServices
+                .Application
+                .DocumentManager
+                .MdiActiveDocument
+                .Editor;
+            var json = File.ReadAllText($"../../block data/String.json");
+            var stringData = JArray
+                .Parse(json)
+                .ToObject<List<Dictionary<string, Dictionary<string, object>>>>();
+
+            var midPoint = new Dictionary<string, double>
+            {
+                { "x", selectedPoint.X - (0.5673 + (0.6484 * (numberOfMPPTs - 1))) - 3.3606 },
+                { "y", selectedPoint.Y - 0.6098 - 1.2706 }
+            };
+
+            var stringStartPoint = new Point3d(midPoint["x"], midPoint["y"] + 0.5348, 0);
+
+            CreateObjectGivenData(stringData, ed, stringStartPoint);
+        }
+
+        private static void CreateLinesOffMPPTs(
+            Dictionary<string, Dictionary<string, object>> formData,
+            int numberOfMPPTs,
+            PromptPointResult pointResult,
+            out Point3d selectedPoint,
+            out List<List<Dictionary<string, double>>> mpptEndPoints
+        )
+        {
+            Double STARTLINE_LENGTH = 1.25;
+            Double CELL_SPACING = 0.1621;
+            selectedPoint = pointResult.Value;
+            mpptEndPoints = new List<List<Dictionary<string, double>>>();
+            var startPoint = new Dictionary<string, double>
+            {
+                { "x", selectedPoint.X - (0.5673 + (0.6484 * (numberOfMPPTs - 1))) },
+                { "y", selectedPoint.Y - 0.6098 }
+            };
+
+            var endPoint = new Dictionary<string, double>
+            {
+                { "x", selectedPoint.X - (0.5673 + (0.6484 * (numberOfMPPTs - 1))) },
+                { "y", selectedPoint.Y - 0.6098 - STARTLINE_LENGTH }
+            };
+
+            if (numberOfMPPTs == 1)
+            {
+                startPoint["x"] = selectedPoint.X - 0.7944;
+                endPoint["x"] = selectedPoint.X - 0.7944;
+            }
+
+            foreach (var mpptData in formData)
+            {
+                var enabled = Convert.ToBoolean(mpptData.Value["Enabled"]);
+                var endPoints = new List<Dictionary<string, double>>();
+
+                if (!enabled)
+                {
+                    continue;
+                }
+
+                var isRegular = Convert.ToBoolean(mpptData.Value["Regular"]);
+                var isParallel = Convert.ToBoolean(mpptData.Value["Parallel"]);
+
+                var moduleCount = 0;
+                if (
+                    mpptData.Value["Input"] != null
+                    && int.TryParse(mpptData.Value["Input"].ToString(), out int count)
+                )
+                {
+                    moduleCount = count;
+                }
+
+                if (enabled && moduleCount > 0)
+                {
+                    if (isRegular)
+                    {
+                        endPoints = CreateRegularFirstLines(startPoint, endPoint, CELL_SPACING);
+                    }
+                    else
+                    {
+                        endPoints = CreateParallelFirstLines(startPoint, endPoint, CELL_SPACING);
+                    }
+                }
+
+                mpptEndPoints.Add(endPoints);
+
+                startPoint["x"] += 0.6484;
+                endPoint["x"] += 0.6484;
+                if (isRegular && enabled)
+                {
+                    endPoint["y"] -= 0.1621;
+                }
+                else if (isParallel && enabled)
+                {
+                    endPoint["y"] -= 0.3242;
+                }
             }
         }
 
@@ -339,14 +386,28 @@ namespace GMEPSolar
                         0
                     );
                     CreateFilledCircleInPaperSpace(endPointUpdatedPoint, 0.05);
-                }
+                    endPoints.Add(endPointUpdated);
 
-                endPoints.Add(endPointUpdated);
+                    CreateHorizontalLine(endPointUpdated, CELL_SPACING);
+                }
 
                 AddLineToPaperSpace(line);
             }
 
             return endPoints;
+        }
+
+        private static void CreateHorizontalLine(
+            Dictionary<string, double> endPointUpdated,
+            double CELL_SPACING
+        )
+        {
+            var line = new Line(
+                new Point3d(endPointUpdated["x"], endPointUpdated["y"], 0),
+                new Point3d(endPointUpdated["x"] + CELL_SPACING, endPointUpdated["y"], 0)
+            );
+
+            AddLineToPaperSpace(line);
         }
 
         private static void AddLineToPaperSpace(Line line)
@@ -391,6 +452,10 @@ namespace GMEPSolar
 
                     case "circle":
                         selectedPoint = CreateCircle(ed, selectedPoint, objData);
+                        break;
+
+                    case "solid":
+                        selectedPoint = CreateSolid(ed, selectedPoint, objData);
                         break;
 
                     default:
@@ -517,6 +582,11 @@ namespace GMEPSolar
             // Set line properties
             line.Layer = lineData["layer"].ToString();
 
+            if (lineData.ContainsKey("linetype"))
+            {
+                line.Linetype = lineData["linetype"].ToString();
+            }
+
             var startPointData = JsonConvert.DeserializeObject<Dictionary<string, double>>(
                 lineData["startPoint"].ToString()
             );
@@ -565,6 +635,11 @@ namespace GMEPSolar
 
             polyline.Layer = polylineData["layer"].ToString();
 
+            if (polylineData.ContainsKey("linetype"))
+            {
+                polyline.Linetype = polylineData["linetype"].ToString();
+            }
+
             var vertices = JArray
                 .Parse(polylineData["vertices"].ToString())
                 .ToObject<List<Dictionary<string, double>>>();
@@ -594,6 +669,51 @@ namespace GMEPSolar
                     ) as BlockTableRecord;
                 blockTableRecord.AppendEntity(polyline);
                 transaction.AddNewlyCreatedDBObject(polyline, true);
+                transaction.Commit();
+            }
+
+            return selectedPoint;
+        }
+
+        private static Point3d CreateSolid(
+            Editor ed,
+            Point3d selectedPoint,
+            Dictionary<string, Dictionary<string, object>> objData
+        )
+        {
+            var solidData = objData["solid"];
+            var solid = new Solid();
+            short i = 0;
+
+            solid.Layer = solidData["layer"].ToString();
+
+            var points = JArray
+                .Parse(solidData["vertices"].ToString())
+                .ToObject<List<Dictionary<string, double>>>();
+
+            foreach (var point in points)
+            {
+                var x = point["x"] + selectedPoint.X;
+                var y = point["y"] + selectedPoint.Y;
+                var z = point["z"] + selectedPoint.Z;
+                var point3d = new Point3d(x, y, z);
+                solid.SetPointAt(i, point3d);
+                i++;
+            }
+
+            // Add solid to the drawing
+            using (var transaction = ed.Document.Database.TransactionManager.StartTransaction())
+            {
+                var blockTable =
+                    transaction.GetObject(ed.Document.Database.BlockTableId, OpenMode.ForRead)
+                    as BlockTable;
+                var blockTableRecord =
+                    transaction.GetObject(
+                        blockTable[BlockTableRecord.PaperSpace],
+                        OpenMode.ForWrite
+                    ) as BlockTableRecord;
+                blockTableRecord.AppendEntity(solid);
+                transaction.AddNewlyCreatedDBObject(solid, true);
                 transaction.Commit();
             }
 
