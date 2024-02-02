@@ -95,6 +95,12 @@ namespace GMEPSolar
             var stringMidPointY = lineStartPointY - 1.2706;
 
             var stringDataContainer = GetStringData(formData);
+
+            if (areAllModulesEmpty(stringDataContainer))
+            {
+                return;
+            }
+
             var stringTotalHeight = GetTotalHeight(stringDataContainer);
 
             var stringStartPoint = new Point3d(
@@ -105,10 +111,159 @@ namespace GMEPSolar
 
             CreateDesktopJsonFile(stringDataContainer, "StringData.json");
 
-            CreateStringsAndReturnConnectionPoints(stringDataContainer, stringStartPoint, ed);
+            var connectionPoints = CreateStringsAndReturnConnectionPoints(
+                stringDataContainer,
+                stringStartPoint,
+                ed
+            );
+
+            var mpptEndPointsFlattened = mpptEndPoints.SelectMany(x => x).ToList();
+
+            var aboveAndBelow = GetNumberOfPointsAboveAndBelow(
+                connectionPoints,
+                mpptEndPointsFlattened
+            );
+
+            CreateConnectionLines(
+                connectionPoints,
+                mpptEndPointsFlattened,
+                aboveAndBelow,
+                stringMidPointX
+            );
         }
 
-        private static void CreateStringsAndReturnConnectionPoints(
+        private static bool areAllModulesEmpty(List<Dictionary<string, object>> stringDataContainer)
+        {
+            foreach (var stringData in stringDataContainer)
+            {
+                if (stringData["module"].ToString() != "0" && stringData["module"].ToString() != "")
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private static void CreateConnectionLines(
+            List<Dictionary<string, double>> connectionPoints,
+            List<Dictionary<string, double>> mpptEndPointsFlattened,
+            Dictionary<string, int> aboveAndBelow,
+            double stringMidPointX
+        )
+        {
+            CreateDesktopJsonFile(aboveAndBelow, "AboveAndBelow.json");
+            var STRING_X = stringMidPointX;
+            var LINE_SPACING = 0.1621 / 2;
+            var CLOSEST_DISTANCE_FROM_STRING = 0.1621 / 2;
+            var initialBelowValue = aboveAndBelow["below"];
+
+            var ed = Autodesk
+                .AutoCAD
+                .ApplicationServices
+                .Application
+                .DocumentManager
+                .MdiActiveDocument
+                .Editor;
+
+            for (var i = 0; i < connectionPoints.Count; i++)
+            {
+                var mpptEndPoint = mpptEndPointsFlattened[i];
+                var connectionPoint = connectionPoints[i];
+
+                var xDistance = Math.Abs(mpptEndPoint["x"] - connectionPoint["x"]);
+                var yDistance = Math.Abs(mpptEndPoint["y"] - connectionPoint["y"]);
+
+                var isAbove = connectionPoint["y"] > mpptEndPoint["y"];
+
+                var aboveOrBelowValue = isAbove
+                    ? aboveAndBelow["above"]
+                    : initialBelowValue - aboveAndBelow["below"];
+
+                var firstHorizontalLineStartPoint = new Dictionary<string, double>
+                {
+                    { "x", mpptEndPoint["x"] },
+                    { "y", mpptEndPoint["y"] }
+                };
+
+                var firstHorizontalLineEndPoint = new Dictionary<string, double>
+                {
+                    {
+                        "x",
+                        mpptEndPoint["x"]
+                            - (
+                                xDistance
+                                - CLOSEST_DISTANCE_FROM_STRING
+                                - (aboveOrBelowValue * LINE_SPACING)
+                            )
+                    },
+                    { "y", mpptEndPoint["y"] }
+                };
+
+                if (isAbove)
+                {
+                    aboveAndBelow["above"]--;
+                }
+                else
+                {
+                    aboveAndBelow["below"]--;
+                }
+
+                CreateLineFromPoints(firstHorizontalLineStartPoint, firstHorizontalLineEndPoint);
+            }
+        }
+
+        private static void CreateLineFromPoints(
+            Dictionary<string, double> firstHorizontalLineStartPoint,
+            Dictionary<string, double> firstHorizontalLineEndPoint
+        )
+        {
+            var ed = Autodesk
+                .AutoCAD
+                .ApplicationServices
+                .Application
+                .DocumentManager
+                .MdiActiveDocument
+                .Editor;
+
+            var line = new Line(
+                new Point3d(
+                    firstHorizontalLineStartPoint["x"],
+                    firstHorizontalLineStartPoint["y"],
+                    0
+                ),
+                new Point3d(firstHorizontalLineEndPoint["x"], firstHorizontalLineEndPoint["y"], 0)
+            );
+
+            AddLineToPaperSpace(line);
+        }
+
+        private static Dictionary<string, int> GetNumberOfPointsAboveAndBelow(
+            List<Dictionary<string, double>> connectionPoints,
+            List<Dictionary<string, double>> mpptEndPointsFlattened
+        )
+        {
+            var above = 0;
+            var below = 0;
+
+            for (var i = 0; i < connectionPoints.Count; i++)
+            {
+                var connectionPoint = connectionPoints[i];
+                var mpptEndPoint = mpptEndPointsFlattened[i];
+
+                if (connectionPoint["y"] > mpptEndPoint["y"])
+                {
+                    above++;
+                }
+                else
+                {
+                    below++;
+                }
+            }
+
+            return new Dictionary<string, int>() { { "above", above }, { "below", below } };
+        }
+
+        private static List<Dictionary<string, double>> CreateStringsAndReturnConnectionPoints(
             List<Dictionary<string, object>> stringDataContainer,
             Point3d stringStartPoint,
             Editor ed
@@ -116,6 +271,7 @@ namespace GMEPSolar
         {
             var TEXT_HEIGHT = 0.8334;
             var STRING_HEIGHT = 1.0695;
+            var CELL_SPACING = 0.1621;
             var connectionPoints = new List<Dictionary<string, double>>();
             var startPoint = new Dictionary<string, double>
             {
@@ -130,7 +286,8 @@ namespace GMEPSolar
                 {
                     continue;
                 }
-                var module = Convert.ToInt32(stringData["module"]);
+                var module = 0;
+                int.TryParse(stringData["module"].ToString(), out module);
                 foreach (var item in items)
                 {
                     if (item == "text")
@@ -141,10 +298,25 @@ namespace GMEPSolar
                     else if (item == "string")
                     {
                         CreateString(ed, new Point3d(startPoint["x"], startPoint["y"], 0));
+                        connectionPoints.Add(
+                            new Dictionary<string, double>
+                            {
+                                { "x", startPoint["x"] },
+                                { "y", startPoint["y"] - (STRING_HEIGHT / 2) + (CELL_SPACING / 2) }
+                            }
+                        );
+                        connectionPoints.Add(
+                            new Dictionary<string, double>
+                            {
+                                { "x", startPoint["x"] },
+                                { "y", startPoint["y"] - (STRING_HEIGHT / 2) - (CELL_SPACING / 2) }
+                            }
+                        );
                         startPoint["y"] -= STRING_HEIGHT;
                     }
                 }
             }
+            return connectionPoints;
         }
 
         private static void CreateText(Editor ed, Point3d startPoint, int module)
