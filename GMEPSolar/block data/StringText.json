@@ -1,0 +1,17 @@
+[
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "TopLeft",
+            "text": "STRING 1 - * MODULES",
+            "height": 0.22130540217076672,
+            "lineSpaceDistance": 0.36884233695127788,
+            "location": {
+                "x": -3.1606320357372368,
+                "y": 0.51010048462453561,
+                "z": 0.0
+            }
+        }
+    }
+]

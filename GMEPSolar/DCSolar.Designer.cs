@@ -70,6 +70,7 @@
             // 
             // MPPT1_INPUT
             // 
+            this.MPPT1_INPUT.Enabled = false;
             this.MPPT1_INPUT.Location = new System.Drawing.Point(16, 143);
             this.MPPT1_INPUT.Name = "MPPT1_INPUT";
             this.MPPT1_INPUT.Size = new System.Drawing.Size(130, 20);
@@ -147,6 +148,7 @@
             // 
             // MPPT2_INPUT
             // 
+            this.MPPT2_INPUT.Enabled = false;
             this.MPPT2_INPUT.Location = new System.Drawing.Point(176, 143);
             this.MPPT2_INPUT.Name = "MPPT2_INPUT";
             this.MPPT2_INPUT.Size = new System.Drawing.Size(130, 20);
@@ -215,6 +217,7 @@
             // 
             // MPPT3_INPUT
             // 
+            this.MPPT3_INPUT.Enabled = false;
             this.MPPT3_INPUT.Location = new System.Drawing.Point(339, 143);
             this.MPPT3_INPUT.Name = "MPPT3_INPUT";
             this.MPPT3_INPUT.Size = new System.Drawing.Size(130, 20);
@@ -283,6 +286,7 @@
             // 
             // MPPT4_INPUT
             // 
+            this.MPPT4_INPUT.Enabled = false;
             this.MPPT4_INPUT.Location = new System.Drawing.Point(501, 143);
             this.MPPT4_INPUT.Name = "MPPT4_INPUT";
             this.MPPT4_INPUT.Size = new System.Drawing.Size(130, 20);

@@ -101,7 +101,20 @@ namespace GMEPSolar
 
             var stringStartPoint = new Point3d(midPoint["x"], midPoint["y"] + 0.5348, 0);
 
+            json = File.ReadAllText($"../../block data/StringText.json");
+            var stringTextData = JArray
+                .Parse(json)
+                .ToObject<List<Dictionary<string, Dictionary<string, object>>>>();
+            var module = formData.First().Value["Input"];
+
+            stringTextData[0]["mtext"]["text"] = stringTextData[0]
+                ["mtext"]["text"]
+                .ToString()
+                .Replace("*", module.ToString().PadLeft(2, '0'));
+
             CreateObjectGivenData(stringData, ed, stringStartPoint);
+
+            CreateObjectGivenData(stringTextData, ed, stringStartPoint);
         }
 
         private static void CreateLinesOffMPPTs(
