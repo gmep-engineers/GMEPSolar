@@ -93,13 +93,21 @@ namespace GMEPSolar
                 .Parse(json)
                 .ToObject<List<Dictionary<string, Dictionary<string, object>>>>();
 
-            var midPoint = new Dictionary<string, double>
-            {
-                { "x", selectedPoint.X - (0.5673 + (0.6484 * (numberOfMPPTs - 1))) - 3.3606 },
-                { "y", selectedPoint.Y - 0.6098 - 1.2706 }
-            };
+            var lineStartPointX = selectedPoint.X - (0.5673 + (0.6484 * (numberOfMPPTs - 1)));
+            var lineStartPointY = selectedPoint.Y - 0.6098;
+            var stringMidPointX = lineStartPointX - 3.3606;
+            var stringMidPointY = lineStartPointY - 1.2706;
 
-            var stringStartPoint = new Point3d(midPoint["x"], midPoint["y"] + 0.5348, 0);
+            var stringDataContainer = GetStringData(formData);
+            var stringTotalHeight = GetTotalHeight(stringDataContainer);
+
+            var stringStartPoint = new Point3d(
+                stringMidPointX,
+                stringMidPointY + stringTotalHeight / 2,
+                0
+            );
+
+            CreateDesktopJsonFile(stringDataContainer, "StringData.json");
 
             json = File.ReadAllText($"../../block data/StringText.json");
             var stringTextData = JArray
@@ -107,14 +115,75 @@ namespace GMEPSolar
                 .ToObject<List<Dictionary<string, Dictionary<string, object>>>>();
             var module = formData.First().Value["Input"];
 
+            CreateObjectGivenData(stringData, ed, stringStartPoint);
+
             stringTextData[0]["mtext"]["text"] = stringTextData[0]
                 ["mtext"]["text"]
                 .ToString()
                 .Replace("*", module.ToString().PadLeft(2, '0'));
 
-            CreateObjectGivenData(stringData, ed, stringStartPoint);
-
             CreateObjectGivenData(stringTextData, ed, stringStartPoint);
+        }
+
+        private static double GetTotalHeight(List<Dictionary<string, object>> stringDataContainer)
+        {
+            double totalHeight = 0;
+            foreach (var stringData in stringDataContainer)
+            {
+                totalHeight += Convert.ToDouble(stringData["height"]);
+            }
+            return totalHeight;
+        }
+
+        private static List<Dictionary<string, object>> GetStringData(
+            Dictionary<string, Dictionary<string, object>> formData
+        )
+        {
+            var stringDataContainer = new List<Dictionary<string, object>>();
+            var firstFlag = true;
+            var previousModulesCount = 0;
+
+            foreach (var mppt in formData)
+            {
+                var stringData = new Dictionary<string, object>();
+                stringData["height"] = 0.0;
+                stringData["items"] = new List<string>();
+                var mpptData = mppt.Value;
+                if (Convert.ToBoolean(mpptData["Enabled"]))
+                {
+                    var isRegular = Convert.ToBoolean(mpptData["Regular"]);
+                    var isParallel = Convert.ToBoolean(mpptData["Parallel"]);
+                    var modulesCount = Convert.ToInt32(mpptData["Input"]);
+
+                    if (firstFlag)
+                    {
+                        firstFlag = false;
+                        stringData["height"] = (double)stringData["height"] + 0.8334;
+                        ((List<string>)stringData["items"]).Add("text");
+                        previousModulesCount = modulesCount;
+                    }
+                    else if ((isRegular || isParallel) && modulesCount != previousModulesCount)
+                    {
+                        stringData["height"] = (double)stringData["height"] + 0.8334;
+                        ((List<string>)stringData["items"]).Add("text");
+                        previousModulesCount = modulesCount;
+                    }
+
+                    if (isRegular)
+                    {
+                        stringData["height"] = (double)stringData["height"] + 1.0695;
+                        ((List<string>)stringData["items"]).Add("string");
+                    }
+                    else if (isParallel)
+                    {
+                        stringData["height"] = (double)stringData["height"] + (1.0695 * 2);
+                        ((List<string>)stringData["items"]).Add("string");
+                        ((List<string>)stringData["items"]).Add("string");
+                    }
+                }
+                stringDataContainer.Add(stringData);
+            }
+            return stringDataContainer;
         }
 
         private static void CreateLinesOffMPPTs(
