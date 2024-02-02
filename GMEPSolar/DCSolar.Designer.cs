@@ -62,6 +62,10 @@
             this.ALL_PARALLEL_BUTTON = new System.Windows.Forms.Button();
             this.SET_ALL_MODULES_BUTTON = new System.Windows.Forms.Button();
             this.NUMBER_ALL_MODULES_TEXTBOX = new System.Windows.Forms.TextBox();
+            this.MPPT1_RADIO_EMPTY = new System.Windows.Forms.RadioButton();
+            this.MPPT2_RADIO_EMPTY = new System.Windows.Forms.RadioButton();
+            this.MPPT3_RADIO_EMPTY = new System.Windows.Forms.RadioButton();
+            this.MPPT4_RADIO_EMPTY = new System.Windows.Forms.RadioButton();
             this.MPPT1_GROUPBOX.SuspendLayout();
             this.MPPT2_GROUPBOX.SuspendLayout();
             this.MPPT3_GROUPBOX.SuspendLayout();
@@ -71,7 +75,7 @@
             // MPPT1_INPUT
             // 
             this.MPPT1_INPUT.Enabled = false;
-            this.MPPT1_INPUT.Location = new System.Drawing.Point(16, 143);
+            this.MPPT1_INPUT.Location = new System.Drawing.Point(16, 181);
             this.MPPT1_INPUT.Name = "MPPT1_INPUT";
             this.MPPT1_INPUT.Size = new System.Drawing.Size(130, 20);
             this.MPPT1_INPUT.TabIndex = 0;
@@ -94,25 +98,26 @@
             this.MPPT1_CHECKBOX.TabIndex = 2;
             this.MPPT1_CHECKBOX.Text = "ENABLE";
             this.MPPT1_CHECKBOX.UseVisualStyleBackColor = true;
+            this.MPPT1_CHECKBOX.CheckedChanged += new System.EventHandler(this.MPPT1_CHECKBOX_CheckedChanged);
             // 
             // MPPT1_RADIO_REGULAR
             // 
             this.MPPT1_RADIO_REGULAR.AutoSize = true;
-            this.MPPT1_RADIO_REGULAR.Location = new System.Drawing.Point(6, 19);
+            this.MPPT1_RADIO_REGULAR.Location = new System.Drawing.Point(6, 42);
             this.MPPT1_RADIO_REGULAR.Name = "MPPT1_RADIO_REGULAR";
             this.MPPT1_RADIO_REGULAR.Size = new System.Drawing.Size(77, 17);
             this.MPPT1_RADIO_REGULAR.TabIndex = 3;
-            this.MPPT1_RADIO_REGULAR.TabStop = true;
             this.MPPT1_RADIO_REGULAR.Text = "REGULAR";
             this.MPPT1_RADIO_REGULAR.UseVisualStyleBackColor = true;
             // 
             // MPPT1_GROUPBOX
             // 
+            this.MPPT1_GROUPBOX.Controls.Add(this.MPPT1_RADIO_EMPTY);
             this.MPPT1_GROUPBOX.Controls.Add(this.MPPT1_RADIO_PARALLEL);
             this.MPPT1_GROUPBOX.Controls.Add(this.MPPT1_RADIO_REGULAR);
             this.MPPT1_GROUPBOX.Location = new System.Drawing.Point(16, 55);
             this.MPPT1_GROUPBOX.Name = "MPPT1_GROUPBOX";
-            this.MPPT1_GROUPBOX.Size = new System.Drawing.Size(86, 66);
+            this.MPPT1_GROUPBOX.Size = new System.Drawing.Size(86, 94);
             this.MPPT1_GROUPBOX.TabIndex = 4;
             this.MPPT1_GROUPBOX.TabStop = false;
             this.MPPT1_GROUPBOX.Text = "STATUS";
@@ -120,18 +125,17 @@
             // MPPT1_RADIO_PARALLEL
             // 
             this.MPPT1_RADIO_PARALLEL.AutoSize = true;
-            this.MPPT1_RADIO_PARALLEL.Location = new System.Drawing.Point(6, 42);
+            this.MPPT1_RADIO_PARALLEL.Location = new System.Drawing.Point(6, 65);
             this.MPPT1_RADIO_PARALLEL.Name = "MPPT1_RADIO_PARALLEL";
             this.MPPT1_RADIO_PARALLEL.Size = new System.Drawing.Size(79, 17);
             this.MPPT1_RADIO_PARALLEL.TabIndex = 4;
-            this.MPPT1_RADIO_PARALLEL.TabStop = true;
             this.MPPT1_RADIO_PARALLEL.Text = "PARALLEL";
             this.MPPT1_RADIO_PARALLEL.UseVisualStyleBackColor = true;
             // 
             // MPPT1_MODULES_LABEL
             // 
             this.MPPT1_MODULES_LABEL.AutoSize = true;
-            this.MPPT1_MODULES_LABEL.Location = new System.Drawing.Point(19, 127);
+            this.MPPT1_MODULES_LABEL.Location = new System.Drawing.Point(19, 165);
             this.MPPT1_MODULES_LABEL.Name = "MPPT1_MODULES_LABEL";
             this.MPPT1_MODULES_LABEL.Size = new System.Drawing.Size(127, 13);
             this.MPPT1_MODULES_LABEL.TabIndex = 5;
@@ -149,7 +153,7 @@
             // MPPT2_INPUT
             // 
             this.MPPT2_INPUT.Enabled = false;
-            this.MPPT2_INPUT.Location = new System.Drawing.Point(176, 143);
+            this.MPPT2_INPUT.Location = new System.Drawing.Point(176, 181);
             this.MPPT2_INPUT.Name = "MPPT2_INPUT";
             this.MPPT2_INPUT.Size = new System.Drawing.Size(130, 20);
             this.MPPT2_INPUT.TabIndex = 6;
@@ -157,29 +161,27 @@
             // MPPT2_RADIO_PARALLEL
             // 
             this.MPPT2_RADIO_PARALLEL.AutoSize = true;
-            this.MPPT2_RADIO_PARALLEL.Location = new System.Drawing.Point(6, 42);
+            this.MPPT2_RADIO_PARALLEL.Location = new System.Drawing.Point(6, 65);
             this.MPPT2_RADIO_PARALLEL.Name = "MPPT2_RADIO_PARALLEL";
             this.MPPT2_RADIO_PARALLEL.Size = new System.Drawing.Size(79, 17);
             this.MPPT2_RADIO_PARALLEL.TabIndex = 4;
-            this.MPPT2_RADIO_PARALLEL.TabStop = true;
             this.MPPT2_RADIO_PARALLEL.Text = "PARALLEL";
             this.MPPT2_RADIO_PARALLEL.UseVisualStyleBackColor = true;
             // 
             // MPPT2_RADIO_REGULAR
             // 
             this.MPPT2_RADIO_REGULAR.AutoSize = true;
-            this.MPPT2_RADIO_REGULAR.Location = new System.Drawing.Point(6, 19);
+            this.MPPT2_RADIO_REGULAR.Location = new System.Drawing.Point(6, 42);
             this.MPPT2_RADIO_REGULAR.Name = "MPPT2_RADIO_REGULAR";
             this.MPPT2_RADIO_REGULAR.Size = new System.Drawing.Size(77, 17);
             this.MPPT2_RADIO_REGULAR.TabIndex = 3;
-            this.MPPT2_RADIO_REGULAR.TabStop = true;
             this.MPPT2_RADIO_REGULAR.Text = "REGULAR";
             this.MPPT2_RADIO_REGULAR.UseVisualStyleBackColor = true;
             // 
             // MPPT2_MODULES_LABEL
             // 
             this.MPPT2_MODULES_LABEL.AutoSize = true;
-            this.MPPT2_MODULES_LABEL.Location = new System.Drawing.Point(179, 127);
+            this.MPPT2_MODULES_LABEL.Location = new System.Drawing.Point(179, 165);
             this.MPPT2_MODULES_LABEL.Name = "MPPT2_MODULES_LABEL";
             this.MPPT2_MODULES_LABEL.Size = new System.Drawing.Size(127, 13);
             this.MPPT2_MODULES_LABEL.TabIndex = 10;
@@ -187,11 +189,12 @@
             // 
             // MPPT2_GROUPBOX
             // 
+            this.MPPT2_GROUPBOX.Controls.Add(this.MPPT2_RADIO_EMPTY);
             this.MPPT2_GROUPBOX.Controls.Add(this.MPPT2_RADIO_PARALLEL);
             this.MPPT2_GROUPBOX.Controls.Add(this.MPPT2_RADIO_REGULAR);
             this.MPPT2_GROUPBOX.Location = new System.Drawing.Point(176, 55);
             this.MPPT2_GROUPBOX.Name = "MPPT2_GROUPBOX";
-            this.MPPT2_GROUPBOX.Size = new System.Drawing.Size(86, 66);
+            this.MPPT2_GROUPBOX.Size = new System.Drawing.Size(86, 94);
             this.MPPT2_GROUPBOX.TabIndex = 9;
             this.MPPT2_GROUPBOX.TabStop = false;
             this.MPPT2_GROUPBOX.Text = "STATUS";
@@ -205,6 +208,7 @@
             this.MPPT2_CHECKBOX.TabIndex = 8;
             this.MPPT2_CHECKBOX.Text = "ENABLE";
             this.MPPT2_CHECKBOX.UseVisualStyleBackColor = true;
+            this.MPPT2_CHECKBOX.CheckedChanged += new System.EventHandler(this.MPPT2_CHECKBOX_CheckedChanged);
             // 
             // MPPT3_LABEL
             // 
@@ -218,7 +222,7 @@
             // MPPT3_INPUT
             // 
             this.MPPT3_INPUT.Enabled = false;
-            this.MPPT3_INPUT.Location = new System.Drawing.Point(339, 143);
+            this.MPPT3_INPUT.Location = new System.Drawing.Point(339, 181);
             this.MPPT3_INPUT.Name = "MPPT3_INPUT";
             this.MPPT3_INPUT.Size = new System.Drawing.Size(130, 20);
             this.MPPT3_INPUT.TabIndex = 11;
@@ -226,29 +230,27 @@
             // MPPT3_RADIO_PARALLEL
             // 
             this.MPPT3_RADIO_PARALLEL.AutoSize = true;
-            this.MPPT3_RADIO_PARALLEL.Location = new System.Drawing.Point(6, 42);
+            this.MPPT3_RADIO_PARALLEL.Location = new System.Drawing.Point(6, 65);
             this.MPPT3_RADIO_PARALLEL.Name = "MPPT3_RADIO_PARALLEL";
             this.MPPT3_RADIO_PARALLEL.Size = new System.Drawing.Size(79, 17);
             this.MPPT3_RADIO_PARALLEL.TabIndex = 4;
-            this.MPPT3_RADIO_PARALLEL.TabStop = true;
             this.MPPT3_RADIO_PARALLEL.Text = "PARALLEL";
             this.MPPT3_RADIO_PARALLEL.UseVisualStyleBackColor = true;
             // 
             // MPPT3_RADIO_REGULAR
             // 
             this.MPPT3_RADIO_REGULAR.AutoSize = true;
-            this.MPPT3_RADIO_REGULAR.Location = new System.Drawing.Point(6, 19);
+            this.MPPT3_RADIO_REGULAR.Location = new System.Drawing.Point(6, 42);
             this.MPPT3_RADIO_REGULAR.Name = "MPPT3_RADIO_REGULAR";
             this.MPPT3_RADIO_REGULAR.Size = new System.Drawing.Size(77, 17);
             this.MPPT3_RADIO_REGULAR.TabIndex = 3;
-            this.MPPT3_RADIO_REGULAR.TabStop = true;
             this.MPPT3_RADIO_REGULAR.Text = "REGULAR";
             this.MPPT3_RADIO_REGULAR.UseVisualStyleBackColor = true;
             // 
             // MPPT3_MODULES_LABEL
             // 
             this.MPPT3_MODULES_LABEL.AutoSize = true;
-            this.MPPT3_MODULES_LABEL.Location = new System.Drawing.Point(342, 127);
+            this.MPPT3_MODULES_LABEL.Location = new System.Drawing.Point(342, 165);
             this.MPPT3_MODULES_LABEL.Name = "MPPT3_MODULES_LABEL";
             this.MPPT3_MODULES_LABEL.Size = new System.Drawing.Size(127, 13);
             this.MPPT3_MODULES_LABEL.TabIndex = 15;
@@ -256,11 +258,12 @@
             // 
             // MPPT3_GROUPBOX
             // 
+            this.MPPT3_GROUPBOX.Controls.Add(this.MPPT3_RADIO_EMPTY);
             this.MPPT3_GROUPBOX.Controls.Add(this.MPPT3_RADIO_PARALLEL);
             this.MPPT3_GROUPBOX.Controls.Add(this.MPPT3_RADIO_REGULAR);
             this.MPPT3_GROUPBOX.Location = new System.Drawing.Point(339, 55);
             this.MPPT3_GROUPBOX.Name = "MPPT3_GROUPBOX";
-            this.MPPT3_GROUPBOX.Size = new System.Drawing.Size(86, 66);
+            this.MPPT3_GROUPBOX.Size = new System.Drawing.Size(86, 94);
             this.MPPT3_GROUPBOX.TabIndex = 14;
             this.MPPT3_GROUPBOX.TabStop = false;
             this.MPPT3_GROUPBOX.Text = "STATUS";
@@ -274,6 +277,7 @@
             this.MPPT3_CHECKBOX.TabIndex = 13;
             this.MPPT3_CHECKBOX.Text = "ENABLE";
             this.MPPT3_CHECKBOX.UseVisualStyleBackColor = true;
+            this.MPPT3_CHECKBOX.CheckedChanged += new System.EventHandler(this.MPPT3_CHECKBOX_CheckedChanged);
             // 
             // MPPT4_LABEL
             // 
@@ -287,7 +291,7 @@
             // MPPT4_INPUT
             // 
             this.MPPT4_INPUT.Enabled = false;
-            this.MPPT4_INPUT.Location = new System.Drawing.Point(501, 143);
+            this.MPPT4_INPUT.Location = new System.Drawing.Point(501, 181);
             this.MPPT4_INPUT.Name = "MPPT4_INPUT";
             this.MPPT4_INPUT.Size = new System.Drawing.Size(130, 20);
             this.MPPT4_INPUT.TabIndex = 16;
@@ -295,29 +299,27 @@
             // MPPT4_RADIO_PARALLEL
             // 
             this.MPPT4_RADIO_PARALLEL.AutoSize = true;
-            this.MPPT4_RADIO_PARALLEL.Location = new System.Drawing.Point(6, 42);
+            this.MPPT4_RADIO_PARALLEL.Location = new System.Drawing.Point(6, 65);
             this.MPPT4_RADIO_PARALLEL.Name = "MPPT4_RADIO_PARALLEL";
             this.MPPT4_RADIO_PARALLEL.Size = new System.Drawing.Size(79, 17);
             this.MPPT4_RADIO_PARALLEL.TabIndex = 4;
-            this.MPPT4_RADIO_PARALLEL.TabStop = true;
             this.MPPT4_RADIO_PARALLEL.Text = "PARALLEL";
             this.MPPT4_RADIO_PARALLEL.UseVisualStyleBackColor = true;
             // 
             // MPPT4_RADIO_REGULAR
             // 
             this.MPPT4_RADIO_REGULAR.AutoSize = true;
-            this.MPPT4_RADIO_REGULAR.Location = new System.Drawing.Point(6, 19);
+            this.MPPT4_RADIO_REGULAR.Location = new System.Drawing.Point(6, 42);
             this.MPPT4_RADIO_REGULAR.Name = "MPPT4_RADIO_REGULAR";
             this.MPPT4_RADIO_REGULAR.Size = new System.Drawing.Size(77, 17);
             this.MPPT4_RADIO_REGULAR.TabIndex = 3;
-            this.MPPT4_RADIO_REGULAR.TabStop = true;
             this.MPPT4_RADIO_REGULAR.Text = "REGULAR";
             this.MPPT4_RADIO_REGULAR.UseVisualStyleBackColor = true;
             // 
             // MPPT4_MODULES_LABEL
             // 
             this.MPPT4_MODULES_LABEL.AutoSize = true;
-            this.MPPT4_MODULES_LABEL.Location = new System.Drawing.Point(504, 127);
+            this.MPPT4_MODULES_LABEL.Location = new System.Drawing.Point(504, 165);
             this.MPPT4_MODULES_LABEL.Name = "MPPT4_MODULES_LABEL";
             this.MPPT4_MODULES_LABEL.Size = new System.Drawing.Size(127, 13);
             this.MPPT4_MODULES_LABEL.TabIndex = 20;
@@ -325,11 +327,12 @@
             // 
             // MPPT4_GROUPBOX
             // 
+            this.MPPT4_GROUPBOX.Controls.Add(this.MPPT4_RADIO_EMPTY);
             this.MPPT4_GROUPBOX.Controls.Add(this.MPPT4_RADIO_PARALLEL);
             this.MPPT4_GROUPBOX.Controls.Add(this.MPPT4_RADIO_REGULAR);
             this.MPPT4_GROUPBOX.Location = new System.Drawing.Point(501, 55);
             this.MPPT4_GROUPBOX.Name = "MPPT4_GROUPBOX";
-            this.MPPT4_GROUPBOX.Size = new System.Drawing.Size(86, 66);
+            this.MPPT4_GROUPBOX.Size = new System.Drawing.Size(86, 94);
             this.MPPT4_GROUPBOX.TabIndex = 19;
             this.MPPT4_GROUPBOX.TabStop = false;
             this.MPPT4_GROUPBOX.Text = "STATUS";
@@ -343,6 +346,7 @@
             this.MPPT4_CHECKBOX.TabIndex = 18;
             this.MPPT4_CHECKBOX.Text = "ENABLE";
             this.MPPT4_CHECKBOX.UseVisualStyleBackColor = true;
+            this.MPPT4_CHECKBOX.CheckedChanged += new System.EventHandler(this.MPPT4_CHECKBOX_CheckedChanged);
             // 
             // CREATE_BUTTON
             // 
@@ -400,6 +404,58 @@
             this.NUMBER_ALL_MODULES_TEXTBOX.Name = "NUMBER_ALL_MODULES_TEXTBOX";
             this.NUMBER_ALL_MODULES_TEXTBOX.Size = new System.Drawing.Size(155, 20);
             this.NUMBER_ALL_MODULES_TEXTBOX.TabIndex = 26;
+            // 
+            // MPPT1_RADIO_EMPTY
+            // 
+            this.MPPT1_RADIO_EMPTY.AutoSize = true;
+            this.MPPT1_RADIO_EMPTY.Checked = true;
+            this.MPPT1_RADIO_EMPTY.Location = new System.Drawing.Point(6, 19);
+            this.MPPT1_RADIO_EMPTY.Name = "MPPT1_RADIO_EMPTY";
+            this.MPPT1_RADIO_EMPTY.Size = new System.Drawing.Size(62, 17);
+            this.MPPT1_RADIO_EMPTY.TabIndex = 8;
+            this.MPPT1_RADIO_EMPTY.TabStop = true;
+            this.MPPT1_RADIO_EMPTY.Text = "EMPTY";
+            this.MPPT1_RADIO_EMPTY.UseVisualStyleBackColor = true;
+            this.MPPT1_RADIO_EMPTY.CheckedChanged += new System.EventHandler(this.MPPT1_RADIO_EMPTY_CheckedChanged);
+            // 
+            // MPPT2_RADIO_EMPTY
+            // 
+            this.MPPT2_RADIO_EMPTY.AutoSize = true;
+            this.MPPT2_RADIO_EMPTY.Checked = true;
+            this.MPPT2_RADIO_EMPTY.Location = new System.Drawing.Point(6, 19);
+            this.MPPT2_RADIO_EMPTY.Name = "MPPT2_RADIO_EMPTY";
+            this.MPPT2_RADIO_EMPTY.Size = new System.Drawing.Size(62, 17);
+            this.MPPT2_RADIO_EMPTY.TabIndex = 9;
+            this.MPPT2_RADIO_EMPTY.TabStop = true;
+            this.MPPT2_RADIO_EMPTY.Text = "EMPTY";
+            this.MPPT2_RADIO_EMPTY.UseVisualStyleBackColor = true;
+            this.MPPT2_RADIO_EMPTY.CheckedChanged += new System.EventHandler(this.MPPT2_RADIO_EMPTY_CheckedChanged);
+            // 
+            // MPPT3_RADIO_EMPTY
+            // 
+            this.MPPT3_RADIO_EMPTY.AutoSize = true;
+            this.MPPT3_RADIO_EMPTY.Checked = true;
+            this.MPPT3_RADIO_EMPTY.Location = new System.Drawing.Point(6, 19);
+            this.MPPT3_RADIO_EMPTY.Name = "MPPT3_RADIO_EMPTY";
+            this.MPPT3_RADIO_EMPTY.Size = new System.Drawing.Size(62, 17);
+            this.MPPT3_RADIO_EMPTY.TabIndex = 10;
+            this.MPPT3_RADIO_EMPTY.TabStop = true;
+            this.MPPT3_RADIO_EMPTY.Text = "EMPTY";
+            this.MPPT3_RADIO_EMPTY.UseVisualStyleBackColor = true;
+            this.MPPT3_RADIO_EMPTY.CheckedChanged += new System.EventHandler(this.MPPT3_RADIO_EMPTY_CheckedChanged);
+            // 
+            // MPPT4_RADIO_EMPTY
+            // 
+            this.MPPT4_RADIO_EMPTY.AutoSize = true;
+            this.MPPT4_RADIO_EMPTY.Checked = true;
+            this.MPPT4_RADIO_EMPTY.Location = new System.Drawing.Point(6, 19);
+            this.MPPT4_RADIO_EMPTY.Name = "MPPT4_RADIO_EMPTY";
+            this.MPPT4_RADIO_EMPTY.Size = new System.Drawing.Size(62, 17);
+            this.MPPT4_RADIO_EMPTY.TabIndex = 10;
+            this.MPPT4_RADIO_EMPTY.TabStop = true;
+            this.MPPT4_RADIO_EMPTY.Text = "EMPTY";
+            this.MPPT4_RADIO_EMPTY.UseVisualStyleBackColor = true;
+            this.MPPT4_RADIO_EMPTY.CheckedChanged += new System.EventHandler(this.MPPT4_RADIO_EMPTY_CheckedChanged);
             // 
             // DC_SOLAR_INPUT
             // 
@@ -483,6 +539,10 @@
         private System.Windows.Forms.Button ALL_PARALLEL_BUTTON;
         private System.Windows.Forms.Button SET_ALL_MODULES_BUTTON;
         private System.Windows.Forms.TextBox NUMBER_ALL_MODULES_TEXTBOX;
+        private System.Windows.Forms.RadioButton MPPT1_RADIO_EMPTY;
+        private System.Windows.Forms.RadioButton MPPT2_RADIO_EMPTY;
+        private System.Windows.Forms.RadioButton MPPT3_RADIO_EMPTY;
+        private System.Windows.Forms.RadioButton MPPT4_RADIO_EMPTY;
     }
 }
 

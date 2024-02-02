@@ -842,5 +842,85 @@ namespace GMEPSolar
             var data = GetFormData(this);
             CreateDCSolarObject(data);
         }
+
+        private void MPPT1_RADIO_EMPTY_CheckedChanged(object sender, EventArgs e)
+        {
+            MPPT1_INPUT.Enabled = !MPPT1_RADIO_EMPTY.Checked && MPPT1_CHECKBOX.Checked;
+            MPPT1_INPUT.Text = "";
+        }
+
+        private void MPPT2_RADIO_EMPTY_CheckedChanged(object sender, EventArgs e)
+        {
+            MPPT2_INPUT.Enabled = !MPPT2_RADIO_EMPTY.Checked && MPPT2_CHECKBOX.Checked;
+            MPPT2_INPUT.Text = "";
+        }
+
+        private void MPPT3_RADIO_EMPTY_CheckedChanged(object sender, EventArgs e)
+        {
+            MPPT3_INPUT.Enabled = !MPPT3_RADIO_EMPTY.Checked && MPPT3_CHECKBOX.Checked;
+            MPPT3_INPUT.Text = "";
+        }
+
+        private void MPPT4_RADIO_EMPTY_CheckedChanged(object sender, EventArgs e)
+        {
+            MPPT4_INPUT.Enabled = !MPPT4_RADIO_EMPTY.Checked && MPPT4_CHECKBOX.Checked;
+            MPPT4_INPUT.Text = "";
+        }
+
+        private void MPPT1_CHECKBOX_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!MPPT1_CHECKBOX.Checked)
+            {
+                MPPT1_RADIO_EMPTY.Checked = true;
+                MPPT1_INPUT.Enabled = false;
+                MPPT1_INPUT.Text = "";
+            }
+            else if (MPPT1_CHECKBOX.Checked && !MPPT1_RADIO_EMPTY.Checked)
+            {
+                MPPT1_INPUT.Enabled = true;
+            }
+        }
+
+        private void MPPT2_CHECKBOX_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!MPPT2_CHECKBOX.Checked)
+            {
+                MPPT2_RADIO_EMPTY.Checked = true;
+                MPPT2_INPUT.Enabled = false;
+                MPPT2_INPUT.Text = "";
+            }
+            else if (MPPT2_CHECKBOX.Checked && !MPPT2_RADIO_EMPTY.Checked)
+            {
+                MPPT2_INPUT.Enabled = true;
+            }
+        }
+
+        private void MPPT3_CHECKBOX_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!MPPT3_CHECKBOX.Checked)
+            {
+                MPPT3_RADIO_EMPTY.Checked = true;
+                MPPT3_INPUT.Enabled = false;
+                MPPT3_INPUT.Text = "";
+            }
+            else if (MPPT3_CHECKBOX.Checked && !MPPT3_RADIO_EMPTY.Checked)
+            {
+                MPPT3_INPUT.Enabled = true;
+            }
+        }
+
+        private void MPPT4_CHECKBOX_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!MPPT4_CHECKBOX.Checked)
+            {
+                MPPT4_RADIO_EMPTY.Checked = true;
+                MPPT4_INPUT.Enabled = false;
+                MPPT4_INPUT.Text = "";
+            }
+            else if (MPPT4_CHECKBOX.Checked && !MPPT4_RADIO_EMPTY.Checked)
+            {
+                MPPT4_INPUT.Enabled = true;
+            }
+        }
     }
 }
