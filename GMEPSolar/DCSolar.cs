@@ -88,10 +88,6 @@ namespace GMEPSolar
                 .DocumentManager
                 .MdiActiveDocument
                 .Editor;
-            var json = File.ReadAllText($"../../block data/String.json");
-            var stringData = JArray
-                .Parse(json)
-                .ToObject<List<Dictionary<string, Dictionary<string, object>>>>();
 
             var lineStartPointX = selectedPoint.X - (0.5673 + (0.6484 * (numberOfMPPTs - 1)));
             var lineStartPointY = selectedPoint.Y - 0.6098;
@@ -109,20 +105,70 @@ namespace GMEPSolar
 
             CreateDesktopJsonFile(stringDataContainer, "StringData.json");
 
-            json = File.ReadAllText($"../../block data/StringText.json");
+            CreateStringsAndReturnConnectionPoints(stringDataContainer, stringStartPoint, ed);
+        }
+
+        private static void CreateStringsAndReturnConnectionPoints(
+            List<Dictionary<string, object>> stringDataContainer,
+            Point3d stringStartPoint,
+            Editor ed
+        )
+        {
+            var TEXT_HEIGHT = 0.8334;
+            var STRING_HEIGHT = 1.0695;
+            var connectionPoints = new List<Dictionary<string, double>>();
+            var startPoint = new Dictionary<string, double>
+            {
+                { "x", stringStartPoint.X },
+                { "y", stringStartPoint.Y }
+            };
+
+            foreach (var stringData in stringDataContainer)
+            {
+                var items = stringData["items"] as List<string>;
+                if (items.Count == 0)
+                {
+                    continue;
+                }
+                var module = Convert.ToInt32(stringData["module"]);
+                foreach (var item in items)
+                {
+                    if (item == "text")
+                    {
+                        CreateText(ed, new Point3d(startPoint["x"], startPoint["y"], 0), module);
+                        startPoint["y"] -= TEXT_HEIGHT;
+                    }
+                    else if (item == "string")
+                    {
+                        CreateString(ed, new Point3d(startPoint["x"], startPoint["y"], 0));
+                        startPoint["y"] -= STRING_HEIGHT;
+                    }
+                }
+            }
+        }
+
+        private static void CreateText(Editor ed, Point3d startPoint, int module)
+        {
+            var json = File.ReadAllText($"../../block data/StringText.json");
             var stringTextData = JArray
                 .Parse(json)
                 .ToObject<List<Dictionary<string, Dictionary<string, object>>>>();
-            var module = formData.First().Value["Input"];
-
-            CreateObjectGivenData(stringData, ed, stringStartPoint);
 
             stringTextData[0]["mtext"]["text"] = stringTextData[0]
                 ["mtext"]["text"]
                 .ToString()
                 .Replace("*", module.ToString().PadLeft(2, '0'));
 
-            CreateObjectGivenData(stringTextData, ed, stringStartPoint);
+            CreateObjectGivenData(stringTextData, ed, startPoint);
+        }
+
+        private static void CreateString(Editor ed, Point3d stringStartPoint)
+        {
+            var json = File.ReadAllText($"../../block data/String.json");
+            var stringData = JArray
+                .Parse(json)
+                .ToObject<List<Dictionary<string, Dictionary<string, object>>>>();
+            CreateObjectGivenData(stringData, ed, stringStartPoint);
         }
 
         private static double GetTotalHeight(List<Dictionary<string, object>> stringDataContainer)
@@ -148,14 +194,21 @@ namespace GMEPSolar
                 var stringData = new Dictionary<string, object>();
                 stringData["height"] = 0.0;
                 stringData["items"] = new List<string>();
+
                 var mpptData = mppt.Value;
+                stringData["module"] = mpptData["Input"];
+
                 if (Convert.ToBoolean(mpptData["Enabled"]))
                 {
                     var isRegular = Convert.ToBoolean(mpptData["Regular"]);
                     var isParallel = Convert.ToBoolean(mpptData["Parallel"]);
-                    var modulesCount = Convert.ToInt32(mpptData["Input"]);
+                    var modulesCount = 0;
+                    if (isRegular || isParallel)
+                    {
+                        int.TryParse((string)mpptData["Input"], out modulesCount);
+                    }
 
-                    if (firstFlag)
+                    if (firstFlag && (isRegular || isParallel))
                     {
                         firstFlag = false;
                         stringData["height"] = (double)stringData["height"] + 0.8334;
@@ -891,10 +944,22 @@ namespace GMEPSolar
 
         private void SET_ALL_MODULES_BUTTON_Click(object sender, EventArgs e)
         {
-            MPPT1_INPUT.Text = NUMBER_ALL_MODULES_TEXTBOX.Text;
-            MPPT2_INPUT.Text = NUMBER_ALL_MODULES_TEXTBOX.Text;
-            MPPT3_INPUT.Text = NUMBER_ALL_MODULES_TEXTBOX.Text;
-            MPPT4_INPUT.Text = NUMBER_ALL_MODULES_TEXTBOX.Text;
+            if (MPPT1_CHECKBOX.Checked && !MPPT1_RADIO_EMPTY.Checked)
+            {
+                MPPT1_INPUT.Text = NUMBER_ALL_MODULES_TEXTBOX.Text;
+            }
+            if (MPPT2_CHECKBOX.Checked && !MPPT2_RADIO_EMPTY.Checked)
+            {
+                MPPT2_INPUT.Text = NUMBER_ALL_MODULES_TEXTBOX.Text;
+            }
+            if (MPPT3_CHECKBOX.Checked && !MPPT3_RADIO_EMPTY.Checked)
+            {
+                MPPT3_INPUT.Text = NUMBER_ALL_MODULES_TEXTBOX.Text;
+            }
+            if (MPPT4_CHECKBOX.Checked && !MPPT4_RADIO_EMPTY.Checked)
+            {
+                MPPT4_INPUT.Text = NUMBER_ALL_MODULES_TEXTBOX.Text;
+            }
         }
 
         private void NUMBER_ALL_MODULES_TEXTBOX_KeyDown(object sender, KeyEventArgs e)
