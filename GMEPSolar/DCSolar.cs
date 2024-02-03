@@ -1297,10 +1297,17 @@ namespace GMEPSolar
                 MPPT1_RADIO_EMPTY.Checked = true;
                 MPPT1_INPUT.Enabled = false;
                 MPPT1_INPUT.Text = "";
+                MPPT1_RADIO_REGULAR.Enabled = false;
+                MPPT1_RADIO_PARALLEL.Enabled = false;
             }
             else if (MPPT1_CHECKBOX.Checked && !MPPT1_RADIO_EMPTY.Checked)
             {
                 MPPT1_INPUT.Enabled = true;
+            }
+            else if (MPPT1_CHECKBOX.Checked && MPPT1_RADIO_EMPTY.Checked)
+            {
+                MPPT1_RADIO_REGULAR.Enabled = true;
+                MPPT1_RADIO_PARALLEL.Enabled = true;
             }
         }
 
@@ -1311,10 +1318,17 @@ namespace GMEPSolar
                 MPPT2_RADIO_EMPTY.Checked = true;
                 MPPT2_INPUT.Enabled = false;
                 MPPT2_INPUT.Text = "";
+                MPPT2_RADIO_REGULAR.Enabled = false;
+                MPPT2_RADIO_PARALLEL.Enabled = false;
             }
             else if (MPPT2_CHECKBOX.Checked && !MPPT2_RADIO_EMPTY.Checked)
             {
                 MPPT2_INPUT.Enabled = true;
+            }
+            else if (MPPT2_CHECKBOX.Checked && MPPT2_RADIO_EMPTY.Checked)
+            {
+                MPPT2_RADIO_REGULAR.Enabled = true;
+                MPPT2_RADIO_PARALLEL.Enabled = true;
             }
         }
 
@@ -1325,10 +1339,17 @@ namespace GMEPSolar
                 MPPT3_RADIO_EMPTY.Checked = true;
                 MPPT3_INPUT.Enabled = false;
                 MPPT3_INPUT.Text = "";
+                MPPT3_RADIO_REGULAR.Enabled = false;
+                MPPT3_RADIO_PARALLEL.Enabled = false;
             }
             else if (MPPT3_CHECKBOX.Checked && !MPPT3_RADIO_EMPTY.Checked)
             {
                 MPPT3_INPUT.Enabled = true;
+            }
+            else if (MPPT3_CHECKBOX.Checked && MPPT3_RADIO_EMPTY.Checked)
+            {
+                MPPT3_RADIO_REGULAR.Enabled = true;
+                MPPT3_RADIO_PARALLEL.Enabled = true;
             }
         }
 
@@ -1339,10 +1360,17 @@ namespace GMEPSolar
                 MPPT4_RADIO_EMPTY.Checked = true;
                 MPPT4_INPUT.Enabled = false;
                 MPPT4_INPUT.Text = "";
+                MPPT4_RADIO_REGULAR.Enabled = false;
+                MPPT4_RADIO_PARALLEL.Enabled = false;
             }
             else if (MPPT4_CHECKBOX.Checked && !MPPT4_RADIO_EMPTY.Checked)
             {
                 MPPT4_INPUT.Enabled = true;
+            }
+            else if (MPPT4_CHECKBOX.Checked && MPPT4_RADIO_EMPTY.Checked)
+            {
+                MPPT4_RADIO_REGULAR.Enabled = true;
+                MPPT4_RADIO_PARALLEL.Enabled = true;
             }
         }
     }
