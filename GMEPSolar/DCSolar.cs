@@ -101,6 +101,12 @@ namespace GMEPSolar
                 return;
             }
 
+            var skipIndices = new List<int>();
+
+            skipIndices = GetIndicesToSkip(formData);
+
+            CreateDesktopJsonFile(skipIndices, "SkipIndices.json");
+
             var stringTotalHeight = GetTotalHeight(stringDataContainer);
 
             var stringStartPoint = new Point3d(
@@ -128,8 +134,40 @@ namespace GMEPSolar
                 connectionPoints,
                 mpptEndPointsFlattened,
                 aboveAndBelow,
-                stringMidPointX
+                stringMidPointX,
+                skipIndices
             );
+        }
+
+        private static List<int> GetIndicesToSkip(
+            Dictionary<string, Dictionary<string, object>> formData
+        )
+        {
+            var indices = new List<int>();
+            var index = 0;
+            foreach (var mppt in formData)
+            {
+                var data = mppt.Value;
+                if (
+                    Convert.ToBoolean(data["Enabled"])
+                    && (Convert.ToBoolean(data["Regular"]) || Convert.ToBoolean(data["Parallel"]))
+                    && data["Input"].ToString() != ""
+                    && data["Input"].ToString() != "0"
+                )
+                {
+                    if (Convert.ToBoolean(data["Regular"]))
+                    {
+                        index += 2;
+                    }
+                    else
+                    {
+                        index += 1;
+                        indices.Add(index);
+                        index += 3;
+                    }
+                }
+            }
+            return indices;
         }
 
         private static bool areAllModulesEmpty(List<Dictionary<string, object>> stringDataContainer)
@@ -148,7 +186,8 @@ namespace GMEPSolar
             List<Dictionary<string, double>> connectionPoints,
             List<Dictionary<string, double>> mpptEndPointsFlattened,
             Dictionary<string, int> aboveAndBelow,
-            double stringMidPointX
+            double stringMidPointX,
+            List<int> skipIndices
         )
         {
             var STRING_X = stringMidPointX;
@@ -183,6 +222,13 @@ namespace GMEPSolar
                     { "x", mpptEndPoint["x"] },
                     { "y", mpptEndPoint["y"] }
                 };
+
+                if (skipIndices.Contains(i))
+                {
+                    firstHorizontalLineStartPoint = CreateLineAndArcFromPoints(
+                        firstHorizontalLineStartPoint
+                    );
+                }
 
                 var firstHorizontalLineEndPoint = new Dictionary<string, double>
                 {
@@ -237,6 +283,41 @@ namespace GMEPSolar
 
                 CreateLineFromPoints(thirdHorizontalLineStartPoint, thirdHorizontalLineEndPoint);
             }
+        }
+
+        private static Dictionary<string, double> CreateLineAndArcFromPoints(
+            Dictionary<string, double> firstHorizontalLineStartPoint
+        )
+        {
+            var CELL_SPACING = 0.1621;
+
+            var firstHorizontalLineEndPoint = new Dictionary<string, double>
+            {
+                { "x", firstHorizontalLineStartPoint["x"] - CELL_SPACING / 2 },
+                { "y", firstHorizontalLineStartPoint["y"] }
+            };
+
+            CreateLineFromPoints(firstHorizontalLineStartPoint, firstHorizontalLineEndPoint);
+
+            var arcStartPoint = new Dictionary<string, double>
+            {
+                { "x", firstHorizontalLineEndPoint["x"] },
+                { "y", firstHorizontalLineEndPoint["y"] }
+            };
+
+            var arcEndPoint = new Dictionary<string, double>
+            {
+                { "x", firstHorizontalLineEndPoint["x"] - CELL_SPACING },
+                { "y", firstHorizontalLineEndPoint["y"] }
+            };
+
+            CreateArc(arcStartPoint, arcEndPoint, 0, 180);
+
+            return new Dictionary<string, double>
+            {
+                { "x", arcEndPoint["x"] },
+                { "y", arcEndPoint["y"] }
+            };
         }
 
         private static void CreateLineFromPoints(
@@ -545,7 +626,7 @@ namespace GMEPSolar
                         { "y", endPointUpdated["y"] - CELL_SPACING }
                     };
 
-                    CreateArc(endPointUpdated, arcEndPoint, 90, 270);
+                    CreateLineFromPoints(endPointUpdated, arcEndPoint);
                 }
                 else if (i == 2)
                 {
@@ -613,16 +694,12 @@ namespace GMEPSolar
             Point3d endPt = new Point3d(endPoint["x"], endPoint["y"], 0);
 
             double radius = Math.Abs(endPt.Y - startPt.Y) / 2;
+            if (radius == 0)
+            {
+                radius = Math.Abs(endPt.X - startPt.X) / 2;
+            }
 
             Point3d centerPt = new Point3d((startPt.X + endPt.X) / 2, (startPt.Y + endPt.Y) / 2, 0);
-
-            var data = new Dictionary<string, object>
-            {
-                { "startPoint", startPt },
-                { "endPoint", endPt },
-                { "centerPoint", centerPt },
-                { "radius", radius }
-            };
 
             using (Transaction tr = ed.Document.Database.TransactionManager.StartTransaction())
             {
@@ -732,7 +809,7 @@ namespace GMEPSolar
                         endPointUpdated["y"],
                         0
                     );
-                    CreateFilledCircleInPaperSpace(endPointUpdatedPoint, 0.05);
+                    CreateFilledCircleInPaperSpace(endPointUpdatedPoint, 0.025);
                     endPoints.Add(endPointUpdated);
 
                     CreateHorizontalLine(endPointUpdated, CELL_SPACING);
