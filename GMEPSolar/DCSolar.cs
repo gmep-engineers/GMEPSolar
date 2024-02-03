@@ -23,10 +23,10 @@ namespace GMEPSolar
         }
 
         public static void CreateDCSolarObject(
-            Dictionary<string, Dictionary<string, object>> formData
+            Dictionary<string, Dictionary<string, object>> formData,
+            string INCREASE_TEXTBOX
         )
         {
-            CreateDesktopJsonFile(formData, "DCSolarFormData.json");
             var numberOfMPPTs = 0;
 
             foreach (var mppt in formData)
@@ -68,9 +68,13 @@ namespace GMEPSolar
 
                 CreateObjectGivenData(MPPTData, ed, selectedPoint);
 
-                CreateDesktopJsonFile(mpptEndPoints, "DCSolarEndPoints.json");
-
-                CreateStringsOffMPPTS(formData, numberOfMPPTs, selectedPoint, mpptEndPoints);
+                CreateStringsOffMPPTS(
+                    formData,
+                    numberOfMPPTs,
+                    selectedPoint,
+                    mpptEndPoints,
+                    INCREASE_TEXTBOX
+                );
             }
         }
 
@@ -78,7 +82,8 @@ namespace GMEPSolar
             Dictionary<string, Dictionary<string, object>> formData,
             int numberOfMPPTs,
             Point3d selectedPoint,
-            List<List<Dictionary<string, double>>> mpptEndPoints
+            List<List<Dictionary<string, double>>> mpptEndPoints,
+            string INCREASE_TEXTBOX
         )
         {
             var ed = Autodesk
@@ -105,8 +110,6 @@ namespace GMEPSolar
 
             skipIndices = GetIndicesToSkip(formData);
 
-            CreateDesktopJsonFile(skipIndices, "SkipIndices.json");
-
             var stringTotalHeight = GetTotalHeight(stringDataContainer);
 
             var stringStartPoint = new Point3d(
@@ -115,7 +118,17 @@ namespace GMEPSolar
                 0
             );
 
-            CreateDesktopJsonFile(stringDataContainer, "StringData.json");
+            var increaseY = 0.0;
+
+            if (INCREASE_TEXTBOX != "")
+            {
+                increaseY = Convert.ToDouble(INCREASE_TEXTBOX);
+                stringStartPoint = new Point3d(
+                    stringMidPointX,
+                    stringMidPointY + stringTotalHeight / 2 + increaseY,
+                    0
+                );
+            }
 
             var connectionPoints = CreateStringsAndReturnConnectionPoints(
                 stringDataContainer,
@@ -1263,7 +1276,7 @@ namespace GMEPSolar
         {
             Close();
             var data = GetFormData(this);
-            CreateDCSolarObject(data);
+            CreateDCSolarObject(data, INCREASE_TEXTBOX.Text);
         }
 
         private void MPPT1_RADIO_EMPTY_CheckedChanged(object sender, EventArgs e)

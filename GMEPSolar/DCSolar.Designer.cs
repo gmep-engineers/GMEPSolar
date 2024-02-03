@@ -66,6 +66,8 @@
             this.ALL_PARALLEL_BUTTON = new System.Windows.Forms.Button();
             this.SET_ALL_MODULES_BUTTON = new System.Windows.Forms.Button();
             this.NUMBER_ALL_MODULES_TEXTBOX = new System.Windows.Forms.TextBox();
+            this.INCREASE_Y_LABEL = new System.Windows.Forms.Label();
+            this.INCREASE_TEXTBOX = new System.Windows.Forms.TextBox();
             this.MPPT1_GROUPBOX.SuspendLayout();
             this.MPPT2_GROUPBOX.SuspendLayout();
             this.MPPT3_GROUPBOX.SuspendLayout();
@@ -465,11 +467,29 @@
             this.NUMBER_ALL_MODULES_TEXTBOX.Size = new System.Drawing.Size(155, 20);
             this.NUMBER_ALL_MODULES_TEXTBOX.TabIndex = 26;
             // 
+            // INCREASE_Y_LABEL
+            // 
+            this.INCREASE_Y_LABEL.AutoSize = true;
+            this.INCREASE_Y_LABEL.Location = new System.Drawing.Point(19, 202);
+            this.INCREASE_Y_LABEL.Name = "INCREASE_Y_LABEL";
+            this.INCREASE_Y_LABEL.Size = new System.Drawing.Size(193, 13);
+            this.INCREASE_Y_LABEL.TabIndex = 28;
+            this.INCREASE_Y_LABEL.Text = "INCREASE Y POSITION OF STRINGS";
+            // 
+            // INCREASE_TEXTBOX
+            // 
+            this.INCREASE_TEXTBOX.Location = new System.Drawing.Point(16, 219);
+            this.INCREASE_TEXTBOX.Name = "INCREASE_TEXTBOX";
+            this.INCREASE_TEXTBOX.Size = new System.Drawing.Size(196, 20);
+            this.INCREASE_TEXTBOX.TabIndex = 29;
+            // 
             // DC_SOLAR_INPUT
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(647, 310);
+            this.ClientSize = new System.Drawing.Size(647, 313);
+            this.Controls.Add(this.INCREASE_TEXTBOX);
+            this.Controls.Add(this.INCREASE_Y_LABEL);
             this.Controls.Add(this.NUMBER_ALL_MODULES_TEXTBOX);
             this.Controls.Add(this.SET_ALL_MODULES_BUTTON);
             this.Controls.Add(this.ALL_PARALLEL_BUTTON);
@@ -551,6 +571,8 @@
         private System.Windows.Forms.RadioButton MPPT2_RADIO_EMPTY;
         private System.Windows.Forms.RadioButton MPPT3_RADIO_EMPTY;
         private System.Windows.Forms.RadioButton MPPT4_RADIO_EMPTY;
+        private System.Windows.Forms.Label INCREASE_Y_LABEL;
+        public System.Windows.Forms.TextBox INCREASE_TEXTBOX;
     }
 }
 
