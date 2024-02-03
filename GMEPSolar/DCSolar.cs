@@ -151,7 +151,6 @@ namespace GMEPSolar
             double stringMidPointX
         )
         {
-            CreateDesktopJsonFile(aboveAndBelow, "AboveAndBelow.json");
             var STRING_X = stringMidPointX;
             var LINE_SPACING = 0.1621 / 2;
             var CLOSEST_DISTANCE_FROM_STRING = 0.1621 / 2;
@@ -176,7 +175,7 @@ namespace GMEPSolar
                 var isAbove = connectionPoint["y"] > mpptEndPoint["y"];
 
                 var aboveOrBelowValue = isAbove
-                    ? aboveAndBelow["above"]
+                    ? aboveAndBelow["above"] - 1
                     : initialBelowValue - aboveAndBelow["below"];
 
                 var firstHorizontalLineStartPoint = new Dictionary<string, double>
@@ -209,6 +208,34 @@ namespace GMEPSolar
                 }
 
                 CreateLineFromPoints(firstHorizontalLineStartPoint, firstHorizontalLineEndPoint);
+
+                var secondVerticalLineStartPoint = new Dictionary<string, double>
+                {
+                    { "x", firstHorizontalLineEndPoint["x"] },
+                    { "y", firstHorizontalLineEndPoint["y"] }
+                };
+
+                var secondVerticalLineEndPoint = new Dictionary<string, double>
+                {
+                    { "x", firstHorizontalLineEndPoint["x"] },
+                    { "y", connectionPoint["y"] }
+                };
+
+                CreateLineFromPoints(secondVerticalLineStartPoint, secondVerticalLineEndPoint);
+
+                var thirdHorizontalLineStartPoint = new Dictionary<string, double>
+                {
+                    { "x", secondVerticalLineEndPoint["x"] },
+                    { "y", secondVerticalLineEndPoint["y"] }
+                };
+
+                var thirdHorizontalLineEndPoint = new Dictionary<string, double>
+                {
+                    { "x", STRING_X },
+                    { "y", secondVerticalLineEndPoint["y"] }
+                };
+
+                CreateLineFromPoints(thirdHorizontalLineStartPoint, thirdHorizontalLineEndPoint);
             }
         }
 
@@ -551,6 +578,19 @@ namespace GMEPSolar
                     );
                 }
             }
+
+            endPoints = SwapParallelEndPoints(endPoints);
+
+            return endPoints;
+        }
+
+        private static List<Dictionary<string, double>> SwapParallelEndPoints(
+            List<Dictionary<string, double>> endPoints
+        )
+        {
+            var temp = endPoints[1];
+            endPoints[1] = endPoints[2];
+            endPoints[2] = temp;
             return endPoints;
         }
 
