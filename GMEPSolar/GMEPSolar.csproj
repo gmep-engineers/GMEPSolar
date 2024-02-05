@@ -70,13 +70,27 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="block data\DCSolar1.json" />
-    <None Include="block data\DCSolar2.json" />
-    <None Include="block data\DCSolar3.json" />
-    <None Include="block data\DCSolar4.json" />
-    <None Include="block data\String.json" />
-    <None Include="block data\StringDouble.json" />
-    <None Include="block data\StringText.json" />
+    <None Include="block data\DCSolar1.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="block data\DCSolar2.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="block data\DCSolar3.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="block data\DCSolar4.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="block data\String.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="block data\StringDouble.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="block data\StringText.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

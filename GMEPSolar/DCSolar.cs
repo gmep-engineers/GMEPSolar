@@ -38,7 +38,7 @@ namespace GMEPSolar
                 }
             }
 
-            var json = File.ReadAllText($"../../block data/DCSolar{numberOfMPPTs}.json");
+            var json = File.ReadAllText($"block data/DCSolar{numberOfMPPTs}.json");
             var MPPTData = JArray
                 .Parse(json)
                 .ToObject<List<Dictionary<string, Dictionary<string, object>>>>();
