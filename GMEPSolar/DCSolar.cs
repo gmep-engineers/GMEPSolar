@@ -1274,9 +1274,57 @@ namespace GMEPSolar
 
         private void CREATE_BUTTON_Click(object sender, EventArgs e)
         {
+            var inputHasValue = CheckForEmptyInputs();
+
+            if (!inputHasValue)
+            {
+                return;
+            }
+
             Close();
             var data = GetFormData(this);
             CreateDCSolarObject(data, INCREASE_TEXTBOX.Text);
+        }
+
+        private bool CheckForEmptyInputs()
+        {
+            if (
+                (MPPT1_RADIO_REGULAR.Checked || MPPT1_RADIO_PARALLEL.Checked)
+                && MPPT1_INPUT.Text == ""
+            )
+            {
+                MessageBox.Show("Please enter the number of modules for MPPT1");
+                return false;
+            }
+
+            if (
+                (MPPT2_RADIO_REGULAR.Checked || MPPT2_RADIO_PARALLEL.Checked)
+                && MPPT2_INPUT.Text == ""
+            )
+            {
+                MessageBox.Show("Please enter the number of modules for MPPT2");
+                return false;
+            }
+
+            if (
+                (MPPT3_RADIO_REGULAR.Checked || MPPT3_RADIO_PARALLEL.Checked)
+                && MPPT3_INPUT.Text == ""
+            )
+            {
+                MessageBox.Show("Please enter the number of modules for MPPT3");
+                return false;
+            }
+
+            if (
+                (MPPT4_RADIO_REGULAR.Checked || MPPT4_RADIO_PARALLEL.Checked)
+                && MPPT4_INPUT.Text == ""
+            )
+            {
+                MessageBox.Show("Please enter the number of modules for MPPT4");
+                return false;
+            }
+
+            return true;
         }
 
         private void MPPT1_RADIO_EMPTY_CheckedChanged(object sender, EventArgs e)
