@@ -55,6 +55,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InverterForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InverterForm.Designer.cs">
+      <DependentUpon>InverterForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InverterUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="InverterUserControl.Designer.cs">
+      <DependentUpon>InverterUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="SolarCommands.cs" />
     <Compile Include="DCSolar.cs">
       <SubType>Form</SubType>
@@ -67,6 +79,12 @@
   <ItemGroup>
     <EmbeddedResource Include="DCSolar.resx">
       <DependentUpon>DCSolar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InverterForm.resx">
+      <DependentUpon>InverterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InverterUserControl.resx">
+      <DependentUpon>InverterUserControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -95,6 +113,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>start "" "C:\Program Files\Autodesk\AutoCAD 2023\acad.exe"</PostBuildEvent>
+    <PostBuildEvent>start "" "C:\Program Files\Autodesk\AutoCAD 2023\acad.exe" "C:\Users\JacobH\OneDrive - GMEPE\Documents\Solar\Solar String Example.dwg"</PostBuildEvent>
   </PropertyGroup>
 </Project>

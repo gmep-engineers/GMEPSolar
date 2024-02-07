@@ -25,7 +25,7 @@ namespace GMEPSolar
                 return;
             }
             DC_SOLAR_INPUT form = new DC_SOLAR_INPUT();
-            Autodesk.AutoCAD.ApplicationServices.Application.ShowModalDialog(form);
+            form.Show();
         }
 
         [CommandMethod("GetObjectData")]
@@ -125,6 +125,18 @@ namespace GMEPSolar
             }
 
             SaveDataToJsonFile(data, "data.json");
+        }
+
+        [CommandMethod("Inverter")]
+        public static void Inverter()
+        {
+            if (IsInModel())
+            {
+                MessageBox.Show("You are in model space. Please switch to paper space.");
+                return;
+            }
+            InverterForm form = new InverterForm();
+            form.Show();
         }
 
         private static void SaveDataToJsonFile(
