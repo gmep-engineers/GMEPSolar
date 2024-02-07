@@ -28,7 +28,7 @@ namespace GMEPSolar
             NUMBER_ALL_MODULES_TEXTBOX.KeyDown += NUMBER_ALL_MODULES_TEXTBOX_KeyDown;
         }
 
-        public static bool CreateDCSolarObject(
+        public static void CreateDCSolarObject(
             Dictionary<string, Dictionary<string, object>> formData,
             string INCREASE_TEXTBOX
         )
@@ -42,20 +42,12 @@ namespace GMEPSolar
                 .Editor;
 
             var numberOfMPPTs = 0;
-
-            foreach (var mppt in formData)
-            {
-                var mpptData = mppt.Value as Dictionary<string, object>;
-                if (Convert.ToBoolean(mpptData["Enabled"]))
-                {
-                    numberOfMPPTs++;
-                }
-            }
+            numberOfMPPTs = CountMPPTsEnabled(formData, numberOfMPPTs);
 
             if (numberOfMPPTs == 0)
             {
                 MessageBox.Show("Please enable at least one MPPT");
-                return true;
+                return;
             }
 
             var dllPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -93,7 +85,23 @@ namespace GMEPSolar
                     INCREASE_TEXTBOX
                 );
             }
-            return false;
+        }
+
+        private static int CountMPPTsEnabled(
+            Dictionary<string, Dictionary<string, object>> formData,
+            int numberOfMPPTs
+        )
+        {
+            foreach (var mppt in formData)
+            {
+                var mpptData = mppt.Value as Dictionary<string, object>;
+                if (Convert.ToBoolean(mpptData["Enabled"]))
+                {
+                    numberOfMPPTs++;
+                }
+            }
+
+            return numberOfMPPTs;
         }
 
         private static void CreateStringsOffMPPTS(
@@ -1413,17 +1421,62 @@ namespace GMEPSolar
             return data;
         }
 
-        private static void CreateDesktopJsonFile(object data, string v)
+        private bool CheckForEmptyInputs()
         {
-            var filePath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                v
-            );
-            var json = Newtonsoft.Json.JsonConvert.SerializeObject(
-                data,
-                Newtonsoft.Json.Formatting.Indented
-            );
-            File.WriteAllText(filePath, json);
+            if (
+                (MPPT1_RADIO_REGULAR.Checked || MPPT1_RADIO_PARALLEL.Checked)
+                && MPPT1_INPUT.Text == ""
+            )
+            {
+                MessageBox.Show("Please enter the number of modules for MPPT1");
+                return false;
+            }
+
+            if (
+                (MPPT2_RADIO_REGULAR.Checked || MPPT2_RADIO_PARALLEL.Checked)
+                && MPPT2_INPUT.Text == ""
+            )
+            {
+                MessageBox.Show("Please enter the number of modules for MPPT2");
+                return false;
+            }
+
+            if (
+                (MPPT3_RADIO_REGULAR.Checked || MPPT3_RADIO_PARALLEL.Checked)
+                && MPPT3_INPUT.Text == ""
+            )
+            {
+                MessageBox.Show("Please enter the number of modules for MPPT3");
+                return false;
+            }
+
+            if (
+                (MPPT4_RADIO_REGULAR.Checked || MPPT4_RADIO_PARALLEL.Checked)
+                && MPPT4_INPUT.Text == ""
+            )
+            {
+                MessageBox.Show("Please enter the number of modules for MPPT4");
+                return false;
+            }
+
+            return true;
+        }
+
+        internal void AlterComponents()
+        {
+            if (INCREASE_TEXTBOX != null)
+            {
+                INCREASE_TEXTBOX.Dispose();
+                INCREASE_TEXTBOX = null;
+            }
+
+            if (INCREASE_Y_LABEL != null)
+            {
+                INCREASE_Y_LABEL.Dispose();
+                INCREASE_Y_LABEL = null;
+            }
+
+            CREATE_BUTTON.Text = "DONE";
         }
 
         private void ENABLE_ALL_BUTTON_Click(object sender, EventArgs e)
@@ -1498,52 +1551,21 @@ namespace GMEPSolar
             }
 
             var data = GetFormData(this);
-            var isToBeLeftOpen = CreateDCSolarObject(data, INCREASE_TEXTBOX.Text);
+
+            var isToBeLeftOpen = CountMPPTsEnabled(data, 0) == 0;
+
             if (!isToBeLeftOpen)
             {
                 Close();
             }
-        }
 
-        private bool CheckForEmptyInputs()
-        {
-            if (
-                (MPPT1_RADIO_REGULAR.Checked || MPPT1_RADIO_PARALLEL.Checked)
-                && MPPT1_INPUT.Text == ""
+            using (
+                DocumentLock docLock =
+                    Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.LockDocument()
             )
             {
-                MessageBox.Show("Please enter the number of modules for MPPT1");
-                return false;
+                CreateDCSolarObject(data, INCREASE_TEXTBOX.Text);
             }
-
-            if (
-                (MPPT2_RADIO_REGULAR.Checked || MPPT2_RADIO_PARALLEL.Checked)
-                && MPPT2_INPUT.Text == ""
-            )
-            {
-                MessageBox.Show("Please enter the number of modules for MPPT2");
-                return false;
-            }
-
-            if (
-                (MPPT3_RADIO_REGULAR.Checked || MPPT3_RADIO_PARALLEL.Checked)
-                && MPPT3_INPUT.Text == ""
-            )
-            {
-                MessageBox.Show("Please enter the number of modules for MPPT3");
-                return false;
-            }
-
-            if (
-                (MPPT4_RADIO_REGULAR.Checked || MPPT4_RADIO_PARALLEL.Checked)
-                && MPPT4_INPUT.Text == ""
-            )
-            {
-                MessageBox.Show("Please enter the number of modules for MPPT4");
-                return false;
-            }
-
-            return true;
         }
 
         private void MPPT1_RADIO_EMPTY_CheckedChanged(object sender, EventArgs e)
@@ -1652,23 +1674,6 @@ namespace GMEPSolar
                 MPPT4_RADIO_REGULAR.Enabled = true;
                 MPPT4_RADIO_PARALLEL.Enabled = true;
             }
-        }
-
-        internal void AlterComponents()
-        {
-            if (INCREASE_TEXTBOX != null)
-            {
-                INCREASE_TEXTBOX.Dispose();
-                INCREASE_TEXTBOX = null;
-            }
-
-            if (INCREASE_Y_LABEL != null)
-            {
-                INCREASE_Y_LABEL.Dispose();
-                INCREASE_Y_LABEL = null;
-            }
-
-            CREATE_BUTTON.Text = "DONE";
         }
     }
 }
