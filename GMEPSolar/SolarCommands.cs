@@ -19,6 +19,11 @@ namespace GMEPSolar
         [CommandMethod("DCSolar")]
         public static void DCSolar()
         {
+            if (IsInModel())
+            {
+                MessageBox.Show("You are in model space. Please switch to paper space.");
+                return;
+            }
             DC_SOLAR_INPUT form = new DC_SOLAR_INPUT();
             Autodesk.AutoCAD.ApplicationServices.Application.ShowModalDialog(form);
         }
@@ -136,6 +141,56 @@ namespace GMEPSolar
                 Newtonsoft.Json.Formatting.Indented
             );
             File.WriteAllText(filePath, json);
+        }
+
+        public static bool IsInModel()
+        {
+            if (
+                Autodesk
+                    .AutoCAD
+                    .ApplicationServices
+                    .Core
+                    .Application
+                    .DocumentManager
+                    .MdiActiveDocument
+                    .Database
+                    .TileMode
+            )
+                return true;
+            else
+                return false;
+        }
+
+        public static bool IsInLayout()
+        {
+            return !IsInModel();
+        }
+
+        public static bool IsInLayoutPaper()
+        {
+            Autodesk.AutoCAD.ApplicationServices.Document doc = Autodesk
+                .AutoCAD
+                .ApplicationServices
+                .Core
+                .Application
+                .DocumentManager
+                .MdiActiveDocument;
+            Database db = doc.Database;
+            Editor ed = doc.Editor;
+
+            if (db.TileMode)
+                return false;
+            else
+            {
+                if (db.PaperSpaceVportId == ObjectId.Null)
+                    return false;
+                else if (ed.CurrentViewportObjectId == ObjectId.Null)
+                    return false;
+                else if (ed.CurrentViewportObjectId == db.PaperSpaceVportId)
+                    return true;
+                else
+                    return false;
+            }
         }
 
         private static List<Dictionary<string, object>> HandleSolid(

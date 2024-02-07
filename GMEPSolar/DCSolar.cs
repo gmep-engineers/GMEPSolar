@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Colors;
@@ -22,11 +23,19 @@ namespace GMEPSolar
             NUMBER_ALL_MODULES_TEXTBOX.KeyDown += NUMBER_ALL_MODULES_TEXTBOX_KeyDown;
         }
 
-        public static void CreateDCSolarObject(
+        public static bool CreateDCSolarObject(
             Dictionary<string, Dictionary<string, object>> formData,
             string INCREASE_TEXTBOX
         )
         {
+            Editor ed = Autodesk
+                .AutoCAD
+                .ApplicationServices
+                .Application
+                .DocumentManager
+                .MdiActiveDocument
+                .Editor;
+
             var numberOfMPPTs = 0;
 
             foreach (var mppt in formData)
@@ -38,24 +47,27 @@ namespace GMEPSolar
                 }
             }
 
-            var json = File.ReadAllText($"block data/DCSolar{numberOfMPPTs}.json");
+            if (numberOfMPPTs == 0)
+            {
+                MessageBox.Show("Please enable at least one MPPT");
+                return true;
+            }
+
+            var dllPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var jsonPath = Path.Combine(dllPath, $"block data/DCSolar{numberOfMPPTs}.json");
+            var json = File.ReadAllText(jsonPath);
+
             var MPPTData = JArray
                 .Parse(json)
                 .ToObject<List<Dictionary<string, Dictionary<string, object>>>>();
 
-            Editor ed = Autodesk
-                .AutoCAD
-                .ApplicationServices
-                .Application
-                .DocumentManager
-                .MdiActiveDocument
-                .Editor;
             PromptPointOptions pointOptions = new PromptPointOptions("Select a point: ");
             PromptPointResult pointResult = ed.GetPoint(pointOptions);
 
             if (pointResult.Status == PromptStatus.OK)
             {
                 Point3d selectedPoint;
+
                 List<List<Dictionary<string, double>>> mpptEndPoints;
 
                 CreateLinesOffMPPTs(
@@ -76,6 +88,7 @@ namespace GMEPSolar
                     INCREASE_TEXTBOX
                 );
             }
+            return false;
         }
 
         private static void CreateStringsOffMPPTS(
@@ -355,6 +368,13 @@ namespace GMEPSolar
                 new Point3d(firstHorizontalLineEndPoint["x"], firstHorizontalLineEndPoint["y"], 0)
             );
 
+            if (!LayerExists("E-CONDUIT"))
+            {
+                CreateLayer("E-CONDUIT", 4);
+            }
+
+            line.Layer = "E-CONDUIT";
+
             AddLineToPaperSpace(line);
         }
 
@@ -442,7 +462,9 @@ namespace GMEPSolar
 
         private static void CreateText(Editor ed, Point3d startPoint, int module)
         {
-            var json = File.ReadAllText($"../../block data/StringText.json");
+            var dllPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var jsonPath = Path.Combine(dllPath, $"block data/StringText.json");
+            var json = File.ReadAllText(jsonPath);
             var stringTextData = JArray
                 .Parse(json)
                 .ToObject<List<Dictionary<string, Dictionary<string, object>>>>();
@@ -457,7 +479,9 @@ namespace GMEPSolar
 
         private static void CreateString(Editor ed, Point3d stringStartPoint)
         {
-            var json = File.ReadAllText($"../../block data/String.json");
+            var dllPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var jsonPath = Path.Combine(dllPath, $"block data/String.json");
+            var json = File.ReadAllText(jsonPath);
             var stringData = JArray
                 .Parse(json)
                 .ToObject<List<Dictionary<string, Dictionary<string, object>>>>();
@@ -655,6 +679,13 @@ namespace GMEPSolar
                     new Point3d(endPointUpdated["x"], endPointUpdated["y"], 0)
                 );
 
+                if (!LayerExists("E-CONDUIT"))
+                {
+                    CreateLayer("E-CONDUIT", 4);
+                }
+
+                line.Layer = "E-CONDUIT";
+
                 AddLineToPaperSpace(line);
 
                 if (i != 1)
@@ -729,6 +760,13 @@ namespace GMEPSolar
                     arc.Radius = radius;
                     arc.StartAngle = startDegrees * (Math.PI / 180);
                     arc.EndAngle = endDegrees * (Math.PI / 180);
+
+                    if (!LayerExists("E-CONDUIT"))
+                    {
+                        CreateLayer("E-CONDUIT", 4);
+                    }
+
+                    arc.Layer = "E-CONDUIT";
                     blockTableRecord.AppendEntity(arc);
                     tr.AddNewlyCreatedDBObject(arc, true);
                 }
@@ -762,17 +800,25 @@ namespace GMEPSolar
                 {
                     acCircle.Center = center;
                     acCircle.Radius = radius;
+
+                    if (!LayerExists("E-CONDUIT"))
+                    {
+                        CreateLayer("E-CONDUIT", 4);
+                    }
+
+                    acCircle.Layer = "E-CONDUIT";
+
                     acCircle.SetDatabaseDefaults();
                     acBlkTblRec.AppendEntity(acCircle);
                     acTrans.AddNewlyCreatedDBObject(acCircle, true);
 
-                    // Create a solid hatch
                     using (Hatch acHatch = new Hatch())
                     {
                         acBlkTblRec.AppendEntity(acHatch);
                         acTrans.AddNewlyCreatedDBObject(acHatch, true);
                         acHatch.SetHatchPattern(HatchPatternType.PreDefined, "SOLID");
                         acHatch.Associative = true;
+                        acHatch.Layer = "E-CONDUIT";
                         acHatch.AppendLoop(
                             HatchLoopTypes.Outermost,
                             new ObjectIdCollection() { acCircle.ObjectId }
@@ -806,6 +852,13 @@ namespace GMEPSolar
                     new Point3d(startPoint["x"] + (CELL_SPACING * i), startPoint["y"], 0),
                     new Point3d(endPointUpdated["x"], endPointUpdated["y"], 0)
                 );
+
+                if (!LayerExists("E-CONDUIT"))
+                {
+                    CreateLayer("E-CONDUIT", 4);
+                }
+
+                line.Layer = "E-CONDUIT";
 
                 if (i == 0 || i == 2)
                 {
@@ -857,6 +910,7 @@ namespace GMEPSolar
                 BlockTableRecord blockTableRecord =
                     tr.GetObject(blockTable[BlockTableRecord.PaperSpace], OpenMode.ForWrite)
                     as BlockTableRecord;
+
                 blockTableRecord.AppendEntity(line);
                 tr.AddNewlyCreatedDBObject(line, true);
                 tr.Commit();
@@ -928,7 +982,11 @@ namespace GMEPSolar
             var circleData = objData["circle"] as Dictionary<string, object>;
             var circle = new Circle();
 
-            // Set circle properties
+            if (!LayerExists(circleData["layer"].ToString()))
+            {
+                CreateLayer(circleData["layer"].ToString(), 4);
+            }
+
             circle.Layer = circleData["layer"].ToString();
 
             var centerData = JsonConvert.DeserializeObject<Dictionary<string, double>>(
@@ -970,13 +1028,31 @@ namespace GMEPSolar
             var mtextData = objData["mtext"] as Dictionary<string, object>;
             var mtext = new MText();
 
-            // Set mtext properties
+            if (!LayerExists(mtextData["layer"].ToString()))
+            {
+                CreateLayer(mtextData["layer"].ToString(), 2);
+            }
+
             mtext.Layer = mtextData["layer"].ToString();
             SetMTextStyleByName(mtext, mtextData["style"].ToString());
             mtext.Attachment = (AttachmentPoint)
                 Enum.Parse(typeof(AttachmentPoint), mtextData["justification"].ToString());
             mtext.Contents = mtextData["text"].ToString();
             mtext.TextHeight = Convert.ToDouble(mtextData["height"]);
+
+            if (mtext.Contents.Contains("STRING"))
+            {
+                mtext.TextHeight = 0.185;
+            }
+            else if (mtext.Contents.Contains("SOLAR"))
+            {
+                mtext.TextHeight = 0.1;
+            }
+            else if (mtext.Contents.Contains("MPPT"))
+            {
+                mtext.TextHeight = 0.075;
+            }
+
             mtext.LineSpaceDistance = Convert.ToDouble(mtextData["lineSpaceDistance"]);
 
             var locationData = JsonConvert.DeserializeObject<Dictionary<string, double>>(
@@ -1007,6 +1083,62 @@ namespace GMEPSolar
             return selectedPoint;
         }
 
+        private static void CreateLayer(string layerName, short colorIndex)
+        {
+            if (layerName.Contains("SYM"))
+            {
+                colorIndex = 6;
+            }
+
+            if (layerName.Contains("Inverter"))
+            {
+                colorIndex = 2;
+            }
+
+            using (
+                var transaction =
+                    HostApplicationServices.WorkingDatabase.TransactionManager.StartTransaction()
+            )
+            {
+                var layerTable =
+                    transaction.GetObject(
+                        HostApplicationServices.WorkingDatabase.LayerTableId,
+                        OpenMode.ForRead
+                    ) as LayerTable;
+
+                if (!layerTable.Has(layerName))
+                {
+                    var layerTableRecord = new LayerTableRecord();
+                    layerTableRecord.Name = layerName;
+                    layerTableRecord.Color = Color.FromColorIndex(ColorMethod.ByAci, colorIndex);
+                    layerTableRecord.LineWeight = LineWeight.LineWeight050;
+                    layerTableRecord.IsPlottable = true;
+
+                    layerTable.UpgradeOpen();
+                    layerTable.Add(layerTableRecord);
+                    transaction.AddNewlyCreatedDBObject(layerTableRecord, true);
+                    transaction.Commit();
+                }
+            }
+        }
+
+        private static bool LayerExists(string layerName)
+        {
+            using (
+                var transaction =
+                    HostApplicationServices.WorkingDatabase.TransactionManager.StartTransaction()
+            )
+            {
+                var layerTable =
+                    transaction.GetObject(
+                        HostApplicationServices.WorkingDatabase.LayerTableId,
+                        OpenMode.ForRead
+                    ) as LayerTable;
+
+                return layerTable.Has(layerName);
+            }
+        }
+
         private static Point3d CreateLine(
             Editor ed,
             Point3d selectedPoint,
@@ -1016,11 +1148,20 @@ namespace GMEPSolar
             var lineData = objData["line"] as Dictionary<string, object>;
             var line = new Line();
 
-            // Set line properties
+            if (!LayerExists(lineData["layer"].ToString()))
+            {
+                CreateLayer(lineData["layer"].ToString(), 4);
+            }
+
             line.Layer = lineData["layer"].ToString();
 
             if (lineData.ContainsKey("linetype"))
             {
+                if (!LinetypeExists(lineData["linetype"].ToString()))
+                {
+                    CreateLinetype(lineData["linetype"].ToString());
+                }
+
                 line.Linetype = lineData["linetype"].ToString();
             }
 
@@ -1061,6 +1202,51 @@ namespace GMEPSolar
             return selectedPoint;
         }
 
+        private static void CreateLinetype(string linetypeName)
+        {
+            Document acDoc = Autodesk
+                .AutoCAD
+                .ApplicationServices
+                .Application
+                .DocumentManager
+                .MdiActiveDocument;
+            Database acCurDb = acDoc.Database;
+            using (
+                var transaction =
+                    HostApplicationServices.WorkingDatabase.TransactionManager.StartTransaction()
+            )
+            {
+                var linetypeTable =
+                    transaction.GetObject(
+                        HostApplicationServices.WorkingDatabase.LinetypeTableId,
+                        OpenMode.ForRead
+                    ) as LinetypeTable;
+
+                if (!linetypeTable.Has(linetypeName))
+                {
+                    acCurDb.LoadLineTypeFile(linetypeName, "acad.lin");
+                    transaction.Commit();
+                }
+            }
+        }
+
+        private static bool LinetypeExists(string linetypeName)
+        {
+            using (
+                var transaction =
+                    HostApplicationServices.WorkingDatabase.TransactionManager.StartTransaction()
+            )
+            {
+                var linetypeTable =
+                    transaction.GetObject(
+                        HostApplicationServices.WorkingDatabase.LinetypeTableId,
+                        OpenMode.ForRead
+                    ) as LinetypeTable;
+
+                return linetypeTable.Has(linetypeName);
+            }
+        }
+
         private static Point3d CreatePolyline(
             Editor ed,
             Point3d selectedPoint,
@@ -1070,10 +1256,20 @@ namespace GMEPSolar
             var polylineData = objData["polyline"] as Dictionary<string, object>;
             var polyline = new Polyline();
 
+            if (!LayerExists(polylineData["layer"].ToString()))
+            {
+                CreateLayer(polylineData["layer"].ToString(), 4);
+            }
+
             polyline.Layer = polylineData["layer"].ToString();
 
             if (polylineData.ContainsKey("linetype"))
             {
+                if (!LinetypeExists(polylineData["linetype"].ToString()))
+                {
+                    CreateLinetype(polylineData["linetype"].ToString());
+                }
+
                 polyline.Linetype = polylineData["linetype"].ToString();
             }
 
@@ -1121,6 +1317,11 @@ namespace GMEPSolar
             var solidData = objData["solid"];
             var solid = new Solid();
             short i = 0;
+
+            if (!LayerExists(solidData["layer"].ToString()))
+            {
+                CreateLayer(solidData["layer"].ToString(), 2);
+            }
 
             solid.Layer = solidData["layer"].ToString();
 
@@ -1281,9 +1482,12 @@ namespace GMEPSolar
                 return;
             }
 
-            Close();
             var data = GetFormData(this);
-            CreateDCSolarObject(data, INCREASE_TEXTBOX.Text);
+            var isToBeLeftOpen = CreateDCSolarObject(data, INCREASE_TEXTBOX.Text);
+            if (!isToBeLeftOpen)
+            {
+                Close();
+            }
         }
 
         private bool CheckForEmptyInputs()

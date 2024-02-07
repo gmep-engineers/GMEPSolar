@@ -95,6 +95,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>start "" "C:\Program Files\Autodesk\AutoCAD 2023\acad.exe" "C:\Users\JacobH\OneDrive - GMEPE\Documents\Solar\Solar String Example.dwg"</PostBuildEvent>
+    <PostBuildEvent>start "" "C:\Program Files\Autodesk\AutoCAD 2023\acad.exe"</PostBuildEvent>
   </PropertyGroup>
 </Project>
