@@ -1675,5 +1675,43 @@ namespace GMEPSolar
                 MPPT4_RADIO_PARALLEL.Enabled = true;
             }
         }
+
+        internal void UpdateValues(
+            string name,
+            bool mppt1Enabled,
+            bool mppt1Regular,
+            bool mppt1Parallel,
+            object mppt1Input
+        )
+        {
+            if (name == "MPPT1")
+            {
+                MPPT1_CHECKBOX.Checked = mppt1Enabled;
+                MPPT1_RADIO_REGULAR.Checked = mppt1Regular;
+                MPPT1_RADIO_PARALLEL.Checked = mppt1Parallel;
+                MPPT1_INPUT.Text = mppt1Input.ToString();
+            }
+            else if (name == "MPPT2")
+            {
+                MPPT2_CHECKBOX.Checked = mppt1Enabled;
+                MPPT2_RADIO_REGULAR.Checked = mppt1Regular;
+                MPPT2_RADIO_PARALLEL.Checked = mppt1Parallel;
+                MPPT2_INPUT.Text = mppt1Input.ToString();
+            }
+            else if (name == "MPPT3")
+            {
+                MPPT3_CHECKBOX.Checked = mppt1Enabled;
+                MPPT3_RADIO_REGULAR.Checked = mppt1Regular;
+                MPPT3_RADIO_PARALLEL.Checked = mppt1Parallel;
+                MPPT3_INPUT.Text = mppt1Input.ToString();
+            }
+            else if (name == "MPPT4")
+            {
+                MPPT4_CHECKBOX.Checked = mppt1Enabled;
+                MPPT4_RADIO_REGULAR.Checked = mppt1Regular;
+                MPPT4_RADIO_PARALLEL.Checked = mppt1Parallel;
+                MPPT4_INPUT.Text = mppt1Input.ToString();
+            }
+        }
     }
 }

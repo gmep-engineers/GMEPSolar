@@ -84,5 +84,79 @@ namespace GMEPSolar
             DCSolarData.Remove(tabID);
             PutObjectInJson(DCSolarData);
         }
+
+        internal bool DoesDataExist(int tabID)
+        {
+            return DCSolarData.ContainsKey(tabID);
+        }
+
+        internal void PopulateFormWithData(int tabID, DC_SOLAR_INPUT form)
+        {
+            var data = DCSolarData[tabID];
+            foreach (var mpptData in data)
+            {
+                var mpptName = mpptData.Key.ToString();
+                if (mpptName == "MPPT1")
+                {
+                    var mppt1Data = mpptData.Value;
+                    var mppt1Enabled = Convert.ToBoolean(mppt1Data["Enabled"]);
+                    var mppt1Regular = Convert.ToBoolean(mppt1Data["Regular"]);
+                    var mppt1Parallel = Convert.ToBoolean(mppt1Data["Parallel"]);
+                    var mppt1Input = mppt1Data["Input"];
+                    form.UpdateValues(
+                        "MPPT1",
+                        mppt1Enabled,
+                        mppt1Regular,
+                        mppt1Parallel,
+                        mppt1Input
+                    );
+                }
+                else if (mpptName == "MPPT2")
+                {
+                    var mppt2Data = mpptData.Value;
+                    var mppt2Enabled = Convert.ToBoolean(mppt2Data["Enabled"]);
+                    var mppt2Regular = Convert.ToBoolean(mppt2Data["Regular"]);
+                    var mppt2Parallel = Convert.ToBoolean(mppt2Data["Parallel"]);
+                    var mppt2Input = mppt2Data["Input"];
+                    form.UpdateValues(
+                        "MPPT2",
+                        mppt2Enabled,
+                        mppt2Regular,
+                        mppt2Parallel,
+                        mppt2Input
+                    );
+                }
+                else if (mpptName == "MPPT3")
+                {
+                    var mppt3Data = mpptData.Value;
+                    var mppt3Enabled = Convert.ToBoolean(mppt3Data["Enabled"]);
+                    var mppt3Regular = Convert.ToBoolean(mppt3Data["Regular"]);
+                    var mppt3Parallel = Convert.ToBoolean(mppt3Data["Parallel"]);
+                    var mppt3Input = mppt3Data["Input"];
+                    form.UpdateValues(
+                        "MPPT3",
+                        mppt3Enabled,
+                        mppt3Regular,
+                        mppt3Parallel,
+                        mppt3Input
+                    );
+                }
+                else if (mpptName == "MPPT4")
+                {
+                    var mppt4Data = mpptData.Value;
+                    var mppt4Enabled = Convert.ToBoolean(mppt4Data["Enabled"]);
+                    var mppt4Regular = Convert.ToBoolean(mppt4Data["Regular"]);
+                    var mppt4Parallel = Convert.ToBoolean(mppt4Data["Parallel"]);
+                    var mppt4Input = mppt4Data["Input"];
+                    form.UpdateValues(
+                        "MPPT4",
+                        mppt4Enabled,
+                        mppt4Regular,
+                        mppt4Parallel,
+                        mppt4Input
+                    );
+                }
+            }
+        }
     }
 }
