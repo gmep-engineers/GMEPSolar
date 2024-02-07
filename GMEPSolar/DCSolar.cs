@@ -17,8 +17,13 @@ namespace GMEPSolar
 {
     public partial class DC_SOLAR_INPUT : Form
     {
-        public DC_SOLAR_INPUT()
+        InverterForm inverterForm;
+        int id;
+
+        public DC_SOLAR_INPUT(InverterForm inverterForm = null, int id = 0)
         {
+            this.inverterForm = inverterForm;
+            this.id = id;
             InitializeComponent();
             NUMBER_ALL_MODULES_TEXTBOX.KeyDown += NUMBER_ALL_MODULES_TEXTBOX_KeyDown;
         }
@@ -1482,6 +1487,16 @@ namespace GMEPSolar
                 return;
             }
 
+            if (CREATE_BUTTON.Text == "DONE" && this.inverterForm != null)
+            {
+                var dcData = GetFormData(this);
+                var oldDataObject = this.inverterForm.GetCurrentDCData();
+                oldDataObject[this.id] = dcData;
+                this.inverterForm.SaveDCData(oldDataObject);
+                Close();
+                return;
+            }
+
             var data = GetFormData(this);
             var isToBeLeftOpen = CreateDCSolarObject(data, INCREASE_TEXTBOX.Text);
             if (!isToBeLeftOpen)
@@ -1637,6 +1652,23 @@ namespace GMEPSolar
                 MPPT4_RADIO_REGULAR.Enabled = true;
                 MPPT4_RADIO_PARALLEL.Enabled = true;
             }
+        }
+
+        internal void AlterComponents()
+        {
+            if (INCREASE_TEXTBOX != null)
+            {
+                INCREASE_TEXTBOX.Dispose();
+                INCREASE_TEXTBOX = null;
+            }
+
+            if (INCREASE_Y_LABEL != null)
+            {
+                INCREASE_Y_LABEL.Dispose();
+                INCREASE_Y_LABEL = null;
+            }
+
+            CREATE_BUTTON.Text = "DONE";
         }
     }
 }

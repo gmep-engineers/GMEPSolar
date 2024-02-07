@@ -28,129 +28,114 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.InverterTabs = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
-            this.radioButton4 = new System.Windows.Forms.RadioButton();
-            this.button1 = new System.Windows.Forms.Button();
-            this.InverterTabs.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            this.INVERTER_TABS = new System.Windows.Forms.TabControl();
+            this.CONFIGURATION_GROUP = new System.Windows.Forms.GroupBox();
+            this.GRID_LOAD_RADIO = new System.Windows.Forms.RadioButton();
+            this.LOAD_RADIO = new System.Windows.Forms.RadioButton();
+            this.GRID_RADIO = new System.Windows.Forms.RadioButton();
+            this.EMPTY_RADIO = new System.Windows.Forms.RadioButton();
+            this.CREATE_BUTTON = new System.Windows.Forms.Button();
+            this.CONFIGURATION_GROUP.SuspendLayout();
             this.SuspendLayout();
             // 
-            // InverterTabs
+            // INVERTER_TABS
             // 
-            this.InverterTabs.Controls.Add(this.tabPage1);
-            this.InverterTabs.Location = new System.Drawing.Point(12, 12);
-            this.InverterTabs.Name = "InverterTabs";
-            this.InverterTabs.SelectedIndex = 0;
-            this.InverterTabs.Size = new System.Drawing.Size(197, 204);
-            this.InverterTabs.TabIndex = 0;
+            this.INVERTER_TABS.Location = new System.Drawing.Point(12, 12);
+            this.INVERTER_TABS.Name = "INVERTER_TABS";
+            this.INVERTER_TABS.SelectedIndex = 0;
+            this.INVERTER_TABS.Size = new System.Drawing.Size(197, 242);
+            this.INVERTER_TABS.TabIndex = 0;
             // 
-            // tabPage1
+            // CONFIGURATION_GROUP
             // 
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(189, 178);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Inverter 1";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.CONFIGURATION_GROUP.Controls.Add(this.GRID_LOAD_RADIO);
+            this.CONFIGURATION_GROUP.Controls.Add(this.LOAD_RADIO);
+            this.CONFIGURATION_GROUP.Controls.Add(this.GRID_RADIO);
+            this.CONFIGURATION_GROUP.Controls.Add(this.EMPTY_RADIO);
+            this.CONFIGURATION_GROUP.Location = new System.Drawing.Point(12, 260);
+            this.CONFIGURATION_GROUP.Name = "CONFIGURATION_GROUP";
+            this.CONFIGURATION_GROUP.Size = new System.Drawing.Size(195, 110);
+            this.CONFIGURATION_GROUP.TabIndex = 1;
+            this.CONFIGURATION_GROUP.TabStop = false;
+            this.CONFIGURATION_GROUP.Text = "CONFIGURATION";
             // 
-            // groupBox1
+            // GRID_LOAD_RADIO
             // 
-            this.groupBox1.Controls.Add(this.radioButton4);
-            this.groupBox1.Controls.Add(this.radioButton3);
-            this.groupBox1.Controls.Add(this.radioButton2);
-            this.groupBox1.Controls.Add(this.radioButton1);
-            this.groupBox1.Location = new System.Drawing.Point(16, 232);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(189, 110);
-            this.groupBox1.TabIndex = 1;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "CONFIGURATION";
+            this.GRID_LOAD_RADIO.AutoSize = true;
+            this.GRID_LOAD_RADIO.Location = new System.Drawing.Point(6, 88);
+            this.GRID_LOAD_RADIO.Name = "GRID_LOAD_RADIO";
+            this.GRID_LOAD_RADIO.Size = new System.Drawing.Size(93, 17);
+            this.GRID_LOAD_RADIO.TabIndex = 3;
+            this.GRID_LOAD_RADIO.TabStop = true;
+            this.GRID_LOAD_RADIO.Text = "GRID + LOAD";
+            this.GRID_LOAD_RADIO.UseVisualStyleBackColor = true;
             // 
-            // radioButton1
+            // LOAD_RADIO
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(6, 19);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(62, 17);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "EMPTY";
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.LOAD_RADIO.AutoSize = true;
+            this.LOAD_RADIO.Location = new System.Drawing.Point(6, 65);
+            this.LOAD_RADIO.Name = "LOAD_RADIO";
+            this.LOAD_RADIO.Size = new System.Drawing.Size(54, 17);
+            this.LOAD_RADIO.TabIndex = 2;
+            this.LOAD_RADIO.TabStop = true;
+            this.LOAD_RADIO.Text = "LOAD";
+            this.LOAD_RADIO.UseVisualStyleBackColor = true;
             // 
-            // radioButton2
+            // GRID_RADIO
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(6, 42);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(52, 17);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "GRID";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.GRID_RADIO.AutoSize = true;
+            this.GRID_RADIO.Location = new System.Drawing.Point(6, 42);
+            this.GRID_RADIO.Name = "GRID_RADIO";
+            this.GRID_RADIO.Size = new System.Drawing.Size(52, 17);
+            this.GRID_RADIO.TabIndex = 1;
+            this.GRID_RADIO.TabStop = true;
+            this.GRID_RADIO.Text = "GRID";
+            this.GRID_RADIO.UseVisualStyleBackColor = true;
             // 
-            // radioButton3
+            // EMPTY_RADIO
             // 
-            this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(6, 65);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(54, 17);
-            this.radioButton3.TabIndex = 2;
-            this.radioButton3.TabStop = true;
-            this.radioButton3.Text = "LOAD";
-            this.radioButton3.UseVisualStyleBackColor = true;
+            this.EMPTY_RADIO.AutoSize = true;
+            this.EMPTY_RADIO.Location = new System.Drawing.Point(6, 19);
+            this.EMPTY_RADIO.Name = "EMPTY_RADIO";
+            this.EMPTY_RADIO.Size = new System.Drawing.Size(62, 17);
+            this.EMPTY_RADIO.TabIndex = 0;
+            this.EMPTY_RADIO.TabStop = true;
+            this.EMPTY_RADIO.Text = "EMPTY";
+            this.EMPTY_RADIO.UseVisualStyleBackColor = true;
             // 
-            // radioButton4
+            // CREATE_BUTTON
             // 
-            this.radioButton4.AutoSize = true;
-            this.radioButton4.Location = new System.Drawing.Point(6, 88);
-            this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(93, 17);
-            this.radioButton4.TabIndex = 3;
-            this.radioButton4.TabStop = true;
-            this.radioButton4.Text = "GRID + LOAD";
-            this.radioButton4.UseVisualStyleBackColor = true;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(16, 348);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(189, 32);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "CREATE";
-            this.button1.UseVisualStyleBackColor = true;
+            this.CREATE_BUTTON.Location = new System.Drawing.Point(12, 376);
+            this.CREATE_BUTTON.Name = "CREATE_BUTTON";
+            this.CREATE_BUTTON.Size = new System.Drawing.Size(197, 32);
+            this.CREATE_BUTTON.TabIndex = 2;
+            this.CREATE_BUTTON.Text = "CREATE";
+            this.CREATE_BUTTON.UseVisualStyleBackColor = true;
             // 
             // InverterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(221, 392);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.InverterTabs);
+            this.ClientSize = new System.Drawing.Size(221, 422);
+            this.Controls.Add(this.CREATE_BUTTON);
+            this.Controls.Add(this.CONFIGURATION_GROUP);
+            this.Controls.Add(this.INVERTER_TABS);
             this.Name = "InverterForm";
             this.Text = "Inverter Form";
-            this.InverterTabs.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.CONFIGURATION_GROUP.ResumeLayout(false);
+            this.CONFIGURATION_GROUP.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TabControl InverterTabs;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.RadioButton radioButton4;
-        private System.Windows.Forms.RadioButton radioButton3;
-        private System.Windows.Forms.RadioButton radioButton2;
-        private System.Windows.Forms.RadioButton radioButton1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TabControl INVERTER_TABS;
+        private System.Windows.Forms.GroupBox CONFIGURATION_GROUP;
+        private System.Windows.Forms.RadioButton GRID_LOAD_RADIO;
+        private System.Windows.Forms.RadioButton LOAD_RADIO;
+        private System.Windows.Forms.RadioButton GRID_RADIO;
+        private System.Windows.Forms.RadioButton EMPTY_RADIO;
+        private System.Windows.Forms.Button CREATE_BUTTON;
     }
 }
