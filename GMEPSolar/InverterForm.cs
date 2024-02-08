@@ -15,6 +15,7 @@ using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.Runtime;
 using GMEPUtilities;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace GMEPSolar
 {
@@ -22,6 +23,7 @@ namespace GMEPSolar
     {
         Dictionary<int, Dictionary<string, Dictionary<string, object>>> DCSolarData =
             new Dictionary<int, Dictionary<string, Dictionary<string, object>>>();
+        DC_SOLAR_INPUT form;
         int initialID;
 
         public InverterForm()
@@ -29,6 +31,7 @@ namespace GMEPSolar
             initialID = 1;
             InitializeComponent();
             CreateNewPanelTab("Inverter");
+            this.form = new DC_SOLAR_INPUT();
         }
 
         private void CreateInverter(
@@ -71,15 +74,6 @@ namespace GMEPSolar
             tabPage.Controls.Add(control);
         }
 
-        public void PutObjectInJson(object data)
-        {
-            string json = JsonConvert.SerializeObject(data, Formatting.Indented);
-            System.IO.File.WriteAllText(
-                Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\ObjectData.json",
-                json
-            );
-        }
-
         internal TabControl GetInverterTabs()
         {
             return INVERTER_TABS;
@@ -90,7 +84,6 @@ namespace GMEPSolar
         )
         {
             DCSolarData = newDataObject;
-            PutObjectInJson(DCSolarData);
         }
 
         internal Dictionary<int, Dictionary<string, Dictionary<string, object>>> GetCurrentDCData()
@@ -101,15 +94,14 @@ namespace GMEPSolar
         internal void RemoveFromDCData(int tabID)
         {
             DCSolarData.Remove(tabID);
-            PutObjectInJson(DCSolarData);
         }
 
-        internal bool DoesDataExist(int tabID)
+        internal bool DoesDCSolarDataHaveThisID(int tabID)
         {
             return DCSolarData.ContainsKey(tabID);
         }
 
-        internal void PopulateFormWithData(int tabID, DC_SOLAR_INPUT form)
+        internal void FillDCSolarFormWithExistingData(int tabID, DC_SOLAR_INPUT form)
         {
             var data = DCSolarData[tabID];
             foreach (var mpptData in data)
@@ -178,19 +170,6 @@ namespace GMEPSolar
             }
         }
 
-        private static void GetUserToClick(out Editor ed, out PromptPointResult pointResult)
-        {
-            ed = Autodesk
-                .AutoCAD
-                .ApplicationServices
-                .Application
-                .DocumentManager
-                .MdiActiveDocument
-                .Editor;
-            PromptPointOptions pointOptions = new PromptPointOptions("Select a point: ");
-            pointResult = ed.GetPoint(pointOptions);
-        }
-
         private Dictionary<string, object> GetInverterFormData()
         {
             var inverterFormData = new Dictionary<string, object>();
@@ -247,13 +226,13 @@ namespace GMEPSolar
         private void CREATE_BUTTON_Click(object sender, EventArgs e)
         {
             var inverterFormData = GetInverterFormData();
-            PutObjectInJson(inverterFormData);
+            HelperMethods.SaveDataToJsonFile(inverterFormData, "InverterFormData.json");
 
             Close();
 
             Editor ed;
             PromptPointResult pointResult;
-            GetUserToClick(out ed, out pointResult);
+            HelperMethods.GetUserToClick(out ed, out pointResult);
 
             if (pointResult.Status == PromptStatus.OK)
             {
@@ -265,8 +244,64 @@ namespace GMEPSolar
                 )
                 {
                     CreateInverter(point, inverterFormData, ed);
+
+                    if (inverterFormData.ContainsKey("InverterData"))
+                    {
+                        var inverterData =
+                            inverterFormData["InverterData"] as List<Dictionary<string, object>>;
+
+                        var firstDCSolarData = inverterData[0];
+
+                        if (firstDCSolarData.ContainsKey("DCSolarData"))
+                        {
+                            var dcSolarData =
+                                firstDCSolarData["DCSolarData"]
+                                as Dictionary<string, Dictionary<string, object>>;
+
+                            var numberOfMPPTs = GetNumberOfMPPTs(dcSolarData);
+                            var json = "";
+
+                            if (numberOfMPPTs != 0)
+                            {
+                                json = BlockDataMethods.GetUnparsedJSONData(
+                                    $"dc solar placement data/DCSolar{numberOfMPPTs}PlacementPoint.json"
+                                );
+                            }
+                            else
+                            {
+                                return;
+                            }
+
+                            var parsedData = JsonConvert.DeserializeObject<
+                                Dictionary<string, double>
+                            >(json);
+
+                            var placement = new Point3d(
+                                parsedData["X"] + point.X,
+                                parsedData["Y"] + point.Y,
+                                parsedData["Z"] + point.Z
+                            );
+
+                            DC_SOLAR_INPUT.CreateDCSolarObject(dcSolarData, "0", placement);
+                        }
+                    }
                 }
             }
+        }
+
+        private static int GetNumberOfMPPTs(Dictionary<string, Dictionary<string, object>> formData)
+        {
+            int numberOfMPPTs = 0;
+            foreach (var mppt in formData)
+            {
+                var mpptData = mppt.Value as Dictionary<string, object>;
+                if (Convert.ToBoolean(mpptData["Enabled"]))
+                {
+                    numberOfMPPTs++;
+                }
+            }
+
+            return numberOfMPPTs;
         }
     }
 }

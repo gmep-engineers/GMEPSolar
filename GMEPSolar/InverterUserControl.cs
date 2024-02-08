@@ -51,9 +51,9 @@ namespace GMEPSolar
         {
             var tabID = (int)(this.Parent as TabPage).Tag;
             DC_SOLAR_INPUT form = new DC_SOLAR_INPUT(this.form, tabID);
-            if (this.form.DoesDataExist(tabID))
+            if (this.form.DoesDCSolarDataHaveThisID(tabID))
             {
-                this.form.PopulateFormWithData(tabID, form);
+                this.form.FillDCSolarFormWithExistingData(tabID, form);
             }
             form.AlterComponents();
             form.Show();

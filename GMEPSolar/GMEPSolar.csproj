@@ -91,10 +91,16 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-	  <Content Include ="block data\**">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
+    <Content Include="block data\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
+    <ItemGroup>
+	    <Content Include="dc solar placement data\**">
+		    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    </Content>
+    </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>start "" "C:\Program Files\Autodesk\AutoCAD 2023\acad.exe" "C:\Users\JacobH\OneDrive - GMEPE\Documents\Solar\Solar String Example.dwg"</PostBuildEvent>

@@ -10,7 +10,6 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Geometry;
 using GMEPUtilities;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace GMEPSolar
@@ -30,12 +29,26 @@ namespace GMEPSolar
 
         public static void CreateDCSolarObject(
             Dictionary<string, Dictionary<string, object>> formData,
-            string INCREASE_TEXTBOX
+            string INCREASE_TEXTBOX,
+            Point3d selectedPoint
         )
         {
-            Editor ed;
-            PromptPointResult pointResult;
-            GetUserToClick(out ed, out pointResult);
+            HelperMethods.SaveDataToJsonFile(formData, "FORMDATA.json");
+            HelperMethods.SaveDataToJsonFile(selectedPoint, "SELECTEDPOINT.json");
+
+            Editor ed = Autodesk
+                .AutoCAD
+                .ApplicationServices
+                .Application
+                .DocumentManager
+                .MdiActiveDocument
+                .Editor;
+
+            if (selectedPoint == new Point3d(0, 0, 0))
+            {
+                HelperMethods.GetUserToClick(out ed, out PromptPointResult pointResult);
+                selectedPoint = pointResult.Value;
+            }
 
             var numberOfMPPTs = GetNumberOfMPPTs(formData);
 
@@ -48,43 +61,22 @@ namespace GMEPSolar
             string path = $"block data/DCSolar{numberOfMPPTs}.json";
             var MPPTData = BlockDataMethods.GetData(path);
 
-            if (pointResult.Status == PromptStatus.OK)
-            {
-                Point3d selectedPoint;
+            CreateLinesOffMPPTs(
+                formData,
+                numberOfMPPTs,
+                selectedPoint,
+                out List<List<Dictionary<string, double>>> mpptEndPoints
+            );
 
-                List<List<Dictionary<string, double>>> mpptEndPoints;
+            BlockDataMethods.CreateObjectGivenData(MPPTData, ed, selectedPoint);
 
-                CreateLinesOffMPPTs(
-                    formData,
-                    numberOfMPPTs,
-                    pointResult,
-                    out selectedPoint,
-                    out mpptEndPoints
-                );
-
-                BlockDataMethods.CreateObjectGivenData(MPPTData, ed, selectedPoint);
-
-                CreateStringsOffMPPTS(
-                    formData,
-                    numberOfMPPTs,
-                    selectedPoint,
-                    mpptEndPoints,
-                    INCREASE_TEXTBOX
-                );
-            }
-        }
-
-        private static void GetUserToClick(out Editor ed, out PromptPointResult pointResult)
-        {
-            ed = Autodesk
-                .AutoCAD
-                .ApplicationServices
-                .Application
-                .DocumentManager
-                .MdiActiveDocument
-                .Editor;
-            PromptPointOptions pointOptions = new PromptPointOptions("Select a point: ");
-            pointResult = ed.GetPoint(pointOptions);
+            CreateStringsOffMPPTS(
+                formData,
+                numberOfMPPTs,
+                selectedPoint,
+                mpptEndPoints,
+                INCREASE_TEXTBOX
+            );
         }
 
         private static int GetNumberOfMPPTs(Dictionary<string, Dictionary<string, object>> formData)
@@ -134,7 +126,7 @@ namespace GMEPSolar
 
             skipIndices = GetIndicesToSkip(formData);
 
-            var stringTotalHeight = GetTotalHeight(stringDataContainer);
+            var stringTotalHeight = GetTotalHeightOfStringModule(stringDataContainer);
 
             var stringStartPoint = new Point3d(
                 stringMidPointX,
@@ -444,12 +436,19 @@ namespace GMEPSolar
                 {
                     if (item == "text")
                     {
-                        CreateText(ed, new Point3d(startPoint["x"], startPoint["y"], 0), module);
+                        CreateStringTextInCAD(
+                            ed,
+                            new Point3d(startPoint["x"], startPoint["y"], 0),
+                            module
+                        );
                         startPoint["y"] -= TEXT_HEIGHT;
                     }
                     else if (item == "string")
                     {
-                        CreateString(ed, new Point3d(startPoint["x"], startPoint["y"], 0));
+                        CreateStringObjectInCAD(
+                            ed,
+                            new Point3d(startPoint["x"], startPoint["y"], 0)
+                        );
                         connectionPoints.Add(
                             new Dictionary<string, double>
                             {
@@ -471,7 +470,7 @@ namespace GMEPSolar
             return connectionPoints;
         }
 
-        private static void CreateText(Editor ed, Point3d startPoint, int module)
+        private static void CreateStringTextInCAD(Editor ed, Point3d startPoint, int module)
         {
             var dllPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var jsonPath = Path.Combine(dllPath, $"block data/StringText.json");
@@ -488,7 +487,7 @@ namespace GMEPSolar
             BlockDataMethods.CreateObjectGivenData(stringTextData, ed, startPoint);
         }
 
-        private static void CreateString(Editor ed, Point3d stringStartPoint)
+        private static void CreateStringObjectInCAD(Editor ed, Point3d stringStartPoint)
         {
             var dllPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var jsonPath = Path.Combine(dllPath, $"block data/String.json");
@@ -500,7 +499,9 @@ namespace GMEPSolar
             BlockDataMethods.CreateObjectGivenData(stringData, ed, stringStartPoint);
         }
 
-        private static double GetTotalHeight(List<Dictionary<string, object>> stringDataContainer)
+        private static double GetTotalHeightOfStringModule(
+            List<Dictionary<string, object>> stringDataContainer
+        )
         {
             double totalHeight = 0;
             foreach (var stringData in stringDataContainer)
@@ -571,14 +572,12 @@ namespace GMEPSolar
         private static void CreateLinesOffMPPTs(
             Dictionary<string, Dictionary<string, object>> formData,
             int numberOfMPPTs,
-            PromptPointResult pointResult,
-            out Point3d selectedPoint,
+            Point3d selectedPoint,
             out List<List<Dictionary<string, double>>> mpptEndPoints
         )
         {
             Double STARTLINE_LENGTH = 1.25;
             Double CELL_SPACING = 0.1621;
-            selectedPoint = pointResult.Value;
             mpptEndPoints = new List<List<Dictionary<string, double>>>();
             var startPoint = new Dictionary<string, double>
             {
@@ -1216,7 +1215,7 @@ namespace GMEPSolar
                     Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.LockDocument()
             )
             {
-                CreateDCSolarObject(data, INCREASE_TEXTBOX.Text);
+                CreateDCSolarObject(data, INCREASE_TEXTBOX.Text, new Point3d(0, 0, 0));
             }
         }
 
