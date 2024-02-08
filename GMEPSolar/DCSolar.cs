@@ -45,9 +45,8 @@ namespace GMEPSolar
                 return;
             }
 
-            List<Dictionary<string, Dictionary<string, object>>> MPPTData = GetMPPTData(
-                numberOfMPPTs
-            );
+            string path = $"block data/DCSolar{numberOfMPPTs}.json";
+            var MPPTData = BlockDataMethods.GetData(path);
 
             if (pointResult.Status == PromptStatus.OK)
             {
@@ -73,20 +72,6 @@ namespace GMEPSolar
                     INCREASE_TEXTBOX
                 );
             }
-        }
-
-        private static List<Dictionary<string, Dictionary<string, object>>> GetMPPTData(
-            int numberOfMPPTs
-        )
-        {
-            var dllPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var jsonPath = Path.Combine(dllPath, $"block data/DCSolar{numberOfMPPTs}.json");
-            var json = File.ReadAllText(jsonPath);
-
-            var MPPTData = JArray
-                .Parse(json)
-                .ToObject<List<Dictionary<string, Dictionary<string, object>>>>();
-            return MPPTData;
         }
 
         private static void GetUserToClick(out Editor ed, out PromptPointResult pointResult)

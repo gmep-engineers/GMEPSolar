@@ -13,6 +13,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.Runtime;
+using GMEPUtilities;
 using Newtonsoft.Json;
 
 namespace GMEPSolar
@@ -170,6 +171,8 @@ namespace GMEPSolar
             var inverterFormData = GetInverterFormData();
             PutObjectInJson(inverterFormData);
 
+            Close();
+
             Editor ed;
             PromptPointResult pointResult;
             GetUserToClick(out ed, out pointResult);
@@ -178,11 +181,27 @@ namespace GMEPSolar
             {
                 var point = pointResult.Value;
 
-                CreateInverter(point, inverterFormData);
+                using (
+                    DocumentLock docLock =
+                        Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.LockDocument()
+                )
+                {
+                    CreateInverter(point, inverterFormData, ed);
+                }
             }
         }
 
-        private void CreateInverter(Point3d point, Dictionary<string, object> inverterFormData) { }
+        private void CreateInverter(
+            Point3d point,
+            Dictionary<string, object> inverterFormData,
+            Editor ed
+        )
+        {
+            string path = "block data/Inverter.json";
+            var data = BlockDataMethods.GetData(path);
+
+            BlockDataMethods.CreateObjectGivenData(data, ed, point);
+        }
 
         private static void GetUserToClick(out Editor ed, out PromptPointResult pointResult)
         {
