@@ -7,6 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.Colors;
+using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.EditorInput;
+using Autodesk.AutoCAD.Geometry;
+using Autodesk.AutoCAD.Runtime;
 using Newtonsoft.Json;
 
 namespace GMEPSolar
@@ -163,9 +169,35 @@ namespace GMEPSolar
         {
             var inverterFormData = GetInverterFormData();
             PutObjectInJson(inverterFormData);
+
+            Editor ed;
+            PromptPointResult pointResult;
+            GetUserToClick(out ed, out pointResult);
+
+            if (pointResult.Status == PromptStatus.OK)
+            {
+                var point = pointResult.Value;
+
+                CreateInverter(point, inverterFormData);
+            }
         }
 
-        private object GetInverterFormData()
+        private void CreateInverter(Point3d point, Dictionary<string, object> inverterFormData) { }
+
+        private static void GetUserToClick(out Editor ed, out PromptPointResult pointResult)
+        {
+            ed = Autodesk
+                .AutoCAD
+                .ApplicationServices
+                .Application
+                .DocumentManager
+                .MdiActiveDocument
+                .Editor;
+            PromptPointOptions pointOptions = new PromptPointOptions("Select a point: ");
+            pointResult = ed.GetPoint(pointOptions);
+        }
+
+        private Dictionary<string, object> GetInverterFormData()
         {
             var inverterFormData = new Dictionary<string, object>();
             var inverterEncapsulation = new List<Dictionary<string, object>>();
