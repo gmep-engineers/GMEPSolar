@@ -114,6 +114,14 @@ namespace GMEPSolar
                                     origin
                                 );
                             }
+                            else if (obj is Autodesk.AutoCAD.DatabaseServices.Arc)
+                            {
+                                data = HandleArc(
+                                    obj as Autodesk.AutoCAD.DatabaseServices.Arc,
+                                    data,
+                                    origin
+                                );
+                            }
 
                             // Commit the transaction
                             transaction.Commit();
@@ -137,10 +145,43 @@ namespace GMEPSolar
             form.Show();
         }
 
-        private static void SaveDataToJsonFile(
-            List<Dictionary<string, object>> data,
-            string fileName
-        )
+        [CommandMethod("GetRelativePoint")]
+        public static void GetRelativePoint()
+        {
+            PromptPointResult pointResult;
+            GetUserToClick(out _, out pointResult);
+            PromptPointResult pointResult2;
+            GetUserToClick(out _, out pointResult2);
+
+            if (pointResult.Status == PromptStatus.OK && pointResult2.Status == PromptStatus.OK)
+            {
+                var point = pointResult.Value;
+                var point2 = pointResult2.Value;
+
+                var relativePoint = new Point3d(
+                    point.X - point2.X,
+                    point.Y - point2.Y,
+                    point.Z - point2.Z
+                );
+
+                SaveDataToJsonFile(relativePoint, "relativePoint.json");
+            }
+        }
+
+        private static void GetUserToClick(out Editor ed, out PromptPointResult pointResult)
+        {
+            ed = Autodesk
+                .AutoCAD
+                .ApplicationServices
+                .Application
+                .DocumentManager
+                .MdiActiveDocument
+                .Editor;
+            PromptPointOptions pointOptions = new PromptPointOptions("Select a point: ");
+            pointResult = ed.GetPoint(pointOptions);
+        }
+
+        private static void SaveDataToJsonFile(object data, string fileName)
         {
             var filePath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
@@ -226,6 +267,37 @@ namespace GMEPSolar
             solidData.Add("vertices", vertices);
 
             var encapsulate = new Dictionary<string, object> { { "solid", solidData } };
+
+            data.Add(encapsulate);
+
+            return data;
+        }
+
+        private static List<Dictionary<string, object>> HandleArc(
+            Arc arc,
+            List<Dictionary<string, object>> data,
+            Point3d origin
+        )
+        {
+            var arcData = new Dictionary<string, object> { { "layer", arc.Layer } };
+
+            var center = new Dictionary<string, object>
+            {
+                { "x", arc.Center.X - origin.X },
+                { "y", arc.Center.Y - origin.Y },
+                { "z", arc.Center.Z - origin.Z }
+            };
+
+            arcData.Add("center", center);
+
+            arcData.Add("radius", arc.Radius);
+            arcData.Add("startAngle", arc.StartAngle);
+            arcData.Add("endAngle", arc.EndAngle);
+
+            arcData.Add("startPoint", arc.StartPoint);
+            arcData.Add("endPoint", arc.EndPoint);
+
+            var encapsulate = new Dictionary<string, object> { { "arc", arcData } };
 
             data.Add(encapsulate);
 

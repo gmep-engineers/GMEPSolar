@@ -31,6 +31,18 @@ namespace GMEPSolar
             CreateNewPanelTab("Inverter");
         }
 
+        private void CreateInverter(
+            Point3d point,
+            Dictionary<string, object> inverterFormData,
+            Editor ed
+        )
+        {
+            string path = "block data/Inverter.json";
+            var data = BlockDataMethods.GetData(path);
+
+            BlockDataMethods.CreateObjectGivenData(data, ed, point);
+        }
+
         public InverterUserControl CreateNewPanelTab(string tabName)
         {
             InverterUserControl inverterUserControl = new InverterUserControl(this);
@@ -166,43 +178,6 @@ namespace GMEPSolar
             }
         }
 
-        private void CREATE_BUTTON_Click(object sender, EventArgs e)
-        {
-            var inverterFormData = GetInverterFormData();
-            PutObjectInJson(inverterFormData);
-
-            Close();
-
-            Editor ed;
-            PromptPointResult pointResult;
-            GetUserToClick(out ed, out pointResult);
-
-            if (pointResult.Status == PromptStatus.OK)
-            {
-                var point = pointResult.Value;
-
-                using (
-                    DocumentLock docLock =
-                        Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.LockDocument()
-                )
-                {
-                    CreateInverter(point, inverterFormData, ed);
-                }
-            }
-        }
-
-        private void CreateInverter(
-            Point3d point,
-            Dictionary<string, object> inverterFormData,
-            Editor ed
-        )
-        {
-            string path = "block data/Inverter.json";
-            var data = BlockDataMethods.GetData(path);
-
-            BlockDataMethods.CreateObjectGivenData(data, ed, point);
-        }
-
         private static void GetUserToClick(out Editor ed, out PromptPointResult pointResult)
         {
             ed = Autodesk
@@ -266,6 +241,31 @@ namespace GMEPSolar
             else
             {
                 return "EMPTY";
+            }
+        }
+
+        private void CREATE_BUTTON_Click(object sender, EventArgs e)
+        {
+            var inverterFormData = GetInverterFormData();
+            PutObjectInJson(inverterFormData);
+
+            Close();
+
+            Editor ed;
+            PromptPointResult pointResult;
+            GetUserToClick(out ed, out pointResult);
+
+            if (pointResult.Status == PromptStatus.OK)
+            {
+                var point = pointResult.Value;
+
+                using (
+                    DocumentLock docLock =
+                        Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.LockDocument()
+                )
+                {
+                    CreateInverter(point, inverterFormData, ed);
+                }
             }
         }
     }
