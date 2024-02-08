@@ -158,5 +158,64 @@ namespace GMEPSolar
                 }
             }
         }
+
+        private void CREATE_BUTTON_Click(object sender, EventArgs e)
+        {
+            var inverterFormData = GetInverterFormData();
+            PutObjectInJson(inverterFormData);
+        }
+
+        private object GetInverterFormData()
+        {
+            var inverterFormData = new Dictionary<string, object>();
+            var inverterEncapsulation = new List<Dictionary<string, object>>();
+            var inverterEncapsulationExtra = new Dictionary<string, object>();
+            var inverterTabs = INVERTER_TABS.TabPages;
+
+            foreach (TabPage tab in inverterTabs)
+            {
+                var tabID = (int)tab.Tag;
+                if (DCSolarData.ContainsKey(tabID))
+                {
+                    inverterFormData.Add("DCSolarData", DCSolarData[tabID]);
+                }
+                var control = tab.Controls[0] as InverterUserControl;
+                var controlData = control.GetInverterFormData();
+                inverterFormData.Add("is2P", controlData["is2P"]);
+                inverterFormData.Add("isMaster", controlData["isMaster"]);
+                inverterEncapsulation.Add(inverterFormData);
+                inverterFormData = new Dictionary<string, object>();
+            }
+
+            var configuration = GetConfigurationOfInverters();
+
+            inverterEncapsulationExtra.Add("InverterData", inverterEncapsulation);
+            inverterEncapsulationExtra.Add("Configuration", configuration);
+            return inverterEncapsulationExtra;
+        }
+
+        private object GetConfigurationOfInverters()
+        {
+            if (EMPTY_RADIO.Checked)
+            {
+                return "EMPTY";
+            }
+            else if (GRID_RADIO.Checked)
+            {
+                return "GRID";
+            }
+            else if (LOAD_RADIO.Checked)
+            {
+                return "LOAD";
+            }
+            else if (GRID_LOAD_RADIO.Checked)
+            {
+                return "GRID_LOAD";
+            }
+            else
+            {
+                return "EMPTY";
+            }
+        }
     }
 }

@@ -142,6 +142,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.Controls.Add(this.REMOVE_BUTTON);
             this.Controls.Add(this.NEW_INVERTER_BUTTON);
             this.Controls.Add(this.DC_SOLAR_BUTTON);

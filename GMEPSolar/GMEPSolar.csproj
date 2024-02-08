@@ -100,10 +100,8 @@
     <None Include="block data\DCSolar4.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="block data\Inverter.json" />
     <None Include="block data\String.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="block data\StringDouble.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="block data\StringText.json">

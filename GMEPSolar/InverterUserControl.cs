@@ -58,5 +58,13 @@ namespace GMEPSolar
             form.AlterComponents();
             form.Show();
         }
+
+        internal Dictionary<string, object> GetInverterFormData()
+        {
+            Dictionary<string, object> data = new Dictionary<string, object>();
+            data["is2P"] = RADIO_2P.Checked;
+            data["isMaster"] = RADIO_MASTER.Checked;
+            return data;
+        }
     }
 }

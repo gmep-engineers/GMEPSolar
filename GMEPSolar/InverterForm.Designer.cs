@@ -48,6 +48,7 @@
             // 
             // CONFIGURATION_GROUP
             // 
+            this.CONFIGURATION_GROUP.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.CONFIGURATION_GROUP.Controls.Add(this.GRID_LOAD_RADIO);
             this.CONFIGURATION_GROUP.Controls.Add(this.LOAD_RADIO);
             this.CONFIGURATION_GROUP.Controls.Add(this.GRID_RADIO);
@@ -66,7 +67,6 @@
             this.GRID_LOAD_RADIO.Name = "GRID_LOAD_RADIO";
             this.GRID_LOAD_RADIO.Size = new System.Drawing.Size(93, 17);
             this.GRID_LOAD_RADIO.TabIndex = 3;
-            this.GRID_LOAD_RADIO.TabStop = true;
             this.GRID_LOAD_RADIO.Text = "GRID + LOAD";
             this.GRID_LOAD_RADIO.UseVisualStyleBackColor = true;
             // 
@@ -77,7 +77,6 @@
             this.LOAD_RADIO.Name = "LOAD_RADIO";
             this.LOAD_RADIO.Size = new System.Drawing.Size(54, 17);
             this.LOAD_RADIO.TabIndex = 2;
-            this.LOAD_RADIO.TabStop = true;
             this.LOAD_RADIO.Text = "LOAD";
             this.LOAD_RADIO.UseVisualStyleBackColor = true;
             // 
@@ -88,13 +87,13 @@
             this.GRID_RADIO.Name = "GRID_RADIO";
             this.GRID_RADIO.Size = new System.Drawing.Size(52, 17);
             this.GRID_RADIO.TabIndex = 1;
-            this.GRID_RADIO.TabStop = true;
             this.GRID_RADIO.Text = "GRID";
             this.GRID_RADIO.UseVisualStyleBackColor = true;
             // 
             // EMPTY_RADIO
             // 
             this.EMPTY_RADIO.AutoSize = true;
+            this.EMPTY_RADIO.Checked = true;
             this.EMPTY_RADIO.Location = new System.Drawing.Point(6, 19);
             this.EMPTY_RADIO.Name = "EMPTY_RADIO";
             this.EMPTY_RADIO.Size = new System.Drawing.Size(62, 17);
@@ -111,6 +110,7 @@
             this.CREATE_BUTTON.TabIndex = 2;
             this.CREATE_BUTTON.Text = "CREATE";
             this.CREATE_BUTTON.UseVisualStyleBackColor = true;
+            this.CREATE_BUTTON.Click += new System.EventHandler(this.CREATE_BUTTON_Click);
             // 
             // InverterForm
             // 

@@ -1,0 +1,1690 @@
+[
+    {
+        "circle": {
+            "layer": "E-CONDUIT",
+            "center": {
+                "x": -0.33597823956413464,
+                "y": -3.0767796081386614,
+                "z": 0.0
+            },
+            "radius": 0.039236382599967569
+        }
+    },
+    {
+        "circle": {
+            "layer": "E-CONDUIT",
+            "center": {
+                "x": -0.20286513573002907,
+                "y": -3.0767796081386614,
+                "z": 0.0
+            },
+            "radius": 0.039236382599967569
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleRight",
+            "text": "GROUND BUS",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -0.53773424512401391,
+                "y": -3.16972281742402,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -0.12585961153019554,
+                "y": -3.1160159907386351,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -0.12585961153019554,
+                "y": -3.0375432255386983,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -0.12585961153019554,
+                "y": -3.1160159907386351,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -0.92043128517612516,
+                "y": -3.1160159907386351,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -0.92043128517612516,
+                "y": -3.0375432255386983,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -0.12585961153019554,
+                "y": -3.0375432255386983,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -0.92043128517612516,
+                "y": -3.1160159907386351,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -0.92043128517612516,
+                "y": -3.0375432255386983,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "MPPT #1",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -5.2275391902647428,
+                "y": -1.9081888501772077,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "line": {
+            "layer": "E-CONDUIT",
+            "startPoint": {
+                "x": -0.20286513573002907,
+                "y": -3.1160159907386351,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -0.20286513573002907,
+                "y": -3.2027289459435977,
+                "z": 0.0
+            },
+            "linetype": "HIDDEN"
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "BottomRight",
+            "text": "*SLAVE_MASTER*",
+            "height": 0.15825921073926139,
+            "lineSpaceDistance": 0.26376535123210232,
+            "location": {
+                "x": -0.056166427107985584,
+                "y": 0.057178503826584404,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "BottomLeft",
+            "text": "*INVERTER_TITLE*\\PSOL-ARK-60K-3P-480V",
+            "height": 0.15825921073926139,
+            "lineSpaceDistance": 0.26376535123210232,
+            "location": {
+                "x": -6.519221239495927,
+                "y": 0.057178503826584404,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "TopLeft",
+            "text": "RSD",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -6.1108349389512142,
+                "y": -0.21356055091080961,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -6.2833674472931875,
+                "y": -0.21354745411079534,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -6.3618402124931208,
+                "y": -0.21354745411079534,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -6.2833674472931875,
+                "y": -0.29202021931072863,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -6.3618402124931208,
+                "y": -0.29202021931072863,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -6.2833674472931875,
+                "y": -0.29202021931072863,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -6.2833674472931875,
+                "y": -0.21354745411079534,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -6.3618402124931208,
+                "y": -0.29202021931072863,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -6.3618402124931208,
+                "y": -0.21354745411079534,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -6.1601998821734085,
+                "y": -0.3814098191504236,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -6.2386726473733418,
+                "y": -0.3814098191504236,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -6.1601998821734085,
+                "y": -0.45988258435036045,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -6.2386726473733418,
+                "y": -0.45988258435036045,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -6.1601998821734085,
+                "y": -0.45988258435036045,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -6.1601998821734085,
+                "y": -0.3814098191504236,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -6.2386726473733418,
+                "y": -0.45988258435036045,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -6.2386726473733418,
+                "y": -0.3814098191504236,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -5.75000973954802,
+                "y": -1.6384045133273801,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -5.75000973954802,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -0.66698207804646614,
+                "y": -1.1695301418665203,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -0.6406818692751024,
+                "y": -1.1204142466253444,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -0.43347641240743684,
+                "y": -1.1695301418665203,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -0.40717620363606954,
+                "y": -1.1204142466253444,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -0.52364254859785575,
+                "y": -1.1695301418665203,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -0.549942757369223,
+                "y": -1.1204142466253444,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "polyline": {
+            "layer": "M-HVAC",
+            "vertices": [
+                {
+                    "x": -5.3229148313264147,
+                    "y": -0.48764146384635154,
+                    "z": 0.0
+                },
+                {
+                    "x": -5.1210929951353847,
+                    "y": -0.48764146384635154,
+                    "z": 0.0
+                }
+            ],
+            "linetype": "ByLayer",
+            "isClosed": false
+        }
+    },
+    {
+        "polyline": {
+            "layer": "M-HVAC",
+            "vertices": [
+                {
+                    "x": -5.3229148313264147,
+                    "y": -0.42709490822160134,
+                    "z": 0.0
+                },
+                {
+                    "x": -5.1210929951353847,
+                    "y": -0.42709490822160134,
+                    "z": 0.0
+                }
+            ],
+            "linetype": "ByLayer",
+            "isClosed": false
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -5.75000973954802,
+                "y": -1.6384045133273801,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -6.2833674472931875,
+                "y": -0.3814098191504236,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -6.3618402124931208,
+                "y": -0.3814098191504236,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -6.2833674472931875,
+                "y": -0.45988258435036045,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -6.3618402124931208,
+                "y": -0.45988258435036045,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": 7.1054273576010019E-15,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -6.5753876666039233,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": 7.1054273576010019E-15,
+                "y": -3.2768090266547638,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -6.5753876666039233,
+                "y": -3.2768090266547638,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -2.8255756801710241,
+                "y": -1.6384045133273801,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -2.8255756801710241,
+                "y": -2.4843331910673854,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -3.5402698408872553,
+                "y": -1.8300531000532381,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -3.5402698408872553,
+                "y": -2.4843331910673854,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "-",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -2.9729343141681888,
+                "y": -2.0035209613973315,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "-",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -3.1350301789450654,
+                "y": -2.0035209613973315,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "+",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -3.2971260437219385,
+                "y": -2.0123862710345293,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "+",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -3.4592219084988187,
+                "y": -2.0123862710345293,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "MPPT #4",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -3.216078111333502,
+                "y": -1.9081888501772077,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": 7.1054273576010019E-15,
+                "y": -3.2768090266547638,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "L3",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -0.12585961153018488,
+                "y": -1.904686263888852,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "circle": {
+            "layer": "Inverter Background",
+            "center": {
+                "x": -0.12585961153019554,
+                "y": -2.1668117050197679,
+                "z": 0.0
+            },
+            "radius": 0.081366872868093132
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": 7.1054273576010019E-15,
+                "y": -1.8300531000532381,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -0.87618017402053994,
+                "y": -1.8300531000532381,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "L2",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -0.43809008701026642,
+                "y": -1.904686263888852,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "L1",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -0.7503205624903373,
+                "y": -1.904686263888852,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "GRID",
+            "height": 0.10107381478769784,
+            "lineSpaceDistance": 0.1684563579794964,
+            "location": {
+                "x": -0.43809008701026642,
+                "y": -1.7407370977025209,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "circle": {
+            "layer": "Inverter Background",
+            "center": {
+                "x": -0.7503205624903373,
+                "y": -2.1668117050197679,
+                "z": 0.0
+            },
+            "radius": 0.081366872868093132
+        }
+    },
+    {
+        "circle": {
+            "layer": "Inverter Background",
+            "center": {
+                "x": -0.43809008701026642,
+                "y": -2.1668117050197679,
+                "z": 0.0
+            },
+            "radius": 0.081366872868093132
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -6.5753876666039233,
+                "y": -1.6384045133273801,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": 7.1054273576010019E-15,
+                "y": -1.6384045133273801,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -0.87618017402053994,
+                "y": -2.484333191067396,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -0.87618017402053994,
+                "y": -1.6384045133273801,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": 7.1054273576010019E-15,
+                "y": -2.484333191067396,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -0.87618017402053994,
+                "y": -2.484333191067396,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -0.94185856005700686,
+                "y": -2.484333191067396,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -0.94185856005700686,
+                "y": -1.6384045133273801,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "L3",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -1.0677181715871988,
+                "y": -1.904686263888852,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "circle": {
+            "layer": "Inverter Background",
+            "center": {
+                "x": -1.0677181715872024,
+                "y": -2.1668117050197679,
+                "z": 0.0
+            },
+            "radius": 0.081366872868093132
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -0.94185856005700686,
+                "y": -1.8300531000532381,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -1.8180387340775539,
+                "y": -1.8300531000532381,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "L2",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -1.3799486470672697,
+                "y": -1.904686263888852,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "L1",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -1.6921791225473442,
+                "y": -1.904686263888852,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "LOAD",
+            "height": 0.10107381478769784,
+            "lineSpaceDistance": 0.1684563579794964,
+            "location": {
+                "x": -1.3799486470672804,
+                "y": -1.7407370977025209,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "circle": {
+            "layer": "Inverter Background",
+            "center": {
+                "x": -1.6921791225473513,
+                "y": -2.1668117050197679,
+                "z": 0.0
+            },
+            "radius": 0.081366872868093132
+        }
+    },
+    {
+        "circle": {
+            "layer": "Inverter Background",
+            "center": {
+                "x": -1.3799486470672804,
+                "y": -2.1668117050197679,
+                "z": 0.0
+            },
+            "radius": 0.081366872868093132
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -1.8180387340775539,
+                "y": -2.484333191067396,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -1.8180387340775539,
+                "y": -1.6384045133273801,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -0.94185856005700686,
+                "y": -2.484333191067396,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -1.8180387340775539,
+                "y": -2.484333191067396,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -1.8837171201140173,
+                "y": -2.484333191067396,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -1.8837171201140173,
+                "y": -1.6384045133273801,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "L3",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -2.0095767316442021,
+                "y": -1.904686263888852,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "circle": {
+            "layer": "Inverter Background",
+            "center": {
+                "x": -2.0095767316442092,
+                "y": -2.1668117050197679,
+                "z": 0.0
+            },
+            "radius": 0.081366872868093132
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -5.617409305854963,
+                "y": -1.8300531000532381,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -6.5753876666039233,
+                "y": -1.8300531000532381,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -6.2833674472931875,
+                "y": -0.45988258435036045,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -6.2833674472931875,
+                "y": -0.3814098191504236,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -6.3618402124931208,
+                "y": -0.45988258435036045,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -6.3618402124931208,
+                "y": -0.3814098191504236,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -6.5753876666039233,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -6.5753876666039233,
+                "y": -3.2768090266547638,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -5.617409305854963,
+                "y": -2.4843331910673854,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -5.617409305854963,
+                "y": -1.6384045133273801,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -6.5753876666039233,
+                "y": -2.4843331910673854,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -5.617409305854963,
+                "y": -2.4843331910673854,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "-",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -5.8200993382597588,
+                "y": -2.0035209613973315,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "-",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -5.982195203036639,
+                "y": -2.0035209613973315,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "+",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -6.1442910678135121,
+                "y": -2.0123862710345293,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "+",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -6.3063869325903852,
+                "y": -2.0123862710345293,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "BATT INPUT X2",
+            "height": 0.10107381478769784,
+            "lineSpaceDistance": 0.1684563579794964,
+            "location": {
+                "x": -6.0963984862294254,
+                "y": -1.7399585357870109,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "polyline": {
+            "layer": "Inverter Background",
+            "vertices": [
+                {
+                    "x": -5.8593357208597254,
+                    "y": -2.0553956461973009,
+                    "z": 0.0
+                },
+                {
+                    "x": -5.7808629556597921,
+                    "y": -2.0553956461973009,
+                    "z": 0.0
+                },
+                {
+                    "x": -5.7808629556597921,
+                    "y": -2.248178577887856,
+                    "z": 0.0
+                },
+                {
+                    "x": -5.8593357208597254,
+                    "y": -2.248178577887856,
+                    "z": 0.0
+                }
+            ],
+            "linetype": "ByLayer",
+            "isClosed": true
+        }
+    },
+    {
+        "polyline": {
+            "layer": "Inverter Background",
+            "vertices": [
+                {
+                    "x": -6.0214315856365985,
+                    "y": -2.0553956461973009,
+                    "z": 0.0
+                },
+                {
+                    "x": -5.9429588204366652,
+                    "y": -2.0553956461973009,
+                    "z": 0.0
+                },
+                {
+                    "x": -5.9429588204366652,
+                    "y": -2.248178577887856,
+                    "z": 0.0
+                },
+                {
+                    "x": -6.0214315856365985,
+                    "y": -2.248178577887856,
+                    "z": 0.0
+                }
+            ],
+            "linetype": "ByLayer",
+            "isClosed": true
+        }
+    },
+    {
+        "polyline": {
+            "layer": "Inverter Background",
+            "vertices": [
+                {
+                    "x": -6.1835274504134787,
+                    "y": -2.0553956461973009,
+                    "z": 0.0
+                },
+                {
+                    "x": -6.1050546852135454,
+                    "y": -2.0553956461973009,
+                    "z": 0.0
+                },
+                {
+                    "x": -6.1050546852135454,
+                    "y": -2.248178577887856,
+                    "z": 0.0
+                },
+                {
+                    "x": -6.1835274504134787,
+                    "y": -2.248178577887856,
+                    "z": 0.0
+                }
+            ],
+            "linetype": "ByLayer",
+            "isClosed": true
+        }
+    },
+    {
+        "polyline": {
+            "layer": "Inverter Background",
+            "vertices": [
+                {
+                    "x": -6.3456233151903518,
+                    "y": -2.0553956461973009,
+                    "z": 0.0
+                },
+                {
+                    "x": -6.2671505499904185,
+                    "y": -2.0553956461973009,
+                    "z": 0.0
+                },
+                {
+                    "x": -6.2671505499904185,
+                    "y": -2.248178577887856,
+                    "z": 0.0
+                },
+                {
+                    "x": -6.3456233151903518,
+                    "y": -2.248178577887856,
+                    "z": 0.0
+                }
+            ],
+            "linetype": "ByLayer",
+            "isClosed": true
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -1.8837171201140173,
+                "y": -1.8300531000532381,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -2.7598972941345572,
+                "y": -1.8300531000532381,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "L2",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -2.32180720712428,
+                "y": -1.904686263888852,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "L1",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -2.634037682604351,
+                "y": -1.904686263888852,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "GEN",
+            "height": 0.10107381478769784,
+            "lineSpaceDistance": 0.1684563579794964,
+            "location": {
+                "x": -2.3218072071242872,
+                "y": -1.7407370977025209,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "circle": {
+            "layer": "Inverter Background",
+            "center": {
+                "x": -2.6340376826043617,
+                "y": -2.1668117050197679,
+                "z": 0.0
+            },
+            "radius": 0.081366872868093132
+        }
+    },
+    {
+        "circle": {
+            "layer": "Inverter Background",
+            "center": {
+                "x": -2.3218072071242872,
+                "y": -2.1668117050197679,
+                "z": 0.0
+            },
+            "radius": 0.081366872868093132
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -2.7598972941345572,
+                "y": -2.484333191067396,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -2.7598972941345572,
+                "y": -1.6384045133273801,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -1.8837171201140173,
+                "y": -2.484333191067396,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -2.7598972941345572,
+                "y": -2.484333191067396,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -2.8255756801710241,
+                "y": -1.8300531000532381,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -5.5517309198184961,
+                "y": -1.8300531000532381,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -5.5517309198184961,
+                "y": -1.6384045133273801,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -5.5517309198184961,
+                "y": -2.4843331910673854,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -5.5517309198184961,
+                "y": -2.4843331910673854,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -2.8255756801710241,
+                "y": -2.4843331910673854,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "-",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -3.6213177732756918,
+                "y": -2.0035209613973315,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "-",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -3.7834136380525685,
+                "y": -2.0035209613973315,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "+",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -3.9455095028294487,
+                "y": -2.0123862710345293,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "+",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -4.1076053676063253,
+                "y": -2.0123862710345293,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "MPPT #3",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -3.8644615704410086,
+                "y": -1.9081888501772077,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "-",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -4.2697012323831984,
+                "y": -2.0035209613973315,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "-",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -4.4317970971600715,
+                "y": -2.0035209613973315,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "+",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -4.5938929619369446,
+                "y": -2.0123862710345293,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "+",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -4.7559888267138319,
+                "y": -2.0123862710345293,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "MPPT #2",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -4.5128450295485116,
+                "y": -1.9081888501772077,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "-",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -4.918084691490705,
+                "y": -2.0035209613973315,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "-",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -5.0801805562675781,
+                "y": -2.0035209613973315,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "+",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -5.2422764210444583,
+                "y": -2.0123862710345293,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "+",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -5.4043722858213314,
+                "y": -2.0123862710345293,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "TopLeft",
+            "text": "COM",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -6.1108349389512142,
+                "y": -0.38142291595043076,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -4.1886532999947619,
+                "y": -1.8300531000532381,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -4.1886532999947619,
+                "y": -2.4843331910673854,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -4.8370367591022685,
+                "y": -1.8300531000532381,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -4.8370367591022685,
+                "y": -2.4843331910673854,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "DC SOLAR INPUT",
+            "height": 0.10107381478769784,
+            "lineSpaceDistance": 0.1684563579794964,
+            "location": {
+                "x": -4.1886532999947548,
+                "y": -1.7399585357870215,
+                "z": 0.0
+            }
+        }
+    }
+]
