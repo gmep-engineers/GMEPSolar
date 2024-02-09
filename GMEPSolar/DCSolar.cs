@@ -159,6 +159,8 @@ namespace GMEPSolar
                 ed
             );
 
+            HelperMethods.SaveDataToJsonFile(connectionPoints, "connectionPoints.json");
+
             var mpptEndPointsFlattened = mpptEndPoints.SelectMany(x => x).ToList();
 
             var aboveAndBelow = GetNumberOfPointsAboveAndBelow(
@@ -230,14 +232,6 @@ namespace GMEPSolar
             var LINE_SPACING = 0.1621 / 2;
             var CLOSEST_DISTANCE_FROM_STRING = 0.1621 / 2;
             var initialBelowValue = aboveAndBelow["below"];
-
-            var ed = Autodesk
-                .AutoCAD
-                .ApplicationServices
-                .Application
-                .DocumentManager
-                .MdiActiveDocument
-                .Editor;
 
             for (var i = 0; i < connectionPoints.Count; i++)
             {
@@ -312,7 +306,7 @@ namespace GMEPSolar
 
                 var thirdHorizontalLineEndPoint = new Dictionary<string, double>
                 {
-                    { "x", STRING_X },
+                    { "x", connectionPoints[0]["x"] },
                     { "y", secondVerticalLineEndPoint["y"] }
                 };
 
