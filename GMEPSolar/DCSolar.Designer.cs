@@ -67,7 +67,9 @@
             this.SET_ALL_MODULES_BUTTON = new System.Windows.Forms.Button();
             this.NUMBER_ALL_MODULES_TEXTBOX = new System.Windows.Forms.TextBox();
             this.INCREASE_Y_LABEL = new System.Windows.Forms.Label();
-            this.INCREASE_TEXTBOX = new System.Windows.Forms.TextBox();
+            this.INCREASE_Y_TEXTBOX = new System.Windows.Forms.TextBox();
+            this.INCREASE_X_TEXTBOX = new System.Windows.Forms.TextBox();
+            this.INCREASE_X_LABEL = new System.Windows.Forms.Label();
             this.MPPT1_GROUPBOX.SuspendLayout();
             this.MPPT2_GROUPBOX.SuspendLayout();
             this.MPPT3_GROUPBOX.SuspendLayout();
@@ -412,7 +414,7 @@
             // 
             // CREATE_BUTTON
             // 
-            this.CREATE_BUTTON.Location = new System.Drawing.Point(16, 273);
+            this.CREATE_BUTTON.Location = new System.Drawing.Point(16, 275);
             this.CREATE_BUTTON.Name = "CREATE_BUTTON";
             this.CREATE_BUTTON.Size = new System.Drawing.Size(615, 23);
             this.CREATE_BUTTON.TabIndex = 21;
@@ -422,7 +424,7 @@
             // 
             // ENABLE_ALL_BUTTON
             // 
-            this.ENABLE_ALL_BUTTON.Location = new System.Drawing.Point(16, 244);
+            this.ENABLE_ALL_BUTTON.Location = new System.Drawing.Point(16, 247);
             this.ENABLE_ALL_BUTTON.Name = "ENABLE_ALL_BUTTON";
             this.ENABLE_ALL_BUTTON.Size = new System.Drawing.Size(99, 23);
             this.ENABLE_ALL_BUTTON.TabIndex = 22;
@@ -432,7 +434,7 @@
             // 
             // ALL_REGULAR_BUTTON
             // 
-            this.ALL_REGULAR_BUTTON.Location = new System.Drawing.Point(121, 244);
+            this.ALL_REGULAR_BUTTON.Location = new System.Drawing.Point(121, 247);
             this.ALL_REGULAR_BUTTON.Name = "ALL_REGULAR_BUTTON";
             this.ALL_REGULAR_BUTTON.Size = new System.Drawing.Size(103, 23);
             this.ALL_REGULAR_BUTTON.TabIndex = 23;
@@ -442,7 +444,7 @@
             // 
             // ALL_PARALLEL_BUTTON
             // 
-            this.ALL_PARALLEL_BUTTON.Location = new System.Drawing.Point(230, 244);
+            this.ALL_PARALLEL_BUTTON.Location = new System.Drawing.Point(230, 247);
             this.ALL_PARALLEL_BUTTON.Name = "ALL_PARALLEL_BUTTON";
             this.ALL_PARALLEL_BUTTON.Size = new System.Drawing.Size(103, 23);
             this.ALL_PARALLEL_BUTTON.TabIndex = 24;
@@ -452,7 +454,7 @@
             // 
             // SET_ALL_MODULES_BUTTON
             // 
-            this.SET_ALL_MODULES_BUTTON.Location = new System.Drawing.Point(501, 244);
+            this.SET_ALL_MODULES_BUTTON.Location = new System.Drawing.Point(501, 247);
             this.SET_ALL_MODULES_BUTTON.Name = "SET_ALL_MODULES_BUTTON";
             this.SET_ALL_MODULES_BUTTON.Size = new System.Drawing.Size(130, 23);
             this.SET_ALL_MODULES_BUTTON.TabIndex = 25;
@@ -462,7 +464,7 @@
             // 
             // NUMBER_ALL_MODULES_TEXTBOX
             // 
-            this.NUMBER_ALL_MODULES_TEXTBOX.Location = new System.Drawing.Point(340, 245);
+            this.NUMBER_ALL_MODULES_TEXTBOX.Location = new System.Drawing.Point(340, 248);
             this.NUMBER_ALL_MODULES_TEXTBOX.Name = "NUMBER_ALL_MODULES_TEXTBOX";
             this.NUMBER_ALL_MODULES_TEXTBOX.Size = new System.Drawing.Size(155, 20);
             this.NUMBER_ALL_MODULES_TEXTBOX.TabIndex = 26;
@@ -470,25 +472,43 @@
             // INCREASE_Y_LABEL
             // 
             this.INCREASE_Y_LABEL.AutoSize = true;
-            this.INCREASE_Y_LABEL.Location = new System.Drawing.Point(19, 202);
+            this.INCREASE_Y_LABEL.Location = new System.Drawing.Point(232, 202);
             this.INCREASE_Y_LABEL.Name = "INCREASE_Y_LABEL";
             this.INCREASE_Y_LABEL.Size = new System.Drawing.Size(193, 13);
             this.INCREASE_Y_LABEL.TabIndex = 28;
             this.INCREASE_Y_LABEL.Text = "INCREASE Y POSITION OF STRINGS";
             // 
-            // INCREASE_TEXTBOX
+            // INCREASE_Y_TEXTBOX
             // 
-            this.INCREASE_TEXTBOX.Location = new System.Drawing.Point(16, 219);
-            this.INCREASE_TEXTBOX.Name = "INCREASE_TEXTBOX";
-            this.INCREASE_TEXTBOX.Size = new System.Drawing.Size(196, 20);
-            this.INCREASE_TEXTBOX.TabIndex = 29;
+            this.INCREASE_Y_TEXTBOX.Location = new System.Drawing.Point(229, 219);
+            this.INCREASE_Y_TEXTBOX.Name = "INCREASE_Y_TEXTBOX";
+            this.INCREASE_Y_TEXTBOX.Size = new System.Drawing.Size(200, 20);
+            this.INCREASE_Y_TEXTBOX.TabIndex = 29;
+            // 
+            // INCREASE_X_TEXTBOX
+            // 
+            this.INCREASE_X_TEXTBOX.Location = new System.Drawing.Point(19, 219);
+            this.INCREASE_X_TEXTBOX.Name = "INCREASE_X_TEXTBOX";
+            this.INCREASE_X_TEXTBOX.Size = new System.Drawing.Size(200, 20);
+            this.INCREASE_X_TEXTBOX.TabIndex = 31;
+            // 
+            // INCREASE_X_LABEL
+            // 
+            this.INCREASE_X_LABEL.AutoSize = true;
+            this.INCREASE_X_LABEL.Location = new System.Drawing.Point(22, 202);
+            this.INCREASE_X_LABEL.Name = "INCREASE_X_LABEL";
+            this.INCREASE_X_LABEL.Size = new System.Drawing.Size(193, 13);
+            this.INCREASE_X_LABEL.TabIndex = 30;
+            this.INCREASE_X_LABEL.Text = "INCREASE X POSITION OF STRINGS";
             // 
             // DC_SOLAR_INPUT
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(647, 313);
-            this.Controls.Add(this.INCREASE_TEXTBOX);
+            this.Controls.Add(this.INCREASE_X_TEXTBOX);
+            this.Controls.Add(this.INCREASE_X_LABEL);
+            this.Controls.Add(this.INCREASE_Y_TEXTBOX);
             this.Controls.Add(this.INCREASE_Y_LABEL);
             this.Controls.Add(this.NUMBER_ALL_MODULES_TEXTBOX);
             this.Controls.Add(this.SET_ALL_MODULES_BUTTON);
@@ -572,7 +592,9 @@
         private System.Windows.Forms.RadioButton MPPT3_RADIO_EMPTY;
         private System.Windows.Forms.RadioButton MPPT4_RADIO_EMPTY;
         private System.Windows.Forms.Label INCREASE_Y_LABEL;
-        public System.Windows.Forms.TextBox INCREASE_TEXTBOX;
+        public System.Windows.Forms.TextBox INCREASE_Y_TEXTBOX;
+        public System.Windows.Forms.TextBox INCREASE_X_TEXTBOX;
+        private System.Windows.Forms.Label INCREASE_X_LABEL;
     }
 }
 

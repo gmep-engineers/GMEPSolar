@@ -282,7 +282,7 @@ namespace GMEPSolar
                                 parsedData["Z"] + point.Z
                             );
 
-                            DC_SOLAR_INPUT.CreateDCSolarObject(dcSolarData, "0", placement);
+                            DC_SOLAR_INPUT.CreateDCSolarObject(dcSolarData, "0", "0", placement);
                         }
                     }
                 }

@@ -16,8 +16,8 @@ namespace GMEPSolar
 {
     public partial class DC_SOLAR_INPUT : Form
     {
-        InverterForm inverterForm;
-        int id;
+        readonly InverterForm inverterForm;
+        readonly int id;
 
         public DC_SOLAR_INPUT(InverterForm inverterForm = null, int id = 0)
         {
@@ -29,13 +29,11 @@ namespace GMEPSolar
 
         public static void CreateDCSolarObject(
             Dictionary<string, Dictionary<string, object>> formData,
-            string INCREASE_TEXTBOX,
+            string INCREASE_Y_TEXTBOX,
+            string INCREASE_X_TEXTBOX,
             Point3d selectedPoint
         )
         {
-            HelperMethods.SaveDataToJsonFile(formData, "FORMDATA.json");
-            HelperMethods.SaveDataToJsonFile(selectedPoint, "SELECTEDPOINT.json");
-
             Editor ed = Autodesk
                 .AutoCAD
                 .ApplicationServices
@@ -75,7 +73,8 @@ namespace GMEPSolar
                 numberOfMPPTs,
                 selectedPoint,
                 mpptEndPoints,
-                INCREASE_TEXTBOX
+                INCREASE_Y_TEXTBOX,
+                INCREASE_X_TEXTBOX
             );
         }
 
@@ -99,7 +98,8 @@ namespace GMEPSolar
             int numberOfMPPTs,
             Point3d selectedPoint,
             List<List<Dictionary<string, double>>> mpptEndPoints,
-            string INCREASE_TEXTBOX
+            string INCREASE_TEXTBOX_Y,
+            string INCREASE_TEXTBOX_X
         )
         {
             var ed = Autodesk
@@ -135,13 +135,20 @@ namespace GMEPSolar
             );
 
             var increaseY = 0.0;
+            var increaseX = 0.0;
 
-            if (INCREASE_TEXTBOX != "")
+            if (INCREASE_TEXTBOX_X != "")
             {
-                increaseY = Convert.ToDouble(INCREASE_TEXTBOX);
+                increaseX = Convert.ToDouble(INCREASE_TEXTBOX_X);
+                stringStartPoint = new Point3d(stringMidPointX + increaseX, stringStartPoint.Y, 0);
+            }
+
+            if (INCREASE_TEXTBOX_Y != "")
+            {
+                increaseY = Convert.ToDouble(INCREASE_TEXTBOX_Y);
                 stringStartPoint = new Point3d(
-                    stringMidPointX,
-                    stringMidPointY + stringTotalHeight / 2 + increaseY,
+                    stringStartPoint.X,
+                    stringStartPoint.Y + increaseY,
                     0
                 );
             }
@@ -238,7 +245,6 @@ namespace GMEPSolar
                 var connectionPoint = connectionPoints[i];
 
                 var xDistance = Math.Abs(mpptEndPoint["x"] - connectionPoint["x"]);
-                var yDistance = Math.Abs(mpptEndPoint["y"] - connectionPoint["y"]);
 
                 var isAbove = connectionPoint["y"] > mpptEndPoint["y"];
 
@@ -1077,16 +1083,28 @@ namespace GMEPSolar
 
         internal void AlterComponents()
         {
-            if (INCREASE_TEXTBOX != null)
+            if (INCREASE_Y_TEXTBOX != null)
             {
-                INCREASE_TEXTBOX.Dispose();
-                INCREASE_TEXTBOX = null;
+                INCREASE_Y_TEXTBOX.Dispose();
+                INCREASE_Y_TEXTBOX = null;
             }
 
             if (INCREASE_Y_LABEL != null)
             {
                 INCREASE_Y_LABEL.Dispose();
                 INCREASE_Y_LABEL = null;
+            }
+
+            if (INCREASE_X_TEXTBOX != null)
+            {
+                INCREASE_X_TEXTBOX.Dispose();
+                INCREASE_X_TEXTBOX = null;
+            }
+
+            if (INCREASE_X_LABEL != null)
+            {
+                INCREASE_X_LABEL.Dispose();
+                INCREASE_X_LABEL = null;
             }
 
             CREATE_BUTTON.Text = "DONE";
@@ -1205,6 +1223,9 @@ namespace GMEPSolar
 
             var isToBeLeftOpen = GetNumberOfMPPTs(data) == 0;
 
+            var increaseY = INCREASE_Y_TEXTBOX.Text;
+            var increaseX = INCREASE_X_TEXTBOX.Text;
+
             if (!isToBeLeftOpen)
             {
                 Close();
@@ -1215,7 +1236,7 @@ namespace GMEPSolar
                     Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.LockDocument()
             )
             {
-                CreateDCSolarObject(data, INCREASE_TEXTBOX.Text, new Point3d(0, 0, 0));
+                CreateDCSolarObject(data, increaseY, increaseX, new Point3d(0, 0, 0));
             }
         }
 
