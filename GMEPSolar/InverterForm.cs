@@ -264,8 +264,6 @@ namespace GMEPSolar
                         var inverterData =
                             inverterFormData["InverterData"] as List<Dictionary<string, object>>;
 
-                        HelperMethods.SaveDataToJsonFile(inverterData, "InverterData.json");
-
                         foreach (var currentInverterData in inverterData)
                         {
                             CreateInverter(point, currentInverterData, ed);
@@ -301,11 +299,6 @@ namespace GMEPSolar
                                 );
 
                                 var stringDataContainer = GetStringData(dcSolarData);
-
-                                HelperMethods.SaveDataToJsonFile(
-                                    stringDataContainer,
-                                    "DCSolarData.json"
-                                );
 
                                 var numberOfConduit = GetNumberOfConduit(dcSolarData);
 

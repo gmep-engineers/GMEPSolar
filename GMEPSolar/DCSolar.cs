@@ -111,6 +111,12 @@ namespace GMEPSolar
                 .Editor;
 
             var lineStartPointX = selectedPoint.X - (0.5673 + (0.6484 * (numberOfMPPTs - 1)));
+
+            if (numberOfMPPTs == 1)
+            {
+                lineStartPointX = selectedPoint.X - (1.0213 + (0.6484 * (numberOfMPPTs - 1)));
+            }
+
             var lineStartPointY = selectedPoint.Y - 0.6098;
             var stringMidPointX = lineStartPointX - 3.3606;
             var stringMidPointY = lineStartPointY - 1.2706;
@@ -125,8 +131,6 @@ namespace GMEPSolar
             var skipIndices = new List<int>();
 
             skipIndices = GetIndicesToSkip(formData);
-
-            HelperMethods.SaveDataToJsonFile(stringDataContainer, "stringDataContainer.json");
 
             var stringTotalHeight = GetTotalHeightOfStringModule(stringDataContainer);
 
@@ -155,9 +159,12 @@ namespace GMEPSolar
                 );
             }
 
+            var stringsPerChunk = GetStringsPerChunk(stringDataContainer);
+
             var connectionPoints = CreateStringsAndReturnConnectionPoints(
                 stringDataContainer,
                 stringStartPoint,
+                stringsPerChunk,
                 ed
             );
 
@@ -175,6 +182,40 @@ namespace GMEPSolar
                 stringMidPointX,
                 skipIndices
             );
+        }
+
+        private static List<int> GetStringsPerChunk(
+            List<Dictionary<string, object>> stringDataContainer
+        )
+        {
+            var stringsPerChunk = new List<int>();
+            int stringCount = 0;
+
+            var allItems = stringDataContainer.SelectMany(dict => dict["items"] as List<string>);
+
+            foreach (var itemType in allItems)
+            {
+                if (itemType == "string")
+                {
+                    stringCount++;
+                }
+                else
+                {
+                    if (stringCount > 0)
+                    {
+                        stringsPerChunk.Add(stringCount);
+                        stringCount = 0;
+                    }
+                }
+            }
+
+            // If the last item was a "string", add the count to the list
+            if (stringCount > 0)
+            {
+                stringsPerChunk.Add(stringCount);
+            }
+
+            return stringsPerChunk;
         }
 
         private static List<int> GetIndicesToSkip(
@@ -410,12 +451,14 @@ namespace GMEPSolar
         private static List<Dictionary<string, double>> CreateStringsAndReturnConnectionPoints(
             List<Dictionary<string, object>> stringDataContainer,
             Point3d stringStartPoint,
+            List<int> stringsPerChunk,
             Editor ed
         )
         {
             var TEXT_HEIGHT = 0.8334;
             var STRING_HEIGHT = 1.0695;
             var CELL_SPACING = 0.1621;
+            int stringIndex = 0;
             var connectionPoints = new List<Dictionary<string, double>>();
             var startPoint = new Dictionary<string, double>
             {
@@ -430,15 +473,18 @@ namespace GMEPSolar
                 {
                     continue;
                 }
-                var module = 0;
-                int.TryParse(stringData["module"].ToString(), out module);
+                int.TryParse(stringData["module"].ToString(), out int module);
                 foreach (var item in items)
                 {
                     if (item == "text")
                     {
+                        var stringAmountPerChunk = stringsPerChunk[stringIndex];
+                        stringIndex++;
+
                         CreateStringTextInCAD(
                             ed,
                             new Point3d(startPoint["x"], startPoint["y"], 0),
+                            stringAmountPerChunk,
                             module
                         );
                         startPoint["y"] -= TEXT_HEIGHT;
@@ -470,7 +516,12 @@ namespace GMEPSolar
             return connectionPoints;
         }
 
-        private static void CreateStringTextInCAD(Editor ed, Point3d startPoint, int module)
+        private static void CreateStringTextInCAD(
+            Editor ed,
+            Point3d startPoint,
+            int stringAmountPerChunk,
+            int module
+        )
         {
             var dllPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var jsonPath = Path.Combine(dllPath, $"block data/StringText.json");
@@ -479,10 +530,12 @@ namespace GMEPSolar
                 .Parse(json)
                 .ToObject<List<Dictionary<string, Dictionary<string, object>>>>();
 
-            stringTextData[0]["mtext"]["text"] = stringTextData[0]
-                ["mtext"]["text"]
-                .ToString()
-                .Replace("*", module.ToString().PadLeft(2, '0'));
+            stringTextData[0]["mtext"]["text"] =
+                stringTextData[0]
+                    ["mtext"]["text"]
+                    .ToString()
+                    .Replace("*", module.ToString().PadLeft(2, '0'))
+                    .Replace("STRING 1", $"{stringAmountPerChunk} STRINGS") + " EA.";
 
             BlockDataMethods.CreateObjectGivenData(stringTextData, ed, startPoint);
         }
