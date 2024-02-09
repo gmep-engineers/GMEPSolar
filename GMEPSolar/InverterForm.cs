@@ -36,14 +36,28 @@ namespace GMEPSolar
 
         private void CreateInverter(
             Point3d point,
-            Dictionary<string, object> inverterFormData,
+            Dictionary<string, object> inverterData,
             Editor ed
         )
         {
-            string path = "block data/Inverter.json";
+            string path = "block data/Inverter2P.json";
             var data = BlockDataMethods.GetData(path);
+            Point3d center1 = new Point3d(
+                -0.33597823956413464 + point.X,
+                -3.0767796081386578 + point.Y,
+                0.0 + point.Z
+            );
+            double radius1 = 0.039236382599967569;
+            Point3d center2 = new Point3d(
+                -0.20286513573002907 + point.X,
+                -3.0767796081386578 + point.Y,
+                0.0 + point.Z
+            );
+            double radius2 = 0.039236382599967569;
 
             BlockDataMethods.CreateObjectGivenData(data, ed, point);
+            BlockDataMethods.CreateFilledCircleInPaperSpace(center1, radius1);
+            BlockDataMethods.CreateFilledCircleInPaperSpace(center2, radius2);
         }
 
         public InverterUserControl CreateNewPanelTab(string tabName)
@@ -226,7 +240,9 @@ namespace GMEPSolar
         private void CREATE_BUTTON_Click(object sender, EventArgs e)
         {
             var inverterFormData = GetInverterFormData();
-            HelperMethods.SaveDataToJsonFile(inverterFormData, "InverterFormData.json");
+            var INVERTER_HEIGHT = 5.75;
+            var REDUCING_FACTOR = 0.081;
+            var MAXIMUM_CONDUIT = 16;
 
             Close();
 
@@ -243,50 +259,189 @@ namespace GMEPSolar
                         Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.LockDocument()
                 )
                 {
-                    CreateInverter(point, inverterFormData, ed);
-
                     if (inverterFormData.ContainsKey("InverterData"))
                     {
                         var inverterData =
                             inverterFormData["InverterData"] as List<Dictionary<string, object>>;
 
-                        var firstDCSolarData = inverterData[0];
+                        HelperMethods.SaveDataToJsonFile(inverterData, "InverterData.json");
 
-                        if (firstDCSolarData.ContainsKey("DCSolarData"))
+                        foreach (var currentInverterData in inverterData)
                         {
-                            var dcSolarData =
-                                firstDCSolarData["DCSolarData"]
-                                as Dictionary<string, Dictionary<string, object>>;
+                            CreateInverter(point, currentInverterData, ed);
 
-                            var numberOfMPPTs = GetNumberOfMPPTs(dcSolarData);
-                            var json = "";
-
-                            if (numberOfMPPTs != 0)
+                            if (currentInverterData.ContainsKey("DCSolarData"))
                             {
-                                json = BlockDataMethods.GetUnparsedJSONData(
-                                    $"dc solar placement data/DCSolar{numberOfMPPTs}PlacementPoint.json"
+                                var dcSolarData =
+                                    currentInverterData["DCSolarData"]
+                                    as Dictionary<string, Dictionary<string, object>>;
+
+                                var numberOfMPPTs = GetNumberOfMPPTs(dcSolarData);
+                                string json;
+
+                                if (numberOfMPPTs != 0)
+                                {
+                                    json = BlockDataMethods.GetUnparsedJSONData(
+                                        $"dc solar placement data/DCSolar{numberOfMPPTs}PlacementPoint.json"
+                                    );
+                                }
+                                else
+                                {
+                                    return;
+                                }
+
+                                var parsedData = JsonConvert.DeserializeObject<
+                                    Dictionary<string, double>
+                                >(json);
+
+                                var placement = new Point3d(
+                                    parsedData["X"] + point.X,
+                                    parsedData["Y"] + point.Y,
+                                    parsedData["Z"] + point.Z
                                 );
+
+                                var stringDataContainer = GetStringData(dcSolarData);
+
+                                HelperMethods.SaveDataToJsonFile(
+                                    stringDataContainer,
+                                    "DCSolarData.json"
+                                );
+
+                                var numberOfConduit = GetNumberOfConduit(dcSolarData);
+
+                                var stringTotalHeight = GetTotalHeightOfStringModule(
+                                    stringDataContainer
+                                );
+
+                                var lineStartPointX =
+                                    point.X - (0.5673 + (0.6484 * (numberOfMPPTs - 1)));
+                                var lineStartPointY = point.Y - 0.6098;
+
+                                var stringDefaultMidPointX = lineStartPointX - 3.3606;
+                                var stringDefaultMidPointY = lineStartPointY - 1.3;
+
+                                var topOfStringY = lineStartPointY + 2.9784;
+
+                                var shiftYDown = (
+                                    topOfStringY - stringDefaultMidPointY - stringTotalHeight / 2
+                                );
+
+                                DC_SOLAR_INPUT.CreateDCSolarObject(
+                                    dcSolarData,
+                                    shiftYDown.ToString(),
+                                    "0",
+                                    placement
+                                );
+
+                                var adjustedInverterHeight =
+                                    INVERTER_HEIGHT
+                                    - ((MAXIMUM_CONDUIT - numberOfConduit) * REDUCING_FACTOR);
+
+                                if (stringTotalHeight > adjustedInverterHeight)
+                                {
+                                    point = new Point3d(
+                                        point.X,
+                                        point.Y - (stringTotalHeight),
+                                        point.Z
+                                    );
+                                }
+                                else
+                                {
+                                    point = new Point3d(
+                                        point.X,
+                                        point.Y - (adjustedInverterHeight),
+                                        point.Z
+                                    );
+                                }
                             }
-                            else
-                            {
-                                return;
-                            }
-
-                            var parsedData = JsonConvert.DeserializeObject<
-                                Dictionary<string, double>
-                            >(json);
-
-                            var placement = new Point3d(
-                                parsedData["X"] + point.X,
-                                parsedData["Y"] + point.Y,
-                                parsedData["Z"] + point.Z
-                            );
-
-                            DC_SOLAR_INPUT.CreateDCSolarObject(dcSolarData, "0", "0", placement);
                         }
                     }
                 }
             }
+        }
+
+        private int GetNumberOfConduit(Dictionary<string, Dictionary<string, object>> dcSolarData)
+        {
+            int numberOfConduit = 0;
+            foreach (var stringData in dcSolarData.Values)
+            {
+                if (stringData.ContainsKey("items"))
+                {
+                    var items = stringData["items"] as List<string>;
+                    numberOfConduit += items.Count(item => item == "string");
+                }
+            }
+            return numberOfConduit * 2;
+        }
+
+        private static double GetTotalHeightOfStringModule(
+            List<Dictionary<string, object>> stringDataContainer
+        )
+        {
+            double totalHeight = 0;
+            foreach (var stringData in stringDataContainer)
+            {
+                totalHeight += Convert.ToDouble(stringData["height"]);
+            }
+            return totalHeight;
+        }
+
+        private static List<Dictionary<string, object>> GetStringData(
+            Dictionary<string, Dictionary<string, object>> formData
+        )
+        {
+            var stringDataContainer = new List<Dictionary<string, object>>();
+            var firstFlag = true;
+            var previousModulesCount = 0;
+
+            foreach (var mppt in formData)
+            {
+                var stringData = new Dictionary<string, object>();
+                stringData["height"] = 0.0;
+                stringData["items"] = new List<string>();
+
+                var mpptData = mppt.Value;
+                stringData["module"] = mpptData["Input"];
+
+                if (Convert.ToBoolean(mpptData["Enabled"]))
+                {
+                    var isRegular = Convert.ToBoolean(mpptData["Regular"]);
+                    var isParallel = Convert.ToBoolean(mpptData["Parallel"]);
+                    var modulesCount = 0;
+                    if (isRegular || isParallel)
+                    {
+                        int.TryParse((string)mpptData["Input"], out modulesCount);
+                    }
+
+                    if (firstFlag && (isRegular || isParallel))
+                    {
+                        firstFlag = false;
+                        stringData["height"] = (double)stringData["height"] + 0.8334;
+                        ((List<string>)stringData["items"]).Add("text");
+                        previousModulesCount = modulesCount;
+                    }
+                    else if ((isRegular || isParallel) && modulesCount != previousModulesCount)
+                    {
+                        stringData["height"] = (double)stringData["height"] + 0.8334;
+                        ((List<string>)stringData["items"]).Add("text");
+                        previousModulesCount = modulesCount;
+                    }
+
+                    if (isRegular)
+                    {
+                        stringData["height"] = (double)stringData["height"] + 1.0695;
+                        ((List<string>)stringData["items"]).Add("string");
+                    }
+                    else if (isParallel)
+                    {
+                        stringData["height"] = (double)stringData["height"] + (1.0695 * 2);
+                        ((List<string>)stringData["items"]).Add("string");
+                        ((List<string>)stringData["items"]).Add("string");
+                    }
+                }
+                stringDataContainer.Add(stringData);
+            }
+            return stringDataContainer;
         }
 
         private static int GetNumberOfMPPTs(Dictionary<string, Dictionary<string, object>> formData)

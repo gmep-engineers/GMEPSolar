@@ -126,6 +126,8 @@ namespace GMEPSolar
 
             skipIndices = GetIndicesToSkip(formData);
 
+            HelperMethods.SaveDataToJsonFile(stringDataContainer, "stringDataContainer.json");
+
             var stringTotalHeight = GetTotalHeightOfStringModule(stringDataContainer);
 
             var stringStartPoint = new Point3d(
@@ -158,8 +160,6 @@ namespace GMEPSolar
                 stringStartPoint,
                 ed
             );
-
-            HelperMethods.SaveDataToJsonFile(connectionPoints, "connectionPoints.json");
 
             var mpptEndPointsFlattened = mpptEndPoints.SelectMany(x => x).ToList();
 

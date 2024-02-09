@@ -91,16 +91,36 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="block data\**">
+    <Content Include="block data\DCSolar1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="block data\DCSolar2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="block data\DCSolar3.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="block data\DCSolar4.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="block data\Inverter2P.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="block data\String.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="block data\StringText.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-    <ItemGroup>
-	    <Content Include="dc solar placement data\**">
-		    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	    </Content>
-    </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="dc solar placement data\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="block data\Inverter3P.json" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>start "" "C:\Program Files\Autodesk\AutoCAD 2023\acad.exe" "C:\Users\JacobH\OneDrive - GMEPE\Documents\Solar\Solar String Example.dwg"</PostBuildEvent>
