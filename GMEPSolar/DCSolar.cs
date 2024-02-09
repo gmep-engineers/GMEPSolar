@@ -1205,18 +1205,42 @@ namespace GMEPSolar
 
         private void ALL_REGULAR_BUTTON_Click(object sender, EventArgs e)
         {
-            MPPT1_RADIO_REGULAR.Checked = true;
-            MPPT2_RADIO_REGULAR.Checked = true;
-            MPPT3_RADIO_REGULAR.Checked = true;
-            MPPT4_RADIO_REGULAR.Checked = true;
+            if (MPPT1_RADIO_REGULAR.Enabled)
+            {
+                MPPT1_RADIO_REGULAR.Checked = true;
+            }
+            if (MPPT2_RADIO_REGULAR.Enabled)
+            {
+                MPPT2_RADIO_REGULAR.Checked = true;
+            }
+            if (MPPT3_RADIO_REGULAR.Enabled)
+            {
+                MPPT3_RADIO_REGULAR.Checked = true;
+            }
+            if (MPPT4_RADIO_REGULAR.Enabled)
+            {
+                MPPT4_RADIO_REGULAR.Checked = true;
+            }
         }
 
         private void ALL_PARALLEL_BUTTON_Click(object sender, EventArgs e)
         {
-            MPPT1_RADIO_PARALLEL.Checked = true;
-            MPPT2_RADIO_PARALLEL.Checked = true;
-            MPPT3_RADIO_PARALLEL.Checked = true;
-            MPPT4_RADIO_PARALLEL.Checked = true;
+            if (MPPT1_RADIO_PARALLEL.Enabled)
+            {
+                MPPT1_RADIO_PARALLEL.Checked = true;
+            }
+            if (MPPT2_RADIO_PARALLEL.Enabled)
+            {
+                MPPT2_RADIO_PARALLEL.Checked = true;
+            }
+            if (MPPT3_RADIO_PARALLEL.Enabled)
+            {
+                MPPT3_RADIO_PARALLEL.Checked = true;
+            }
+            if (MPPT4_RADIO_PARALLEL.Enabled)
+            {
+                MPPT4_RADIO_PARALLEL.Checked = true;
+            }
         }
 
         private void SET_ALL_MODULES_BUTTON_Click(object sender, EventArgs e)
