@@ -1,0 +1,120 @@
+[
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "TopLeft",
+            "text": "{\\Farctext|c0;RS485}",
+            "height": 0.10308337007706908,
+            "lineSpaceDistance": 0.17180561679511511,
+            "location": {
+                "x": -7.6376342874744978,
+                "y": 0.67302857177713094,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "line": {
+            "layer": "E-TEXT",
+            "startPoint": {
+                "x": -7.0607399833508637,
+                "y": 0.62071314145698864,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -7.125293483352813,
+                "y": 0.62071314145698864,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "TopLeft",
+            "text": "RAPID SHUTDOWN\\PE-PUSH BUTTON\\P(PV/ESS)\\PWITHIN SIGHT, 3FT\\POF MAIN PANEL",
+            "height": 0.10308337007706908,
+            "lineSpaceDistance": 0.17180561679511511,
+            "location": {
+                "x": -8.3474939372203565,
+                "y": -0.62722225447394564,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "line": {
+            "layer": "E-TEXT",
+            "startPoint": {
+                "x": -7.0607399833508637,
+                "y": -0.074467191134093724,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -7.0607399833508637,
+                "y": 0.62071314145698864,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "circle": {
+            "layer": "Inverter Background",
+            "center": {
+                "x": -7.8997197718687744,
+                "y": -0.064320596764321891,
+                "z": 0.0
+            },
+            "radius": 0.26298809864790867
+        }
+    },
+    {
+        "polyline": {
+            "layer": "Inverter Background",
+            "vertices": [
+                {
+                    "x": -8.3426072238522835,
+                    "y": 0.39751153079972568,
+                    "z": 0.0
+                },
+                {
+                    "x": -7.4568323198852724,
+                    "y": 0.39751153079972568,
+                    "z": 0.0
+                },
+                {
+                    "x": -7.4568323198852724,
+                    "y": -0.52615272432836946,
+                    "z": 0.0
+                },
+                {
+                    "x": -8.3426072238522835,
+                    "y": -0.52615272432836946,
+                    "z": 0.0
+                }
+            ],
+            "linetype": "ByLayer",
+            "isClosed": true
+        }
+    },
+    {
+        "line": {
+            "layer": "E-CONDUIT",
+            "startPoint": {
+                "x": -6.3618402124931279,
+                "y": -0.25278383671075844,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -7.4568323198852724,
+                "y": -0.25278383671075844,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    }
+]

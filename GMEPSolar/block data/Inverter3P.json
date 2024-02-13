@@ -1,398 +1,5 @@
 [
     {
-        "line": {
-            "layer": "Inverter Background",
-            "startPoint": {
-                "x": -1.2592561691539004,
-                "y": -2.4843331910673996,
-                "z": 0.0
-            },
-            "endPoint": {
-                "x": -1.2592561691539004,
-                "y": -1.6384045133273872,
-                "z": 0.0
-            },
-            "linetype": "ByLayer"
-        }
-    },
-    {
-        "line": {
-            "layer": "Inverter Background",
-            "startPoint": {
-                "x": -1.2592561691539004,
-                "y": -1.8300531000532416,
-                "z": 0.0
-            },
-            "endPoint": {
-                "x": -1.8232058676943765,
-                "y": -1.8300531000532416,
-                "z": 0.0
-            },
-            "linetype": "ByLayer"
-        }
-    },
-    {
-        "mtext": {
-            "layer": "E-TEXT",
-            "style": "section title",
-            "justification": "MiddleCenter",
-            "text": "L2",
-            "height": 0.075859283618388451,
-            "lineSpaceDistance": 0.12643213936398076,
-            "location": {
-                "x": -1.385115780684103,
-                "y": -1.9046862638888555,
-                "z": 0.0
-            }
-        }
-    },
-    {
-        "mtext": {
-            "layer": "E-TEXT",
-            "style": "section title",
-            "justification": "MiddleCenter",
-            "text": "L1",
-            "height": 0.075859283618388451,
-            "lineSpaceDistance": 0.12643213936398076,
-            "location": {
-                "x": -1.6973462561641739,
-                "y": -1.9046862638888555,
-                "z": 0.0
-            }
-        }
-    },
-    {
-        "mtext": {
-            "layer": "E-TEXT",
-            "style": "section title",
-            "justification": "MiddleCenter",
-            "text": "GEN",
-            "height": 0.10107381478769784,
-            "lineSpaceDistance": 0.1684563579794964,
-            "location": {
-                "x": -1.5412310184241349,
-                "y": -1.7407370977025209,
-                "z": 0.0
-            }
-        }
-    },
-    {
-        "circle": {
-            "layer": "Inverter Background",
-            "center": {
-                "x": -1.6973462561641739,
-                "y": -2.166811705019775,
-                "z": 0.0
-            },
-            "radius": 0.081366872868093132
-        }
-    },
-    {
-        "circle": {
-            "layer": "Inverter Background",
-            "center": {
-                "x": -1.385115780684103,
-                "y": -2.166811705019775,
-                "z": 0.0
-            },
-            "radius": 0.081366872868093132
-        }
-    },
-    {
-        "line": {
-            "layer": "Inverter Background",
-            "startPoint": {
-                "x": -1.8232058676943765,
-                "y": -2.4843331910673996,
-                "z": 0.0
-            },
-            "endPoint": {
-                "x": -1.8232058676943765,
-                "y": -1.6384045133273872,
-                "z": 0.0
-            },
-            "linetype": "ByLayer"
-        }
-    },
-    {
-        "line": {
-            "layer": "Inverter Background",
-            "startPoint": {
-                "x": -1.2592561691539004,
-                "y": -2.4843331910673996,
-                "z": 0.0
-            },
-            "endPoint": {
-                "x": -1.8232058676943765,
-                "y": -2.4843331910673996,
-                "z": 0.0
-            },
-            "linetype": "ByLayer"
-        }
-    },
-    {
-        "line": {
-            "layer": "Inverter Background",
-            "startPoint": {
-                "x": -0.62962808457695729,
-                "y": -2.4843331910673996,
-                "z": 0.0
-            },
-            "endPoint": {
-                "x": -0.62962808457695729,
-                "y": -1.6384045133273872,
-                "z": 0.0
-            },
-            "linetype": "ByLayer"
-        }
-    },
-    {
-        "line": {
-            "layer": "Inverter Background",
-            "startPoint": {
-                "x": -0.62962808457695729,
-                "y": -1.8300531000532416,
-                "z": 0.0
-            },
-            "endPoint": {
-                "x": -1.1935777831174263,
-                "y": -1.8300531000532416,
-                "z": 0.0
-            },
-            "linetype": "ByLayer"
-        }
-    },
-    {
-        "mtext": {
-            "layer": "E-TEXT",
-            "style": "section title",
-            "justification": "MiddleCenter",
-            "text": "L2",
-            "height": 0.075859283618388451,
-            "lineSpaceDistance": 0.12643213936398076,
-            "location": {
-                "x": -0.75548769610715993,
-                "y": -1.9046862638888555,
-                "z": 0.0
-            }
-        }
-    },
-    {
-        "mtext": {
-            "layer": "E-TEXT",
-            "style": "section title",
-            "justification": "MiddleCenter",
-            "text": "L1",
-            "height": 0.075859283618388451,
-            "lineSpaceDistance": 0.12643213936398076,
-            "location": {
-                "x": -1.0677181715872237,
-                "y": -1.9046862638888555,
-                "z": 0.0
-            }
-        }
-    },
-    {
-        "mtext": {
-            "layer": "E-TEXT",
-            "style": "section title",
-            "justification": "MiddleCenter",
-            "text": "LOAD",
-            "height": 0.10107381478769784,
-            "lineSpaceDistance": 0.1684563579794964,
-            "location": {
-                "x": -0.91160293384719182,
-                "y": -1.7407370977025209,
-                "z": 0.0
-            }
-        }
-    },
-    {
-        "circle": {
-            "layer": "Inverter Background",
-            "center": {
-                "x": -1.0677181715872237,
-                "y": -2.166811705019775,
-                "z": 0.0
-            },
-            "radius": 0.081366872868093132
-        }
-    },
-    {
-        "circle": {
-            "layer": "Inverter Background",
-            "center": {
-                "x": -0.75548769610715993,
-                "y": -2.166811705019775,
-                "z": 0.0
-            },
-            "radius": 0.081366872868093132
-        }
-    },
-    {
-        "line": {
-            "layer": "Inverter Background",
-            "startPoint": {
-                "x": -1.1935777831174263,
-                "y": -2.4843331910673996,
-                "z": 0.0
-            },
-            "endPoint": {
-                "x": -1.1935777831174263,
-                "y": -1.6384045133273872,
-                "z": 0.0
-            },
-            "linetype": "ByLayer"
-        }
-    },
-    {
-        "line": {
-            "layer": "Inverter Background",
-            "startPoint": {
-                "x": -0.62962808457695729,
-                "y": -2.4843331910673996,
-                "z": 0.0
-            },
-            "endPoint": {
-                "x": -1.1935777831174263,
-                "y": -2.4843331910673996,
-                "z": 0.0
-            },
-            "linetype": "ByLayer"
-        }
-    },
-    {
-        "line": {
-            "layer": "Inverter Background",
-            "startPoint": {
-                "x": -7.1054273576010019E-15,
-                "y": -2.4843331910673996,
-                "z": 0.0
-            },
-            "endPoint": {
-                "x": -7.1054273576010019E-15,
-                "y": -1.6384045133273872,
-                "z": 0.0
-            },
-            "linetype": "ByLayer"
-        }
-    },
-    {
-        "line": {
-            "layer": "Inverter Background",
-            "startPoint": {
-                "x": -7.1054273576010019E-15,
-                "y": -1.8300531000532416,
-                "z": 0.0
-            },
-            "endPoint": {
-                "x": -0.56394969854048327,
-                "y": -1.8300531000532416,
-                "z": 0.0
-            },
-            "linetype": "ByLayer"
-        }
-    },
-    {
-        "mtext": {
-            "layer": "E-TEXT",
-            "style": "section title",
-            "justification": "MiddleCenter",
-            "text": "L2",
-            "height": 0.075859283618388451,
-            "lineSpaceDistance": 0.12643213936398076,
-            "location": {
-                "x": -0.12585961153020975,
-                "y": -1.9046862638888555,
-                "z": 0.0
-            }
-        }
-    },
-    {
-        "mtext": {
-            "layer": "E-TEXT",
-            "style": "section title",
-            "justification": "MiddleCenter",
-            "text": "L1",
-            "height": 0.075859283618388451,
-            "lineSpaceDistance": 0.12643213936398076,
-            "location": {
-                "x": -0.43809008701028063,
-                "y": -1.9046862638888555,
-                "z": 0.0
-            }
-        }
-    },
-    {
-        "mtext": {
-            "layer": "E-TEXT",
-            "style": "section title",
-            "justification": "MiddleCenter",
-            "text": "GRID",
-            "height": 0.10107381478769784,
-            "lineSpaceDistance": 0.1684563579794964,
-            "location": {
-                "x": -0.28197484927024874,
-                "y": -1.7407370977025209,
-                "z": 0.0
-            }
-        }
-    },
-    {
-        "circle": {
-            "layer": "Inverter Background",
-            "center": {
-                "x": -0.43809008701028063,
-                "y": -2.166811705019775,
-                "z": 0.0
-            },
-            "radius": 0.081366872868093132
-        }
-    },
-    {
-        "circle": {
-            "layer": "Inverter Background",
-            "center": {
-                "x": -0.12585961153020975,
-                "y": -2.166811705019775,
-                "z": 0.0
-            },
-            "radius": 0.081366872868093132
-        }
-    },
-    {
-        "line": {
-            "layer": "Inverter Background",
-            "startPoint": {
-                "x": -0.56394969854048327,
-                "y": -2.4843331910673996,
-                "z": 0.0
-            },
-            "endPoint": {
-                "x": -0.56394969854048327,
-                "y": -1.6384045133273872,
-                "z": 0.0
-            },
-            "linetype": "ByLayer"
-        }
-    },
-    {
-        "line": {
-            "layer": "Inverter Background",
-            "startPoint": {
-                "x": -7.1054273576010019E-15,
-                "y": -2.4843331910673996,
-                "z": 0.0
-            },
-            "endPoint": {
-                "x": -0.56394969854048327,
-                "y": -2.4843331910673996,
-                "z": 0.0
-            },
-            "linetype": "ByLayer"
-        }
-    },
-    {
         "mtext": {
             "layer": "E-TEXT",
             "style": "section title",
@@ -405,6 +12,121 @@
                 "y": -0.38142291595043076,
                 "z": 0.0
             }
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -1.8837171201140208,
+                "y": -2.4843331910673996,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -2.7598972941345679,
+                "y": -2.4843331910673996,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -2.7598972941345679,
+                "y": -2.4843331910673996,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -2.7598972941345679,
+                "y": -1.6384045133273801,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "circle": {
+            "layer": "Inverter Background",
+            "center": {
+                "x": -2.3218072071242943,
+                "y": -2.1668117050197679,
+                "z": 0.0
+            },
+            "radius": 0.081366872868093132
+        }
+    },
+    {
+        "circle": {
+            "layer": "Inverter Background",
+            "center": {
+                "x": -2.6340376826043652,
+                "y": -2.1668117050197679,
+                "z": 0.0
+            },
+            "radius": 0.081366872868093132
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "GEN",
+            "height": 0.10107381478769784,
+            "lineSpaceDistance": 0.1684563579794964,
+            "location": {
+                "x": -2.3218072071242943,
+                "y": -1.7407370977025209,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "L1",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -2.6340376826043581,
+                "y": -1.9046862638888555,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "L2",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -2.3218072071242872,
+                "y": -1.9046862638888555,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -1.8837171201140208,
+                "y": -1.8300531000532416,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -2.7598972941345679,
+                "y": -1.8300531000532416,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
         }
     },
     {
@@ -695,6 +417,237 @@
         }
     },
     {
+        "circle": {
+            "layer": "Inverter Background",
+            "center": {
+                "x": -2.0095767316442164,
+                "y": -2.1668117050197679,
+                "z": 0.0
+            },
+            "radius": 0.081366872868093132
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "L3",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -2.0095767316442092,
+                "y": -1.9046862638888555,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -1.8837171201140208,
+                "y": -2.4843331910673996,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -1.8837171201140208,
+                "y": -1.6384045133273801,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -0.941858560057014,
+                "y": -2.4843331910673996,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -1.818038734077561,
+                "y": -2.4843331910673996,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -1.818038734077561,
+                "y": -2.4843331910673996,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -1.818038734077561,
+                "y": -1.6384045133273801,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "circle": {
+            "layer": "Inverter Background",
+            "center": {
+                "x": -1.3799486470672875,
+                "y": -2.1668117050197679,
+                "z": 0.0
+            },
+            "radius": 0.081366872868093132
+        }
+    },
+    {
+        "circle": {
+            "layer": "Inverter Background",
+            "center": {
+                "x": -1.6921791225473584,
+                "y": -2.1668117050197679,
+                "z": 0.0
+            },
+            "radius": 0.081366872868093132
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "LOAD",
+            "height": 0.10107381478769784,
+            "lineSpaceDistance": 0.1684563579794964,
+            "location": {
+                "x": -1.3799486470672875,
+                "y": -1.7407370977025209,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "L1",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -1.6921791225473513,
+                "y": -1.9046862638888555,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "L2",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -1.3799486470672733,
+                "y": -1.9046862638888555,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -0.941858560057014,
+                "y": -1.8300531000532416,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -1.818038734077561,
+                "y": -1.8300531000532416,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "circle": {
+            "layer": "Inverter Background",
+            "center": {
+                "x": -1.0677181715872095,
+                "y": -2.1668117050197679,
+                "z": 0.0
+            },
+            "radius": 0.081366872868093132
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "L3",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -1.0677181715872095,
+                "y": -1.9046862638888555,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -0.941858560057014,
+                "y": -2.4843331910673996,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -0.941858560057014,
+                "y": -1.6384045133273801,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": 0.0,
+                "y": -2.4843331910673996,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -0.876180174020547,
+                "y": -2.4843331910673996,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": -0.876180174020547,
+                "y": -2.4843331910673996,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -0.876180174020547,
+                "y": -1.6384045133273801,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
         "line": {
             "layer": "Inverter Background",
             "startPoint": {
@@ -708,6 +661,115 @@
                 "z": 0.0
             },
             "linetype": "ByLayer"
+        }
+    },
+    {
+        "circle": {
+            "layer": "Inverter Background",
+            "center": {
+                "x": -0.43809008701027352,
+                "y": -2.1668117050197679,
+                "z": 0.0
+            },
+            "radius": 0.081366872868093132
+        }
+    },
+    {
+        "circle": {
+            "layer": "Inverter Background",
+            "center": {
+                "x": -0.7503205624903444,
+                "y": -2.1668117050197679,
+                "z": 0.0
+            },
+            "radius": 0.081366872868093132
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "GRID",
+            "height": 0.10107381478769784,
+            "lineSpaceDistance": 0.1684563579794964,
+            "location": {
+                "x": -0.43809008701027352,
+                "y": -1.7407370977025209,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "L1",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -0.7503205624903444,
+                "y": -1.9046862638888555,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "L2",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -0.43809008701027352,
+                "y": -1.9046862638888555,
+                "z": 0.0
+            }
+        }
+    },
+    {
+        "line": {
+            "layer": "Inverter Background",
+            "startPoint": {
+                "x": 0.0,
+                "y": -1.8300531000532416,
+                "z": 0.0
+            },
+            "endPoint": {
+                "x": -0.876180174020547,
+                "y": -1.8300531000532416,
+                "z": 0.0
+            },
+            "linetype": "ByLayer"
+        }
+    },
+    {
+        "circle": {
+            "layer": "Inverter Background",
+            "center": {
+                "x": -0.12585961153020264,
+                "y": -2.1668117050197679,
+                "z": 0.0
+            },
+            "radius": 0.081366872868093132
+        }
+    },
+    {
+        "mtext": {
+            "layer": "E-TEXT",
+            "style": "section title",
+            "justification": "MiddleCenter",
+            "text": "L3",
+            "height": 0.075859283618388451,
+            "lineSpaceDistance": 0.12643213936398076,
+            "location": {
+                "x": -0.12585961153019554,
+                "y": -1.9046862638888555,
+                "z": 0.0
+            }
         }
     },
     {

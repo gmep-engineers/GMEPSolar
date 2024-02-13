@@ -37,17 +37,65 @@ namespace GMEPSolar
         private void CreateInverter(
             Point3d point,
             Dictionary<string, object> inverterData,
-            Editor ed
+            Editor ed,
+            int slaveOrMasterNumber,
+            int inverterCount
         )
         {
             string path = "block data/Inverter2P.json";
+            var isMaster = Convert.ToBoolean(inverterData["isMaster"]);
+            var is2P = Convert.ToBoolean(inverterData["is2P"]);
 
-            if (!Convert.ToBoolean(inverterData["is2P"]))
+            if (!is2P)
             {
                 path = "block data/Inverter3P.json";
             }
 
             var data = BlockDataMethods.GetData(path);
+
+            if (isMaster)
+            {
+                CreateEMButton(point, ed);
+                data = UpdateInverterTextToMaster(data, slaveOrMasterNumber);
+            }
+            else
+            {
+                data = UpdateInverterTextToSlave(data, slaveOrMasterNumber);
+            }
+
+            data = UpdateInverterTextWithInverterNumber(data, inverterCount);
+
+            CreateFilledCircles(point);
+
+            BlockDataMethods.CreateObjectGivenData(data, ed, point);
+        }
+
+        private List<
+            Dictionary<string, Dictionary<string, object>>
+        > UpdateInverterTextWithInverterNumber(
+            List<Dictionary<string, Dictionary<string, object>>> data,
+            int inverterCount
+        )
+        {
+            var inverterText = "INVERTER #" + inverterCount;
+            foreach (var dict in data)
+            {
+                if (dict.ContainsKey("mtext"))
+                {
+                    var mText = dict["mtext"];
+                    if (mText["text"].ToString().Contains("INVERTER #1"))
+                    {
+                        mText["text"] = mText["text"]
+                            .ToString()
+                            .Replace("INVERTER #1", inverterText);
+                    }
+                }
+            }
+            return data;
+        }
+
+        private static void CreateFilledCircles(Point3d point)
+        {
             Point3d center1 = new Point3d(
                 -0.33597823956413464 + point.X,
                 -3.0767796081386578 + point.Y,
@@ -60,10 +108,55 @@ namespace GMEPSolar
                 0.0 + point.Z
             );
             double radius2 = 0.039236382599967569;
-
-            BlockDataMethods.CreateObjectGivenData(data, ed, point);
             BlockDataMethods.CreateFilledCircleInPaperSpace(center1, radius1);
             BlockDataMethods.CreateFilledCircleInPaperSpace(center2, radius2);
+        }
+
+        private List<Dictionary<string, Dictionary<string, object>>> UpdateInverterTextToSlave(
+            List<Dictionary<string, Dictionary<string, object>>> data,
+            int inverterNumber
+        )
+        {
+            var slaveText = "SLAVE-" + inverterNumber.ToString("D2");
+            foreach (var dict in data)
+            {
+                if (dict.ContainsKey("mtext"))
+                {
+                    var sText = dict["mtext"];
+                    if (sText["text"].ToString() == "\"SLAVE-01\"")
+                    {
+                        sText["text"] = "\"" + slaveText + "\"";
+                    }
+                }
+            }
+            return data;
+        }
+
+        private List<Dictionary<string, Dictionary<string, object>>> UpdateInverterTextToMaster(
+            List<Dictionary<string, Dictionary<string, object>>> data,
+            int inverterNumber
+        )
+        {
+            var masterText = "MASTER-" + inverterNumber.ToString("D2");
+            foreach (var dict in data)
+            {
+                if (dict.ContainsKey("mtext"))
+                {
+                    var mText = dict["mtext"];
+                    if (mText["text"].ToString() == "\"SLAVE-01\"")
+                    {
+                        mText["text"] = "\"" + masterText + "\"";
+                    }
+                }
+            }
+            return data;
+        }
+
+        private void CreateEMButton(Point3d point, Editor ed)
+        {
+            string path = "block data/EMButton.json";
+            var data = BlockDataMethods.GetData(path);
+            BlockDataMethods.CreateObjectGivenData(data, ed, point);
         }
 
         public InverterUserControl CreateNewPanelTab(string tabName)
@@ -345,6 +438,7 @@ namespace GMEPSolar
         private void CREATE_BUTTON_Click(object sender, EventArgs e)
         {
             var inverterFormData = GetInverterFormData();
+
             var INVERTER_HEIGHT = 5.75;
             var REDUCING_FACTOR = 0.081;
             var MAXIMUM_CONDUIT = 16;
@@ -369,9 +463,36 @@ namespace GMEPSolar
                         var inverterData =
                             inverterFormData["InverterData"] as List<Dictionary<string, object>>;
 
+                        var numberOfMasters = 0;
+                        var numberOfSlaves = 0;
+                        var inverterCount = 0;
+
                         foreach (var currentInverterData in inverterData)
                         {
-                            CreateInverter(point, currentInverterData, ed);
+                            inverterCount += 1;
+
+                            if (Convert.ToBoolean(currentInverterData["isMaster"]))
+                            {
+                                numberOfMasters++;
+                                CreateInverter(
+                                    point,
+                                    currentInverterData,
+                                    ed,
+                                    numberOfMasters,
+                                    inverterCount
+                                );
+                            }
+                            else
+                            {
+                                numberOfSlaves++;
+                                CreateInverter(
+                                    point,
+                                    currentInverterData,
+                                    ed,
+                                    numberOfSlaves,
+                                    inverterCount
+                                );
+                            }
 
                             if (currentInverterData.ContainsKey("DCSolarData"))
                             {

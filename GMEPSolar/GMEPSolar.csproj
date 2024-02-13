@@ -119,6 +119,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include="block data\EMButton.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="block data\Inverter2PLoadWire.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
