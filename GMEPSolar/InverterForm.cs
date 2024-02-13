@@ -41,6 +41,12 @@ namespace GMEPSolar
         )
         {
             string path = "block data/Inverter2P.json";
+
+            if (!Convert.ToBoolean(inverterData["is2P"]))
+            {
+                path = "block data/Inverter3P.json";
+            }
+
             var data = BlockDataMethods.GetData(path);
             Point3d center1 = new Point3d(
                 -0.33597823956413464 + point.X,
@@ -237,6 +243,105 @@ namespace GMEPSolar
             }
         }
 
+        private int GetNumberOfConduit(Dictionary<string, Dictionary<string, object>> dcSolarData)
+        {
+            int numberOfConduit = 0;
+            foreach (var stringData in dcSolarData.Values)
+            {
+                if (stringData.ContainsKey("items"))
+                {
+                    var items = stringData["items"] as List<string>;
+                    numberOfConduit += items.Count(item => item == "string");
+                }
+            }
+            return numberOfConduit * 2;
+        }
+
+        private static double GetTotalHeightOfStringModule(
+            List<Dictionary<string, object>> stringDataContainer
+        )
+        {
+            double totalHeight = 0;
+            foreach (var stringData in stringDataContainer)
+            {
+                totalHeight += Convert.ToDouble(stringData["height"]);
+            }
+            return totalHeight;
+        }
+
+        private static List<Dictionary<string, object>> GetStringData(
+            Dictionary<string, Dictionary<string, object>> formData
+        )
+        {
+            var stringDataContainer = new List<Dictionary<string, object>>();
+            var firstFlag = true;
+            var previousModulesCount = 0;
+
+            foreach (var mppt in formData)
+            {
+                var stringData = new Dictionary<string, object>();
+                stringData["height"] = 0.0;
+                stringData["items"] = new List<string>();
+
+                var mpptData = mppt.Value;
+                stringData["module"] = mpptData["Input"];
+
+                if (Convert.ToBoolean(mpptData["Enabled"]))
+                {
+                    var isRegular = Convert.ToBoolean(mpptData["Regular"]);
+                    var isParallel = Convert.ToBoolean(mpptData["Parallel"]);
+                    var modulesCount = 0;
+                    if (isRegular || isParallel)
+                    {
+                        int.TryParse((string)mpptData["Input"], out modulesCount);
+                    }
+
+                    if (firstFlag && (isRegular || isParallel))
+                    {
+                        firstFlag = false;
+                        stringData["height"] = (double)stringData["height"] + 0.8334;
+                        ((List<string>)stringData["items"]).Add("text");
+                        previousModulesCount = modulesCount;
+                    }
+                    else if ((isRegular || isParallel) && modulesCount != previousModulesCount)
+                    {
+                        stringData["height"] = (double)stringData["height"] + 0.8334;
+                        ((List<string>)stringData["items"]).Add("text");
+                        previousModulesCount = modulesCount;
+                    }
+
+                    if (isRegular)
+                    {
+                        stringData["height"] = (double)stringData["height"] + 1.0695;
+                        ((List<string>)stringData["items"]).Add("string");
+                    }
+                    else if (isParallel)
+                    {
+                        stringData["height"] = (double)stringData["height"] + (1.0695 * 2);
+                        ((List<string>)stringData["items"]).Add("string");
+                        ((List<string>)stringData["items"]).Add("string");
+                    }
+                }
+                stringDataContainer.Add(stringData);
+            }
+            return stringDataContainer;
+        }
+
+        private static int GetNumberOfMPPTs(Dictionary<string, Dictionary<string, object>> formData)
+        {
+            int numberOfMPPTs = 0;
+            foreach (var mppt in formData)
+            {
+                var mpptData = mppt.Value as Dictionary<string, object>;
+                if (Convert.ToBoolean(mpptData["Enabled"]))
+                {
+                    numberOfMPPTs++;
+                }
+            }
+
+            return numberOfMPPTs;
+        }
+
         private void CREATE_BUTTON_Click(object sender, EventArgs e)
         {
             var inverterFormData = GetInverterFormData();
@@ -347,109 +452,14 @@ namespace GMEPSolar
                                     );
                                 }
                             }
+                            else
+                            {
+                                point = new Point3d(point.X, point.Y - 4.25, point.Z);
+                            }
                         }
                     }
                 }
             }
-        }
-
-        private int GetNumberOfConduit(Dictionary<string, Dictionary<string, object>> dcSolarData)
-        {
-            int numberOfConduit = 0;
-            foreach (var stringData in dcSolarData.Values)
-            {
-                if (stringData.ContainsKey("items"))
-                {
-                    var items = stringData["items"] as List<string>;
-                    numberOfConduit += items.Count(item => item == "string");
-                }
-            }
-            return numberOfConduit * 2;
-        }
-
-        private static double GetTotalHeightOfStringModule(
-            List<Dictionary<string, object>> stringDataContainer
-        )
-        {
-            double totalHeight = 0;
-            foreach (var stringData in stringDataContainer)
-            {
-                totalHeight += Convert.ToDouble(stringData["height"]);
-            }
-            return totalHeight;
-        }
-
-        private static List<Dictionary<string, object>> GetStringData(
-            Dictionary<string, Dictionary<string, object>> formData
-        )
-        {
-            var stringDataContainer = new List<Dictionary<string, object>>();
-            var firstFlag = true;
-            var previousModulesCount = 0;
-
-            foreach (var mppt in formData)
-            {
-                var stringData = new Dictionary<string, object>();
-                stringData["height"] = 0.0;
-                stringData["items"] = new List<string>();
-
-                var mpptData = mppt.Value;
-                stringData["module"] = mpptData["Input"];
-
-                if (Convert.ToBoolean(mpptData["Enabled"]))
-                {
-                    var isRegular = Convert.ToBoolean(mpptData["Regular"]);
-                    var isParallel = Convert.ToBoolean(mpptData["Parallel"]);
-                    var modulesCount = 0;
-                    if (isRegular || isParallel)
-                    {
-                        int.TryParse((string)mpptData["Input"], out modulesCount);
-                    }
-
-                    if (firstFlag && (isRegular || isParallel))
-                    {
-                        firstFlag = false;
-                        stringData["height"] = (double)stringData["height"] + 0.8334;
-                        ((List<string>)stringData["items"]).Add("text");
-                        previousModulesCount = modulesCount;
-                    }
-                    else if ((isRegular || isParallel) && modulesCount != previousModulesCount)
-                    {
-                        stringData["height"] = (double)stringData["height"] + 0.8334;
-                        ((List<string>)stringData["items"]).Add("text");
-                        previousModulesCount = modulesCount;
-                    }
-
-                    if (isRegular)
-                    {
-                        stringData["height"] = (double)stringData["height"] + 1.0695;
-                        ((List<string>)stringData["items"]).Add("string");
-                    }
-                    else if (isParallel)
-                    {
-                        stringData["height"] = (double)stringData["height"] + (1.0695 * 2);
-                        ((List<string>)stringData["items"]).Add("string");
-                        ((List<string>)stringData["items"]).Add("string");
-                    }
-                }
-                stringDataContainer.Add(stringData);
-            }
-            return stringDataContainer;
-        }
-
-        private static int GetNumberOfMPPTs(Dictionary<string, Dictionary<string, object>> formData)
-        {
-            int numberOfMPPTs = 0;
-            foreach (var mppt in formData)
-            {
-                var mpptData = mppt.Value as Dictionary<string, object>;
-                if (Convert.ToBoolean(mpptData["Enabled"]))
-                {
-                    numberOfMPPTs++;
-                }
-            }
-
-            return numberOfMPPTs;
         }
     }
 }
