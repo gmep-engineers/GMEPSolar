@@ -539,7 +539,7 @@ namespace GMEPSolar
                                 var stringDefaultMidPointX = lineStartPointX - 3.3606;
                                 var stringDefaultMidPointY = lineStartPointY - 1.3;
 
-                                var topOfStringY = lineStartPointY + 2.9784;
+                                var topOfStringY = lineStartPointY + 2.9784 + 0.0539;
 
                                 var shiftYDown = (
                                     topOfStringY - stringDefaultMidPointY - stringTotalHeight / 2
