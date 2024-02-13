@@ -124,6 +124,14 @@ namespace GMEPSolar
                                     origin
                                 );
                             }
+                            else if (obj is Autodesk.AutoCAD.DatabaseServices.Ellipse)
+                            {
+                                data = HandleEllipse(
+                                    obj as Autodesk.AutoCAD.DatabaseServices.Ellipse,
+                                    data,
+                                    origin
+                                );
+                            }
 
                             // Commit the transaction
                             transaction.Commit();

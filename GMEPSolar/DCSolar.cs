@@ -308,7 +308,7 @@ namespace GMEPSolar
                             - (
                                 xDistance
                                 - CLOSEST_DISTANCE_FROM_STRING
-                                - (aboveOrBelowValue * LINE_SPACING)
+                                - (aboveOrBelowValue * LINE_SPACING / 2)
                             )
                     },
                     { "y", mpptEndPoint["y"] }
@@ -363,7 +363,7 @@ namespace GMEPSolar
 
             var firstHorizontalLineEndPoint = new Dictionary<string, double>
             {
-                { "x", firstHorizontalLineStartPoint["x"] - CELL_SPACING / 2 },
+                { "x", firstHorizontalLineStartPoint["x"] - CELL_SPACING * 3 / 4 },
                 { "y", firstHorizontalLineStartPoint["y"] }
             };
 
@@ -377,7 +377,7 @@ namespace GMEPSolar
 
             var arcEndPoint = new Dictionary<string, double>
             {
-                { "x", firstHorizontalLineEndPoint["x"] - CELL_SPACING },
+                { "x", firstHorizontalLineEndPoint["x"] - CELL_SPACING / 2 },
                 { "y", firstHorizontalLineEndPoint["y"] }
             };
 
@@ -690,11 +690,11 @@ namespace GMEPSolar
                 endPoint["x"] += 0.6484;
                 if (isRegular && enabled)
                 {
-                    endPoint["y"] -= 0.1621;
+                    endPoint["y"] -= CELL_SPACING / 2;
                 }
                 else if (isParallel && enabled)
                 {
-                    endPoint["y"] -= 0.3242;
+                    endPoint["y"] -= CELL_SPACING;
                 }
             }
         }
@@ -724,18 +724,18 @@ namespace GMEPSolar
                     var arcEndPoint = new Dictionary<string, double>
                     {
                         { "x", endPointUpdated["x"] },
-                        { "y", endPointUpdated["y"] - CELL_SPACING }
+                        { "y", endPointUpdated["y"] - CELL_SPACING / 2 }
                     };
 
                     CreateLineFromPoints(endPointUpdated, arcEndPoint);
                 }
                 else if (i == 2)
                 {
-                    endPointUpdated["y"] -= CELL_SPACING / 2;
+                    endPointUpdated["y"] -= CELL_SPACING / 4;
                 }
                 else if (i == 3)
                 {
-                    endPointUpdated["y"] -= CELL_SPACING + CELL_SPACING / 2;
+                    endPointUpdated["y"] -= CELL_SPACING / 2 + CELL_SPACING / 4;
                 }
 
                 var line = new Line(
@@ -762,7 +762,7 @@ namespace GMEPSolar
                         new Dictionary<string, double>
                         {
                             { "x", endPointUpdated["x"] },
-                            { "y", endPointUpdated["y"] - CELL_SPACING }
+                            { "y", endPointUpdated["y"] - CELL_SPACING / 2 }
                         }
                     );
                 }
@@ -902,7 +902,7 @@ namespace GMEPSolar
         )
         {
             var endPoints = new List<Dictionary<string, double>>();
-            Double ENDPOINT_INCREASE = -CELL_SPACING / 2;
+            Double ENDPOINT_INCREASE = -CELL_SPACING / 4;
 
             for (var i = 0; i < 4; i++)
             {
