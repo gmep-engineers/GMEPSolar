@@ -631,7 +631,7 @@ namespace GMEPSolar
 
         private void CreateEndOfBusBar(Point3d point, Editor ed)
         {
-            throw new NotImplementedException();
+            return;
         }
 
         private void CreateMiddleBusBar(
@@ -685,8 +685,12 @@ namespace GMEPSolar
             double topOfMiddleBusBarY
         )
         {
+            var lengths = new List<double> { 3.1049, 6.0505 };
+            GetLinesFromDataByLength(lengths);
             return data;
         }
+
+        private void GetLinesFromDataByLength(List<double> lengths) { }
 
         private void CreateTopOfBusBar(Point3d point, Editor ed)
         {
