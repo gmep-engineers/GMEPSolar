@@ -363,9 +363,12 @@ namespace GMEPSolar
         }
 
         private static List<Dictionary<string, object>> GetStringData(
-            Dictionary<string, Dictionary<string, object>> formData
+            Dictionary<string, Dictionary<string, object>> formData,
+            bool smallStrings = false
         )
         {
+            var TEXT_HEIGHT = 0.8334;
+            var STRING_HEIGHT = smallStrings ? 0.7648 : 1.0695;
             var stringDataContainer = new List<Dictionary<string, object>>();
             var firstFlag = true;
             var previousModulesCount = 0;
@@ -392,25 +395,25 @@ namespace GMEPSolar
                     if (firstFlag && (isRegular || isParallel))
                     {
                         firstFlag = false;
-                        stringData["height"] = (double)stringData["height"] + 0.8334;
+                        stringData["height"] = (double)stringData["height"] + TEXT_HEIGHT;
                         ((List<string>)stringData["items"]).Add("text");
                         previousModulesCount = modulesCount;
                     }
                     else if ((isRegular || isParallel) && modulesCount != previousModulesCount)
                     {
-                        stringData["height"] = (double)stringData["height"] + 0.8334;
+                        stringData["height"] = (double)stringData["height"] + TEXT_HEIGHT;
                         ((List<string>)stringData["items"]).Add("text");
                         previousModulesCount = modulesCount;
                     }
 
                     if (isRegular)
                     {
-                        stringData["height"] = (double)stringData["height"] + 1.0695;
+                        stringData["height"] = (double)stringData["height"] + STRING_HEIGHT;
                         ((List<string>)stringData["items"]).Add("string");
                     }
                     else if (isParallel)
                     {
-                        stringData["height"] = (double)stringData["height"] + (1.0695 * 2);
+                        stringData["height"] = (double)stringData["height"] + (STRING_HEIGHT * 2);
                         ((List<string>)stringData["items"]).Add("string");
                         ((List<string>)stringData["items"]).Add("string");
                     }
@@ -439,7 +442,10 @@ namespace GMEPSolar
         {
             var inverterFormData = GetInverterFormData();
 
-            var INVERTER_HEIGHT = 5.75;
+            var INVERTER_MAXIMUM_HEIGHT = 5.75;
+            var INVERTER_MINIMUM_HEIGHT = 4.25;
+            var DISTANCE_TO_FIRST_CONDUIT = 3.4556;
+            var BUS_BAR_TO_CONDUIT_SPACING = 0.0894;
             var REDUCING_FACTOR = 0.081;
             var MAXIMUM_CONDUIT = 16;
 
@@ -466,6 +472,18 @@ namespace GMEPSolar
                         var numberOfMasters = 0;
                         var numberOfSlaves = 0;
                         var inverterCount = 0;
+                        var oldPoint = point;
+                        var numberOfConduit = 0;
+                        var oldNumberOfConduits = 0;
+                        var smallStrings = false;
+                        var totalHeightOfInverterModule = GetTotalHeightOfStringModules(
+                            inverterData
+                        );
+
+                        if (totalHeightOfInverterModule > 22.0)
+                        {
+                            smallStrings = true;
+                        }
 
                         foreach (var currentInverterData in inverterData)
                         {
@@ -492,6 +510,26 @@ namespace GMEPSolar
                                     numberOfSlaves,
                                     inverterCount
                                 );
+                            }
+
+                            if (inverterCount == 1)
+                            {
+                                CreateTopOfBusBar(point, ed);
+                            }
+                            else if (inverterCount != inverterData.Count)
+                            {
+                                CreateMiddleBusBar(
+                                    point,
+                                    ed,
+                                    oldPoint,
+                                    oldNumberOfConduits,
+                                    DISTANCE_TO_FIRST_CONDUIT,
+                                    BUS_BAR_TO_CONDUIT_SPACING
+                                );
+                            }
+                            else
+                            {
+                                CreateEndOfBusBar(point, ed);
                             }
 
                             if (currentInverterData.ContainsKey("DCSolarData"))
@@ -524,9 +562,10 @@ namespace GMEPSolar
                                     parsedData["Z"] + point.Z
                                 );
 
-                                var stringDataContainer = GetStringData(dcSolarData);
+                                var stringDataContainer = GetStringData(dcSolarData, smallStrings);
 
-                                var numberOfConduit = GetNumberOfConduit(dcSolarData);
+                                oldNumberOfConduits = numberOfConduit;
+                                numberOfConduit = GetNumberOfConduit(dcSolarData);
 
                                 var stringTotalHeight = GetTotalHeightOfStringModule(
                                     stringDataContainer
@@ -549,12 +588,15 @@ namespace GMEPSolar
                                     dcSolarData,
                                     shiftYDown.ToString(),
                                     "0",
-                                    placement
+                                    placement,
+                                    smallStrings
                                 );
 
                                 var adjustedInverterHeight =
-                                    INVERTER_HEIGHT
+                                    INVERTER_MAXIMUM_HEIGHT
                                     - ((MAXIMUM_CONDUIT - numberOfConduit) * REDUCING_FACTOR);
+
+                                oldPoint = point;
 
                                 if (stringTotalHeight > adjustedInverterHeight)
                                 {
@@ -575,12 +617,123 @@ namespace GMEPSolar
                             }
                             else
                             {
-                                point = new Point3d(point.X, point.Y - 4.25, point.Z);
+                                point = new Point3d(
+                                    point.X,
+                                    point.Y - INVERTER_MINIMUM_HEIGHT,
+                                    point.Z
+                                );
                             }
                         }
                     }
                 }
             }
+        }
+
+        private void CreateEndOfBusBar(Point3d point, Editor ed)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void CreateMiddleBusBar(
+            Point3d point,
+            Editor ed,
+            Point3d oldPoint,
+            int oldNumberOfConduits,
+            double DISTANCE_TO_FIRST_CONDUIT,
+            double BUS_BAR_TO_CONDUIT_SPACING
+        )
+        {
+            var CONDUIT_SPACING = 0.0447;
+            string path = "block data/MiddleBusBar.json";
+            var data = BlockDataMethods.GetData(path);
+
+            var oldPointY = oldPoint.Y;
+            var topOfMiddleBusBarY =
+                oldPointY
+                - DISTANCE_TO_FIRST_CONDUIT
+                - (oldNumberOfConduits - 1) * CONDUIT_SPACING
+                - BUS_BAR_TO_CONDUIT_SPACING;
+
+            var topOfArcY = oldPointY - DISTANCE_TO_FIRST_CONDUIT + BUS_BAR_TO_CONDUIT_SPACING;
+            var botOfArcY = topOfMiddleBusBarY;
+
+            data = UpdateMiddleBusBarLineHeight(data, topOfMiddleBusBarY);
+
+            BlockDataMethods.CreateObjectGivenData(data, ed, point);
+
+            // Create first filled circle
+            Point3d center1 = new Point3d(
+                -7.4960687024852319 + point.X,
+                -2.8603527581839572 + point.Y,
+                0.0 + point.Z
+            );
+            double radius1 = 0.039236382599967569;
+            BlockDataMethods.CreateFilledCircleInPaperSpace(center1, radius1);
+
+            // Create second filled circle
+            Point3d center2 = new Point3d(
+                -7.6530142328851056 + point.X,
+                -2.7971967905063195 + point.Y,
+                0.0 + point.Z
+            );
+            double radius2 = 0.039236382599967569;
+            BlockDataMethods.CreateFilledCircleInPaperSpace(center2, radius2);
+        }
+
+        private List<Dictionary<string, Dictionary<string, object>>> UpdateMiddleBusBarLineHeight(
+            List<Dictionary<string, Dictionary<string, object>>> data,
+            double topOfMiddleBusBarY
+        )
+        {
+            return data;
+        }
+
+        private void CreateTopOfBusBar(Point3d point, Editor ed)
+        {
+            string path = "block data/TopOfBusBar.json";
+            var data = BlockDataMethods.GetData(path);
+            BlockDataMethods.CreateObjectGivenData(data, ed, point);
+
+            // Create first filled circle
+            Point3d center1 = new Point3d(
+                -7.4960687024852319 + point.X,
+                -2.8603527581839572 + point.Y,
+                0.0 + point.Z
+            );
+            double radius1 = 0.039236382599967569;
+            BlockDataMethods.CreateFilledCircleInPaperSpace(center1, radius1);
+
+            // Create second filled circle
+            Point3d center2 = new Point3d(
+                -7.6530142328851056 + point.X,
+                -2.7971967905063195 + point.Y,
+                0.0 + point.Z
+            );
+            double radius2 = 0.039236382599967569;
+            BlockDataMethods.CreateFilledCircleInPaperSpace(center2, radius2);
+        }
+
+        private double GetTotalHeightOfStringModules(List<Dictionary<string, object>> inverterData)
+        {
+            double totalHeight = 0.0;
+
+            foreach (var currentInverterData in inverterData)
+            {
+                if (currentInverterData.ContainsKey("DCSolarData"))
+                {
+                    var dcSolarData =
+                        currentInverterData["DCSolarData"]
+                        as Dictionary<string, Dictionary<string, object>>;
+
+                    var stringDataContainer = GetStringData(dcSolarData);
+
+                    var stringTotalHeight = GetTotalHeightOfStringModule(stringDataContainer);
+
+                    totalHeight += stringTotalHeight;
+                }
+            }
+
+            return totalHeight;
         }
     }
 }

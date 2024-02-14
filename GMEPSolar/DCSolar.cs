@@ -31,7 +31,8 @@ namespace GMEPSolar
             Dictionary<string, Dictionary<string, object>> formData,
             string INCREASE_Y_TEXTBOX,
             string INCREASE_X_TEXTBOX,
-            Point3d selectedPoint
+            Point3d selectedPoint,
+            bool smallStrings = false
         )
         {
             Editor ed = Autodesk
@@ -74,7 +75,8 @@ namespace GMEPSolar
                 selectedPoint,
                 mpptEndPoints,
                 INCREASE_Y_TEXTBOX,
-                INCREASE_X_TEXTBOX
+                INCREASE_X_TEXTBOX,
+                smallStrings
             );
         }
 
@@ -99,7 +101,8 @@ namespace GMEPSolar
             Point3d selectedPoint,
             List<List<Dictionary<string, double>>> mpptEndPoints,
             string INCREASE_TEXTBOX_Y,
-            string INCREASE_TEXTBOX_X
+            string INCREASE_TEXTBOX_X,
+            bool smallStrings = false
         )
         {
             var ed = Autodesk
@@ -121,7 +124,7 @@ namespace GMEPSolar
             var stringMidPointX = lineStartPointX - 3.3606;
             var stringMidPointY = lineStartPointY - 1.2706;
 
-            var stringDataContainer = GetStringData(formData);
+            var stringDataContainer = GetStringData(formData, smallStrings);
 
             if (AreAllModulesEmpty(stringDataContainer))
             {
@@ -165,7 +168,8 @@ namespace GMEPSolar
                 stringDataContainer,
                 stringStartPoint,
                 stringsPerChunk,
-                ed
+                ed,
+                smallStrings
             );
 
             var mpptEndPointsFlattened = mpptEndPoints.SelectMany(x => x).ToList();
@@ -452,11 +456,13 @@ namespace GMEPSolar
             List<Dictionary<string, object>> stringDataContainer,
             Point3d stringStartPoint,
             List<int> stringsPerChunk,
-            Editor ed
+            Editor ed,
+            bool smallStrings = false
         )
         {
             var TEXT_HEIGHT = 0.8334;
             var STRING_HEIGHT = 1.0695;
+            var STRING_HEIGHT_SMALL = 0.7648;
             var CELL_SPACING = 0.1621;
             int stringIndex = 0;
             var connectionPoints = new List<Dictionary<string, double>>();
@@ -493,23 +499,25 @@ namespace GMEPSolar
                     {
                         CreateStringObjectInCAD(
                             ed,
-                            new Point3d(startPoint["x"], startPoint["y"], 0)
+                            new Point3d(startPoint["x"], startPoint["y"], 0),
+                            smallStrings
                         );
+                        var stringHeight = (smallStrings ? STRING_HEIGHT_SMALL : STRING_HEIGHT);
                         connectionPoints.Add(
                             new Dictionary<string, double>
                             {
                                 { "x", startPoint["x"] },
-                                { "y", startPoint["y"] - (STRING_HEIGHT / 2) + (CELL_SPACING / 2) }
+                                { "y", startPoint["y"] - (stringHeight / 2) + (CELL_SPACING / 2) }
                             }
                         );
                         connectionPoints.Add(
                             new Dictionary<string, double>
                             {
                                 { "x", startPoint["x"] },
-                                { "y", startPoint["y"] - (STRING_HEIGHT / 2) - (CELL_SPACING / 2) }
+                                { "y", startPoint["y"] - (stringHeight / 2) - (CELL_SPACING / 2) }
                             }
                         );
-                        startPoint["y"] -= STRING_HEIGHT;
+                        startPoint["y"] -= stringHeight;
                     }
                 }
             }
@@ -540,10 +548,18 @@ namespace GMEPSolar
             BlockDataMethods.CreateObjectGivenData(stringTextData, ed, startPoint);
         }
 
-        private static void CreateStringObjectInCAD(Editor ed, Point3d stringStartPoint)
+        private static void CreateStringObjectInCAD(
+            Editor ed,
+            Point3d stringStartPoint,
+            bool smallStrings = false
+        )
         {
             var dllPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var jsonPath = Path.Combine(dllPath, $"block data/String.json");
+            if (smallStrings)
+            {
+                jsonPath = Path.Combine(dllPath, $"block data/StringSmallScale.json");
+            }
             var json = File.ReadAllText(jsonPath);
             var stringData = JArray
                 .Parse(json)
@@ -565,9 +581,12 @@ namespace GMEPSolar
         }
 
         private static List<Dictionary<string, object>> GetStringData(
-            Dictionary<string, Dictionary<string, object>> formData
+            Dictionary<string, Dictionary<string, object>> formData,
+            bool smallStrings = false
         )
         {
+            var TEXT_HEIGHT = 0.8334;
+            var STRING_HEIGHT = smallStrings ? 0.7648 : 1.0695;
             var stringDataContainer = new List<Dictionary<string, object>>();
             var firstFlag = true;
             var previousModulesCount = 0;
@@ -594,25 +613,25 @@ namespace GMEPSolar
                     if (firstFlag && (isRegular || isParallel))
                     {
                         firstFlag = false;
-                        stringData["height"] = (double)stringData["height"] + 0.8334;
+                        stringData["height"] = (double)stringData["height"] + TEXT_HEIGHT;
                         ((List<string>)stringData["items"]).Add("text");
                         previousModulesCount = modulesCount;
                     }
                     else if ((isRegular || isParallel) && modulesCount != previousModulesCount)
                     {
-                        stringData["height"] = (double)stringData["height"] + 0.8334;
+                        stringData["height"] = (double)stringData["height"] + TEXT_HEIGHT;
                         ((List<string>)stringData["items"]).Add("text");
                         previousModulesCount = modulesCount;
                     }
 
                     if (isRegular)
                     {
-                        stringData["height"] = (double)stringData["height"] + 1.0695;
+                        stringData["height"] = (double)stringData["height"] + STRING_HEIGHT;
                         ((List<string>)stringData["items"]).Add("string");
                     }
                     else if (isParallel)
                     {
-                        stringData["height"] = (double)stringData["height"] + (1.0695 * 2);
+                        stringData["height"] = (double)stringData["height"] + (STRING_HEIGHT * 2);
                         ((List<string>)stringData["items"]).Add("string");
                         ((List<string>)stringData["items"]).Add("string");
                     }
