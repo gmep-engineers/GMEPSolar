@@ -122,6 +122,15 @@
     <None Include="block data\EMButton.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="block data\EMButton2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="block data\EndBusBar1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="block data\EndBusBar2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="block data\Inverter2PLoadWire.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
