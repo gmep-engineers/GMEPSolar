@@ -678,13 +678,44 @@ namespace GMEPSolar
     )
     {
       var lengths = new List<double> { 3.1049, 6.0505 };
-      GetLinesFromDataByLength(data, lengths);
+      data = GetLinesFromDataByLengthAndUpdateUpperPointYCoord(data, lengths, topOfMiddleBusBarY);
       return data;
     }
 
-    private void GetLinesFromDataByLength(List<Dictionary<string, Dictionary<string, object>>> data, List<double> lengths)
+    private List<Dictionary<string, Dictionary<string, object>>> GetLinesFromDataByLengthAndUpdateUpperPointYCoord(List<Dictionary<string, Dictionary<string, object>>> data, List<double> lengths, double newUpperYCoord)
     {
       HelperMethods.SaveDataToJsonFile(data, "middleBusBarData.json");
+
+      foreach (var dict in data)
+      {
+        if (dict.ContainsKey("line"))
+        {
+          var line = dict["line"];
+
+          HelperMethods.SaveDataToJsonFile(line, "line.json");
+
+          var startPoint = line["startPoint"] as Dictionary<string, double>;
+          var endPoint = line["endPoint"] as Dictionary<string, double>;
+
+          HelperMethods.SaveDataToJsonFile(startPoint, "startPoint.json");
+
+          var startPointX = Convert.ToDouble(startPoint["X"]);
+          var startPointY = Convert.ToDouble(startPoint["Y"]);
+          var endPointX = Convert.ToDouble(endPoint["X"]);
+          var endPointY = Convert.ToDouble(endPoint["Y"]);
+
+          var length = Math.Sqrt(Math.Pow(endPointX - startPointX, 2) + Math.Pow(endPointY - startPointY, 2));
+
+          length = Math.Round(length, 4);
+
+          if (lengths.Contains(length))
+          {
+            var adjustmentPoint = (startPointY > endPointY) ? startPoint : endPoint;
+            adjustmentPoint["Y"] = newUpperYCoord;
+          }
+        }
+      }
+      return data;
     }
 
     private void CreateTopOfBusBar(Point3d point, Editor ed)
