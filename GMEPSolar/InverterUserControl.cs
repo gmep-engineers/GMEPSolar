@@ -85,5 +85,27 @@ namespace GMEPSolar
       data["isMaster"] = RADIO_MASTER.Checked;
       return data;
     }
+
+    private void RADIO_MASTER_CheckedChanged(object sender, EventArgs e)
+    {
+      if (!RADIO_MASTER.Checked)
+      {
+        return;
+      }
+
+      var tabs = this.form.GetInverterTabs();
+      for (int i = 0; i < tabs.TabPages.Count; i++)
+      {
+        if (tabs.TabPages[i].Controls[0] != this)
+        {
+          var control = tabs.TabPages[i].Controls[0] as InverterUserControl;
+          if (control.RADIO_MASTER.Checked)
+          {
+            control.RADIO_MASTER.Checked = false;
+            control.RADIO_SLAVE.Checked = true;
+          }
+        }
+      }
+    }
   }
 }
