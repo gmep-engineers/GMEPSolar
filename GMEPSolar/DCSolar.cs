@@ -913,7 +913,6 @@ namespace GMEPSolar
         if (i == 0 || i == 2)
         {
           Editor ed = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.Editor;
-          ed.WriteMessage("Creating hatched circle\n");
           Point3d endPointUpdatedPoint = new Point3d(
               endPointUpdated["x"],
               endPointUpdated["y"],

@@ -149,6 +149,9 @@
     <None Include="block data\MiddleBusBar.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="block data\Note1.1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="block data\StringSmallScale.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

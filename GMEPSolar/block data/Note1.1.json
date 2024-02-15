@@ -1,0 +1,44 @@
+[
+  {
+    "circle": {
+      "layer": "E-TEXT",
+      "center": {
+        "x": -8.3175366901155172,
+        "y": -2.7220052050353303,
+        "z": 0.0
+      },
+      "radius": 0.40807170045023072
+    }
+  },
+  {
+    "mtext": {
+      "layer": "E-TEXT",
+      "style": "section title",
+      "justification": "MiddleCenter",
+      "text": "{\\Farctext|c0;1.1}",
+      "height": 0.23473342503324723,
+      "lineSpaceDistance": 0.391222375055412,
+      "location": {
+        "x": -8.3175366901155172,
+        "y": -2.7220052050353161,
+        "z": 0.0
+      }
+    }
+  },
+  {
+    "line": {
+      "layer": "E-TEXT",
+      "startPoint": {
+        "x": -8.3175366901155172,
+        "y": -3.3661986264944588,
+        "z": 0.0
+      },
+      "endPoint": {
+        "x": -8.3175366901155172,
+        "y": -3.1300769054855664,
+        "z": 0.0
+      },
+      "linetype": "ByLayer"
+    }
+  }
+]

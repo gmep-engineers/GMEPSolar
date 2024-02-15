@@ -34,39 +34,6 @@ namespace GMEPSolar
       tabPage.Controls.Add(control);
     }
 
-    public void CreateArcBy2Points(Point3d startPoint, Point3d endPoint, bool right)
-    {
-      Document doc = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument;
-      Database db = doc.Database;
-
-      using (Transaction trans = db.TransactionManager.StartTransaction())
-      {
-        BlockTable bt = (BlockTable)trans.GetObject(db.BlockTableId, OpenMode.ForRead);
-        BlockTableRecord btr = (BlockTableRecord)trans.GetObject(bt[BlockTableRecord.PaperSpace], OpenMode.ForWrite);
-
-        var intermediatePoint = CreateIntermediatePoint(startPoint, endPoint, right);
-        var pts = new Point3dCollection { startPoint, intermediatePoint, endPoint };
-        CircularArc3d arc3d = new CircularArc3d(startPoint, intermediatePoint, endPoint);
-
-        Point3d centerPoint = arc3d.Center;
-
-        double startAngle = Math.Atan2(startPoint.Y - centerPoint.Y, startPoint.X - centerPoint.X);
-        double endAngle = Math.Atan2(endPoint.Y - centerPoint.Y, endPoint.X - centerPoint.X);
-        if (!right)
-        {
-          startAngle = Math.Atan2(endPoint.Y - centerPoint.Y, endPoint.X - centerPoint.X);
-          endAngle = Math.Atan2(startPoint.Y - centerPoint.Y, startPoint.X - centerPoint.X);
-        }
-
-        Arc arc = new Arc(arc3d.Center, arc3d.Radius, startAngle, endAngle);
-
-        btr.AppendEntity(arc);
-        trans.AddNewlyCreatedDBObject(arc, true);
-
-        trans.Commit();
-      }
-    }
-
     public Point3d CreateIntermediatePoint(Point3d startPoint, Point3d endPoint, bool right)
     {
       // Calculate the midpoint
@@ -91,9 +58,9 @@ namespace GMEPSolar
       return intermediatePoint;
     }
 
-    public InverterUserControl CreateNewPanelTab(string tabName)
+    public InverterUserControl CreateNewPanelTab(string tabName, bool is2P = true)
     {
-      InverterUserControl inverterUserControl = new InverterUserControl(this);
+      InverterUserControl inverterUserControl = new InverterUserControl(this, is2P);
       this.Controls.Add(inverterUserControl);
 
       var numberOfTabs = INVERTER_TABS.TabPages.Count + 1;
@@ -336,6 +303,9 @@ namespace GMEPSolar
       var REDUCING_FACTOR = 0.081;
       var CONDUIT_SPACING = 0.0405;
       var MAXIMUM_CONDUIT = 16;
+      var X_DISTANCE_AWAY = -0.5020;
+      var NOTE1PT1_X = 8.3175;
+      var COM_CONDUIT_X = 6.7542;
 
       Close();
 
@@ -387,6 +357,34 @@ namespace GMEPSolar
               if (inverterCount == 1)
               {
                 CreateTopOfBusBar(point, ed);
+
+                if (inverterCount == inverterData.Count)
+                {
+                  if (currentInverterData.ContainsKey("DCSolarData"))
+                  {
+                    var dcSolarData = currentInverterData["DCSolarData"] as Dictionary<string, Dictionary<string, object>>;
+
+                    numberOfConduit = GetNumberOfConduit(dcSolarData);
+                  }
+
+                  var topOfArcY = point.Y - DISTANCE_TO_FIRST_CONDUIT + BUS_BAR_TO_CONDUIT_SPACING;
+                  var botOfArcY = topOfArcY - (numberOfConduit - 1) * CONDUIT_SPACING - 2 * BUS_BAR_TO_CONDUIT_SPACING;
+
+                  if (numberOfConduit == 0)
+                  {
+                    botOfArcY = topOfArcY;
+                  }
+                  else
+                  {
+                    var pt1 = new Point3d(point.X - NOTE1PT1_X, topOfArcY, 0.0);
+                    var pt2 = new Point3d(point.X - NOTE1PT1_X, botOfArcY, 0.0);
+                    CreateEllipseBy2Points(pt1, pt2);
+                  }
+
+                  var botOfArcYRelativeToNewPoint = botOfArcY - point.Y;
+
+                  CreateEndOfBusBar2(point, ed, botOfArcYRelativeToNewPoint);
+                }
               }
               else if (inverterCount != inverterData.Count)
               {
@@ -400,10 +398,13 @@ namespace GMEPSolar
                 }
                 else
                 {
-                  var COMConduitX = 6.7542;
-                  var pt1 = new Point3d(point.X - COMConduitX, topOfArcY, 0.0);
-                  var pt2 = new Point3d(point.X - COMConduitX, botOfArcY, 0.0);
+                  var pt1 = new Point3d(point.X - COM_CONDUIT_X, topOfArcY, 0.0);
+                  var pt2 = new Point3d(point.X - COM_CONDUIT_X, botOfArcY, 0.0);
                   CreateArcBy2Points(pt1, pt2, true);
+
+                  pt1 = new Point3d(point.X - NOTE1PT1_X, topOfArcY, 0.0);
+                  pt2 = new Point3d(point.X - NOTE1PT1_X, botOfArcY, 0.0);
+                  CreateEllipseBy2Points(pt1, pt2);
                 }
 
                 var botOfArcYRelativeToNewPoint = botOfArcY - point.Y;
@@ -422,10 +423,13 @@ namespace GMEPSolar
                 }
                 else
                 {
-                  var COMConduitX = 6.7542;
-                  var pt1 = new Point3d(point.X - COMConduitX, topOfArcY, 0.0);
-                  var pt2 = new Point3d(point.X - COMConduitX, botOfArcY, 0.0);
+                  var pt1 = new Point3d(point.X - COM_CONDUIT_X, topOfArcY, 0.0);
+                  var pt2 = new Point3d(point.X - COM_CONDUIT_X, botOfArcY, 0.0);
                   CreateArcBy2Points(pt1, pt2, true);
+
+                  pt1 = new Point3d(point.X - NOTE1PT1_X, topOfArcY, 0.0);
+                  pt2 = new Point3d(point.X - NOTE1PT1_X, botOfArcY, 0.0);
+                  CreateEllipseBy2Points(pt1, pt2);
                 }
 
                 var botOfArcYRelativeToNewPoint = botOfArcY - point.Y;
@@ -446,6 +450,12 @@ namespace GMEPSolar
                 {
                   botOfArcY = topOfArcY;
                 }
+                else
+                {
+                  var pt1 = new Point3d(point.X - NOTE1PT1_X, topOfArcY, 0.0);
+                  var pt2 = new Point3d(point.X - NOTE1PT1_X, botOfArcY, 0.0);
+                  CreateEllipseBy2Points(pt1, pt2);
+                }
 
                 botOfArcYRelativeToNewPoint = botOfArcY - point.Y;
 
@@ -457,6 +467,11 @@ namespace GMEPSolar
                 var dcSolarData = currentInverterData["DCSolarData"] as Dictionary<string, Dictionary<string, object>>;
 
                 numberOfConduit = GetNumberOfConduit(dcSolarData);
+
+                if (numberOfConduit != 0)
+                {
+                  CreateNote1pt1(point, ed, numberOfConduit);
+                }
 
                 var numberOfMPPTs = GetNumberOfMPPTs(dcSolarData);
                 string json;
@@ -495,7 +510,7 @@ namespace GMEPSolar
                     topOfStringY - stringDefaultMidPointY - stringTotalHeight / 2
                 );
 
-                DC_SOLAR_INPUT.CreateDCSolarObject(dcSolarData, shiftYDown.ToString(), "0", placement, smallStrings);
+                DC_SOLAR_INPUT.CreateDCSolarObject(dcSolarData, shiftYDown.ToString(), X_DISTANCE_AWAY.ToString(), placement, smallStrings);
 
                 var adjustedInverterHeight = INVERTER_MAXIMUM_HEIGHT - ((MAXIMUM_CONDUIT - numberOfConduit) * REDUCING_FACTOR);
 
@@ -535,6 +550,70 @@ namespace GMEPSolar
       }
     }
 
+    private void CreateArcBy2Points(Point3d startPoint, Point3d endPoint, bool right)
+    {
+      Document doc = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument;
+      Database db = doc.Database;
+
+      using (Transaction trans = db.TransactionManager.StartTransaction())
+      {
+        BlockTable bt = (BlockTable)trans.GetObject(db.BlockTableId, OpenMode.ForRead);
+        BlockTableRecord btr = (BlockTableRecord)trans.GetObject(bt[BlockTableRecord.PaperSpace], OpenMode.ForWrite);
+
+        var intermediatePoint = CreateIntermediatePoint(startPoint, endPoint, right);
+        var pts = new Point3dCollection { startPoint, intermediatePoint, endPoint };
+        CircularArc3d arc3d = new CircularArc3d(startPoint, intermediatePoint, endPoint);
+
+        Point3d centerPoint = arc3d.Center;
+
+        double startAngle = Math.Atan2(startPoint.Y - centerPoint.Y, startPoint.X - centerPoint.X);
+        double endAngle = Math.Atan2(endPoint.Y - centerPoint.Y, endPoint.X - centerPoint.X);
+        if (!right)
+        {
+          startAngle = Math.Atan2(endPoint.Y - centerPoint.Y, endPoint.X - centerPoint.X);
+          endAngle = Math.Atan2(startPoint.Y - centerPoint.Y, startPoint.X - centerPoint.X);
+        }
+
+        Arc arc = new Arc(arc3d.Center, arc3d.Radius, startAngle, endAngle);
+
+        btr.AppendEntity(arc);
+        trans.AddNewlyCreatedDBObject(arc, true);
+
+        trans.Commit();
+      }
+    }
+
+    private void CreateEllipseBy2Points(Point3d startPoint, Point3d endPoint)
+    {
+      Document doc = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument;
+      Database db = doc.Database;
+
+      using (Transaction trans = db.TransactionManager.StartTransaction())
+      {
+        BlockTable bt = (BlockTable)trans.GetObject(db.BlockTableId, OpenMode.ForRead);
+        BlockTableRecord btr = (BlockTableRecord)trans.GetObject(bt[BlockTableRecord.PaperSpace], OpenMode.ForWrite);
+
+        Vector3d majorAxis = (endPoint - startPoint) / 2;
+        double majorRadius = majorAxis.Length;
+        double minorRadius = majorRadius / 5;
+
+        var centerPt = new Point3d((startPoint.X + endPoint.X) / 2, (startPoint.Y + endPoint.Y) / 2, (startPoint.Z + endPoint.Z) / 2);
+        Ellipse ellipse = new Ellipse(centerPt, Vector3d.ZAxis, majorAxis, minorRadius / majorRadius, 0, 2 * Math.PI);
+
+        if (!BlockDataMethods.LayerExists("E-TEXT"))
+        {
+          BlockDataMethods.CreateLayer("E-TEXT", 2);
+        }
+
+        ellipse.Layer = "E-TEXT";
+
+        btr.AppendEntity(ellipse);
+        trans.AddNewlyCreatedDBObject(ellipse, true);
+
+        trans.Commit();
+      }
+    }
+
     private void CreateEMButton(Point3d point, Editor ed, int inverterCount)
     {
       string path = "block data/EMButton.json";
@@ -546,6 +625,25 @@ namespace GMEPSolar
 
       var data = BlockDataMethods.GetData(path);
       BlockDataMethods.CreateObjectGivenData(data, ed, point);
+    }
+
+    private void CreateEndBusBar2FilledCircles(Point3d point)
+    {
+      Point3d center1 = new Point3d(
+          -7.4960687024852319 + point.X,
+          -4.8608048270942366 + point.Y,
+          0.0 + point.Z
+      );
+      double radius1 = 0.039236382599967569;
+      BlockDataMethods.CreateFilledCircleInPaperSpace(center1, radius1);
+
+      Point3d center2 = new Point3d(
+          -7.6530142328851056 + point.X,
+          -5.2579733814152236 + point.Y,
+          0.0 + point.Z
+      );
+      double radius2 = 0.039236382599967569;
+      BlockDataMethods.CreateFilledCircleInPaperSpace(center2, radius2);
     }
 
     private void CreateEndOfBusBar(Point3d point, Editor ed, double botOfArcYRelativeToNewPoint)
@@ -567,6 +665,7 @@ namespace GMEPSolar
       data = UpdateEndBusBar2LineHeight(data, botOfArcYRelativeToNewPoint);
 
       BlockDataMethods.CreateObjectGivenData(data, ed, point);
+      CreateEndBusBar2FilledCircles(point);
     }
 
     private void CreateInverter(Point3d point, Dictionary<string, object> inverterData, Editor ed, int slaveOrMasterNumber, int inverterCount, Point3d originalPoint)
@@ -608,6 +707,13 @@ namespace GMEPSolar
 
       BlockDataMethods.CreateObjectGivenData(data, ed, point);
       CreateMiddleBusBarFilledCircles(point);
+    }
+
+    private void CreateNote1pt1(Point3d point, Editor ed, int numberOfConduit)
+    {
+      string path = "block data/Note1.1.json";
+      var data = BlockDataMethods.GetData(path);
+      BlockDataMethods.CreateObjectGivenData(data, ed, point);
     }
 
     private void CreateTopOfBusBar(Point3d point, Editor ed)
@@ -772,15 +878,15 @@ namespace GMEPSolar
       return totalHeight;
     }
 
-    private List<Dictionary<string, Dictionary<string, object>>> UpdateEndBusBarLineHeight(List<Dictionary<string, Dictionary<string, object>>> data, double topOfMiddleBusBarY)
-    {
-      var lengths = new List<double> { 3.1123, 6.0578 };
-      data = GetLinesFromDataByLengthAndUpdateUpperPointYCoord(data, lengths, topOfMiddleBusBarY); return data;
-    }
-
     private List<Dictionary<string, Dictionary<string, object>>> UpdateEndBusBar2LineHeight(List<Dictionary<string, Dictionary<string, object>>> data, double topOfMiddleBusBarY)
     {
       var lengths = new List<double> { 0.8440, 1.2412 };
+      data = GetLinesFromDataByLengthAndUpdateUpperPointYCoord(data, lengths, topOfMiddleBusBarY); return data;
+    }
+
+    private List<Dictionary<string, Dictionary<string, object>>> UpdateEndBusBarLineHeight(List<Dictionary<string, Dictionary<string, object>>> data, double topOfMiddleBusBarY)
+    {
+      var lengths = new List<double> { 3.1123, 6.0578 };
       data = GetLinesFromDataByLengthAndUpdateUpperPointYCoord(data, lengths, topOfMiddleBusBarY); return data;
     }
 
