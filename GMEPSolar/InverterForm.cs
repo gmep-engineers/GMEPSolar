@@ -3,6 +3,7 @@ using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Geometry;
 using GMEPUtilities;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,8 +14,7 @@ namespace GMEPSolar
 {
   public partial class InverterForm : Form
   {
-    Dictionary<int, Dictionary<string, Dictionary<string, object>>> DCSolarData =
-        new Dictionary<int, Dictionary<string, Dictionary<string, object>>>();
+    Dictionary<int, Dictionary<string, Dictionary<string, object>>> DCSolarData = new Dictionary<int, Dictionary<string, Dictionary<string, object>>>();
     DC_SOLAR_INPUT form;
     int initialID;
 
@@ -26,13 +26,7 @@ namespace GMEPSolar
       this.form = new DC_SOLAR_INPUT();
     }
 
-    private void CreateInverter(
-        Point3d point,
-        Dictionary<string, object> inverterData,
-        Editor ed,
-        int slaveOrMasterNumber,
-        int inverterCount
-    )
+    private void CreateInverter(Point3d point, Dictionary<string, object> inverterData, Editor ed, int slaveOrMasterNumber, int inverterCount)
     {
       string path = "block data/Inverter2P.json";
       var isMaster = Convert.ToBoolean(inverterData["isMaster"]);
@@ -62,12 +56,7 @@ namespace GMEPSolar
       BlockDataMethods.CreateObjectGivenData(data, ed, point);
     }
 
-    private List<
-        Dictionary<string, Dictionary<string, object>>
-    > UpdateInverterTextWithInverterNumber(
-        List<Dictionary<string, Dictionary<string, object>>> data,
-        int inverterCount
-    )
+    private List<Dictionary<string, Dictionary<string, object>>> UpdateInverterTextWithInverterNumber(List<Dictionary<string, Dictionary<string, object>>> data, int inverterCount)
     {
       var inverterText = "INVERTER #" + inverterCount;
       foreach (var dict in data)
@@ -104,10 +93,7 @@ namespace GMEPSolar
       BlockDataMethods.CreateFilledCircleInPaperSpace(center2, radius2);
     }
 
-    private List<Dictionary<string, Dictionary<string, object>>> UpdateInverterTextToSlave(
-        List<Dictionary<string, Dictionary<string, object>>> data,
-        int inverterNumber
-    )
+    private List<Dictionary<string, Dictionary<string, object>>> UpdateInverterTextToSlave(List<Dictionary<string, Dictionary<string, object>>> data, int inverterNumber)
     {
       var slaveText = "SLAVE-" + inverterNumber.ToString("D2");
       foreach (var dict in data)
@@ -124,10 +110,7 @@ namespace GMEPSolar
       return data;
     }
 
-    private List<Dictionary<string, Dictionary<string, object>>> UpdateInverterTextToMaster(
-        List<Dictionary<string, Dictionary<string, object>>> data,
-        int inverterNumber
-    )
+    private List<Dictionary<string, Dictionary<string, object>>> UpdateInverterTextToMaster(List<Dictionary<string, Dictionary<string, object>>> data, int inverterNumber)
     {
       var masterText = "MASTER-" + inverterNumber.ToString("D2");
       foreach (var dict in data)
@@ -184,9 +167,7 @@ namespace GMEPSolar
       return INVERTER_TABS;
     }
 
-    internal void SaveDCData(
-        Dictionary<int, Dictionary<string, Dictionary<string, object>>> newDataObject
-    )
+    internal void SaveDCData(Dictionary<int, Dictionary<string, Dictionary<string, object>>> newDataObject)
     {
       DCSolarData = newDataObject;
     }
@@ -342,9 +323,7 @@ namespace GMEPSolar
       return numberOfConduit * 2;
     }
 
-    private static double GetTotalHeightOfStringModule(
-        List<Dictionary<string, object>> stringDataContainer
-    )
+    private static double GetTotalHeightOfStringModule(List<Dictionary<string, object>> stringDataContainer)
     {
       double totalHeight = 0;
       foreach (var stringData in stringDataContainer)
@@ -354,10 +333,7 @@ namespace GMEPSolar
       return totalHeight;
     }
 
-    private static List<Dictionary<string, object>> GetStringData(
-        Dictionary<string, Dictionary<string, object>> formData,
-        bool smallStrings = false
-    )
+    private static List<Dictionary<string, object>> GetStringData(Dictionary<string, Dictionary<string, object>> formData, bool smallStrings = false)
     {
       var TEXT_HEIGHT = 0.8334;
       var STRING_HEIGHT = smallStrings ? 0.7648 : 1.0695;
@@ -468,9 +444,7 @@ namespace GMEPSolar
             var numberOfConduit = 0;
             var oldNumberOfConduits = 0;
             var smallStrings = false;
-            var totalHeightOfInverterModule = GetTotalHeightOfStringModules(
-                inverterData
-            );
+            var totalHeightOfInverterModule = GetTotalHeightOfStringModules(inverterData);
 
             if (totalHeightOfInverterModule > 22.0)
             {
@@ -484,24 +458,12 @@ namespace GMEPSolar
               if (Convert.ToBoolean(currentInverterData["isMaster"]))
               {
                 numberOfMasters++;
-                CreateInverter(
-                    point,
-                    currentInverterData,
-                    ed,
-                    numberOfMasters,
-                    inverterCount
-                );
+                CreateInverter(point, currentInverterData, ed, numberOfMasters, inverterCount);
               }
               else
               {
                 numberOfSlaves++;
-                CreateInverter(
-                    point,
-                    currentInverterData,
-                    ed,
-                    numberOfSlaves,
-                    inverterCount
-                );
+                CreateInverter(point, currentInverterData, ed, numberOfSlaves, inverterCount);
               }
 
               if (inverterCount == 1)
@@ -510,14 +472,7 @@ namespace GMEPSolar
               }
               else if (inverterCount != inverterData.Count)
               {
-                CreateMiddleBusBar(
-                    point,
-                    ed,
-                    oldPoint,
-                    oldNumberOfConduits,
-                    DISTANCE_TO_FIRST_CONDUIT,
-                    BUS_BAR_TO_CONDUIT_SPACING
-                );
+                CreateMiddleBusBar(point, ed, oldPoint, oldNumberOfConduits, DISTANCE_TO_FIRST_CONDUIT, BUS_BAR_TO_CONDUIT_SPACING);
               }
               else
               {
@@ -526,27 +481,21 @@ namespace GMEPSolar
 
               if (currentInverterData.ContainsKey("DCSolarData"))
               {
-                var dcSolarData =
-                    currentInverterData["DCSolarData"]
-                    as Dictionary<string, Dictionary<string, object>>;
+                var dcSolarData = currentInverterData["DCSolarData"] as Dictionary<string, Dictionary<string, object>>;
 
                 var numberOfMPPTs = GetNumberOfMPPTs(dcSolarData);
                 string json;
 
                 if (numberOfMPPTs != 0)
                 {
-                  json = BlockDataMethods.GetUnparsedJSONData(
-                      $"dc solar placement data/DCSolar{numberOfMPPTs}PlacementPoint.json"
-                  );
+                  json = BlockDataMethods.GetUnparsedJSONData($"dc solar placement data/DCSolar{numberOfMPPTs}PlacementPoint.json");
                 }
                 else
                 {
                   return;
                 }
 
-                var parsedData = JsonConvert.DeserializeObject<
-                    Dictionary<string, double>
-                >(json);
+                var parsedData = JsonConvert.DeserializeObject<Dictionary<string, double>>(json);
 
                 var placement = new Point3d(
                     parsedData["X"] + point.X,
@@ -559,9 +508,7 @@ namespace GMEPSolar
                 oldNumberOfConduits = numberOfConduit;
                 numberOfConduit = GetNumberOfConduit(dcSolarData);
 
-                var stringTotalHeight = GetTotalHeightOfStringModule(
-                    stringDataContainer
-                );
+                var stringTotalHeight = GetTotalHeightOfStringModule(stringDataContainer);
 
                 var lineStartPointX =
                     point.X - (0.5673 + (0.6484 * (numberOfMPPTs - 1)));
@@ -576,17 +523,9 @@ namespace GMEPSolar
                     topOfStringY - stringDefaultMidPointY - stringTotalHeight / 2
                 );
 
-                DC_SOLAR_INPUT.CreateDCSolarObject(
-                    dcSolarData,
-                    shiftYDown.ToString(),
-                    "0",
-                    placement,
-                    smallStrings
-                );
+                DC_SOLAR_INPUT.CreateDCSolarObject(dcSolarData, shiftYDown.ToString(), "0", placement, smallStrings);
 
-                var adjustedInverterHeight =
-                    INVERTER_MAXIMUM_HEIGHT
-                    - ((MAXIMUM_CONDUIT - numberOfConduit) * REDUCING_FACTOR);
+                var adjustedInverterHeight = INVERTER_MAXIMUM_HEIGHT - ((MAXIMUM_CONDUIT - numberOfConduit) * REDUCING_FACTOR);
 
                 oldPoint = point;
 
@@ -626,14 +565,7 @@ namespace GMEPSolar
       return;
     }
 
-    private void CreateMiddleBusBar(
-        Point3d point,
-        Editor ed,
-        Point3d oldPoint,
-        int oldNumberOfConduits,
-        double DISTANCE_TO_FIRST_CONDUIT,
-        double BUS_BAR_TO_CONDUIT_SPACING
-    )
+    private void CreateMiddleBusBar(Point3d point, Editor ed, Point3d oldPoint, int oldNumberOfConduits, double DISTANCE_TO_FIRST_CONDUIT, double BUS_BAR_TO_CONDUIT_SPACING)
     {
       var CONDUIT_SPACING = 0.0447;
       string path = "block data/MiddleBusBar.json";
@@ -644,7 +576,20 @@ namespace GMEPSolar
           oldPointY
           - DISTANCE_TO_FIRST_CONDUIT
           - (oldNumberOfConduits - 1) * CONDUIT_SPACING
-          - BUS_BAR_TO_CONDUIT_SPACING;
+          - BUS_BAR_TO_CONDUIT_SPACING - point.Y;
+
+      HelperMethods.SaveDataToJsonFile(point, "point.json");
+
+      var tempData = new Dictionary<string, object>()
+      {
+          { "oldPointY", oldPointY },
+          { "topOfMiddleBusBarY", topOfMiddleBusBarY },
+          { "DISTANCE_TO_FIRST_CONDUIT", DISTANCE_TO_FIRST_CONDUIT },
+          { "BUS_BAR_TO_CONDUIT_SPACING", BUS_BAR_TO_CONDUIT_SPACING },
+          { "oldNumberOfConduits", oldNumberOfConduits }
+      };
+
+      HelperMethods.SaveDataToJsonFile(tempData, "tempData.json");
 
       var topOfArcY = oldPointY - DISTANCE_TO_FIRST_CONDUIT + BUS_BAR_TO_CONDUIT_SPACING;
       var botOfArcY = topOfMiddleBusBarY;
@@ -672,37 +617,24 @@ namespace GMEPSolar
       BlockDataMethods.CreateFilledCircleInPaperSpace(center2, radius2);
     }
 
-    private List<Dictionary<string, Dictionary<string, object>>> UpdateMiddleBusBarLineHeight(
-        List<Dictionary<string, Dictionary<string, object>>> data,
-        double topOfMiddleBusBarY
-    )
-    {
-      var lengths = new List<double> { 3.1049, 6.0505 };
-      data = GetLinesFromDataByLengthAndUpdateUpperPointYCoord(data, lengths, topOfMiddleBusBarY);
-      return data;
-    }
+    private List<Dictionary<string, Dictionary<string, object>>> UpdateMiddleBusBarLineHeight(List<Dictionary<string, Dictionary<string, object>>> data, double topOfMiddleBusBarY) { var lengths = new List<double> { 3.1049, 6.0505 }; data = GetLinesFromDataByLengthAndUpdateUpperPointYCoord(data, lengths, topOfMiddleBusBarY); return data; }
 
     private List<Dictionary<string, Dictionary<string, object>>> GetLinesFromDataByLengthAndUpdateUpperPointYCoord(List<Dictionary<string, Dictionary<string, object>>> data, List<double> lengths, double newUpperYCoord)
     {
-      HelperMethods.SaveDataToJsonFile(data, "middleBusBarData.json");
-
+      HelperMethods.SaveDataToJsonFile(newUpperYCoord, "newUpperYCoord.json");
       foreach (var dict in data)
       {
         if (dict.ContainsKey("line"))
         {
           var line = dict["line"];
 
-          HelperMethods.SaveDataToJsonFile(line, "line.json");
+          var startPoint = ((JObject)line["startPoint"]).ToObject<Dictionary<string, object>>();
+          var endPoint = ((JObject)line["endPoint"]).ToObject<Dictionary<string, object>>();
 
-          var startPoint = line["startPoint"] as Dictionary<string, double>;
-          var endPoint = line["endPoint"] as Dictionary<string, double>;
-
-          HelperMethods.SaveDataToJsonFile(startPoint, "startPoint.json");
-
-          var startPointX = Convert.ToDouble(startPoint["X"]);
-          var startPointY = Convert.ToDouble(startPoint["Y"]);
-          var endPointX = Convert.ToDouble(endPoint["X"]);
-          var endPointY = Convert.ToDouble(endPoint["Y"]);
+          var startPointX = Convert.ToDouble(startPoint["x"]);
+          var startPointY = Convert.ToDouble(startPoint["y"]);
+          var endPointX = Convert.ToDouble(endPoint["x"]);
+          var endPointY = Convert.ToDouble(endPoint["y"]);
 
           var length = Math.Sqrt(Math.Pow(endPointX - startPointX, 2) + Math.Pow(endPointY - startPointY, 2));
 
@@ -711,7 +643,19 @@ namespace GMEPSolar
           if (lengths.Contains(length))
           {
             var adjustmentPoint = (startPointY > endPointY) ? startPoint : endPoint;
-            adjustmentPoint["Y"] = newUpperYCoord;
+            var startOrEnd = (startPointY > endPointY) ? "start" : "end";
+            HelperMethods.SaveDataToJsonFile(adjustmentPoint, "adjustmentPoint.json");
+            adjustmentPoint["y"] = newUpperYCoord;
+            JObject adjustmentPointJObject = JObject.FromObject(adjustmentPoint);
+
+            if (startOrEnd == "start")
+            {
+              line["startPoint"] = adjustmentPointJObject;
+            }
+            else
+            {
+              line["endPoint"] = adjustmentPointJObject;
+            }
           }
         }
       }
