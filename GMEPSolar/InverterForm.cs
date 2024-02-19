@@ -478,7 +478,7 @@ namespace GMEPSolar
 
                 if (numberOfMPPTs != 0)
                 {
-                  json = BlockDataMethods.GetUnparsedJSONData($"dc solar placement data/DCSolar{numberOfMPPTs}PlacementPoint.json");
+                  json = BlockDataMethods.GetUnparsedJSONData($"point data/DCSolar{numberOfMPPTs}PlacementPoint.json");
                 }
                 else
                 {
