@@ -322,17 +322,16 @@ namespace GMEPSolar
           if (inverterFormData.ContainsKey("InverterData"))
           {
             var inverterData = inverterFormData["InverterData"] as List<Dictionary<string, object>>;
-
             var numberOfMasters = 0;
             var numberOfSlaves = 0;
             var inverterCount = 0;
             var oldPoint = point;
             var numberOfConduit = 0;
             var smallStrings = false;
-
             var originalPoint = point;
-
             var totalHeightOfInverterModule = GetTotalHeightOfStringModules(inverterData);
+            var groundWire1stNodeInitialEndpoint = GetGroundWire1stNodeInitialEndpoint(point, ed);
+            var groundWire2ndNodeInitialEndpoint = GetGroundWire2ndNodeInitialEndpoint(point, ed);
 
             if (totalHeightOfInverterModule > 22.0)
             {
@@ -357,6 +356,10 @@ namespace GMEPSolar
               if (inverterCount == 1)
               {
                 CreateTopOfBusBar(point, ed);
+
+                CreateFirstGroundingWire(point, ed);
+
+                CreateGround1stNodeInitialWire(point, ed);
 
                 if (inverterCount == inverterData.Count)
                 {
@@ -392,6 +395,16 @@ namespace GMEPSolar
                 var topOfArcY = oldPointY - DISTANCE_TO_FIRST_CONDUIT + BUS_BAR_TO_CONDUIT_SPACING;
                 var botOfArcY = topOfArcY - (numberOfConduit - 1) * CONDUIT_SPACING - 2 * BUS_BAR_TO_CONDUIT_SPACING;
 
+                groundWire2ndNodeInitialEndpoint = GetGroundWire2ndNodeInitialEndpoint(point, ed);
+
+                CreateGround2ndNodeInitialWire(point, ed);
+
+                CreateGround1stNodeInitialWire(point, ed);
+
+                CreateGroundConnectingWire(groundWire1stNodeInitialEndpoint, groundWire2ndNodeInitialEndpoint, ed);
+
+                groundWire1stNodeInitialEndpoint = GetGroundWire1stNodeInitialEndpoint(point, ed);
+
                 if (numberOfConduit == 0)
                 {
                   botOfArcY = topOfArcY;
@@ -416,6 +429,16 @@ namespace GMEPSolar
                 var oldPointY = oldPoint.Y;
                 var topOfArcY = oldPointY - DISTANCE_TO_FIRST_CONDUIT + BUS_BAR_TO_CONDUIT_SPACING;
                 var botOfArcY = topOfArcY - (numberOfConduit - 1) * CONDUIT_SPACING - 2 * BUS_BAR_TO_CONDUIT_SPACING;
+
+                groundWire2ndNodeInitialEndpoint = GetGroundWire2ndNodeInitialEndpoint(point, ed);
+
+                CreateGround2ndNodeInitialWire(point, ed);
+
+                CreateGround1stNodeInitialWire(point, ed);
+
+                CreateGroundConnectingWire(groundWire1stNodeInitialEndpoint, groundWire2ndNodeInitialEndpoint, ed);
+
+                groundWire1stNodeInitialEndpoint = GetGroundWire1stNodeInitialEndpoint(point, ed);
 
                 if (numberOfConduit == 0)
                 {
@@ -550,6 +573,63 @@ namespace GMEPSolar
       }
     }
 
+    private void CreateGroundConnectingWire(Dictionary<string, double> groundWire1stNodeInitialEndpoint, Dictionary<string, double> groundWire2ndNodeInitialEndpoint, Editor ed)
+    {
+      var startPoint = new Point3d(groundWire1stNodeInitialEndpoint["X"], groundWire1stNodeInitialEndpoint["Y"], groundWire1stNodeInitialEndpoint["Z"]);
+      var endPoint = new Point3d(groundWire2ndNodeInitialEndpoint["X"], groundWire2ndNodeInitialEndpoint["Y"], groundWire2ndNodeInitialEndpoint["Z"]);
+
+      BlockDataMethods.CreateHiddenLineInPaperspace(startPoint, endPoint, ed);
+    }
+
+    private Dictionary<string, double> GetGroundWire2ndNodeInitialEndpoint(Point3d point, Editor ed)
+    {
+      string path = "point data/GroundWire2ndNodeInitialEndpoint.json";
+      var json = BlockDataMethods.GetUnparsedJSONData(path);
+      var parsedData = JsonConvert.DeserializeObject<Dictionary<string, double>>(json);
+      var absoluteData = new Dictionary<string, double>
+      {
+          { "X", parsedData["X"] + point.X },
+          { "Y", parsedData["Y"] + point.Y },
+          { "Z", parsedData["Z"] + point.Z }
+      };
+      return absoluteData;
+    }
+
+    private Dictionary<string, double> GetGroundWire1stNodeInitialEndpoint(Point3d point, Editor ed)
+    {
+      string path = "point data/GroundWire1stNodeInitialEndpoint.json";
+      var json = BlockDataMethods.GetUnparsedJSONData(path);
+      var parsedData = JsonConvert.DeserializeObject<Dictionary<string, double>>(json);
+      var absoluteData = new Dictionary<string, double>
+      {
+          { "X", parsedData["X"] + point.X },
+          { "Y", parsedData["Y"] + point.Y },
+          { "Z", parsedData["Z"] + point.Z }
+      };
+      return absoluteData;
+    }
+
+    private void CreateGround2ndNodeInitialWire(Point3d point, Editor ed)
+    {
+      string path = "block data/GroundWire2ndNodeInitial.json";
+      var data = BlockDataMethods.GetData(path);
+      BlockDataMethods.CreateObjectGivenData(data, ed, point);
+    }
+
+    private void CreateGround1stNodeInitialWire(Point3d point, Editor ed)
+    {
+      string path = "block data/GroundWire1stNodeInitial.json";
+      var data = BlockDataMethods.GetData(path);
+      BlockDataMethods.CreateObjectGivenData(data, ed, point);
+    }
+
+    private void CreateFirstGroundingWire(Point3d point, Editor ed)
+    {
+      string path = "block data/GroundWire1stNode1stInverter.json";
+      var data = BlockDataMethods.GetData(path);
+      BlockDataMethods.CreateObjectGivenData(data, ed, point);
+    }
+
     private void CreateArcBy2Points(Point3d startPoint, Point3d endPoint, bool right)
     {
       Document doc = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument;
@@ -629,21 +709,51 @@ namespace GMEPSolar
 
     private void CreateEndBusBar2FilledCircles(Point3d point)
     {
+      double radius = 0.039236382599967569;
+
       Point3d center1 = new Point3d(
           -7.4960687024852319 + point.X,
           -4.8608048270942366 + point.Y,
           0.0 + point.Z
       );
-      double radius1 = 0.039236382599967569;
-      BlockDataMethods.CreateFilledCircleInPaperSpace(center1, radius1);
-
       Point3d center2 = new Point3d(
           -7.6530142328851056 + point.X,
           -5.2579733814152236 + point.Y,
           0.0 + point.Z
       );
-      double radius2 = 0.039236382599967569;
-      BlockDataMethods.CreateFilledCircleInPaperSpace(center2, radius2);
+      Point3d center3 = new Point3d(
+          -5.7042862323706061 + point.X,
+          -4.8608048270942348 + point.Y,
+          0.0 + point.Z
+      );
+      Point3d center4 = new Point3d(
+          -5.8778454256876387 + point.X,
+          -5.2579733814152227 + point.Y,
+          0.0 + point.Z
+      );
+      Point3d center5 = new Point3d(
+          -5.8778454256876387 + point.X,
+          -5.6202406847764479 + point.Y,
+          0.0 + point.Z
+      );
+      Point3d center6 = new Point3d(
+          -5.7042862323706061 + point.X,
+          -5.6202406847764479 + point.Y,
+          0.0 + point.Z
+      );
+      Point3d center7 = new Point3d(
+          -5.8778454256876387 + point.X,
+          -5.6202406847764479 + point.Y,
+          0.0 + point.Z
+      );
+
+      BlockDataMethods.CreateFilledCircleInPaperSpace(center1, radius);
+      BlockDataMethods.CreateFilledCircleInPaperSpace(center2, radius);
+      BlockDataMethods.CreateFilledCircleInPaperSpace(center3, radius);
+      BlockDataMethods.CreateFilledCircleInPaperSpace(center4, radius);
+      BlockDataMethods.CreateFilledCircleInPaperSpace(center5, radius);
+      BlockDataMethods.CreateFilledCircleInPaperSpace(center6, radius);
+      BlockDataMethods.CreateFilledCircleInPaperSpace(center7, radius);
     }
 
     private void CreateEndOfBusBar(Point3d point, Editor ed, double botOfArcYRelativeToNewPoint)
