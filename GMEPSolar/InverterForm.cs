@@ -328,7 +328,9 @@ namespace GMEPSolar
             var oldPoint = point;
             var numberOfConduit = 0;
             var smallStrings = false;
+            var firstStringContainerWithItems = false;
             var originalPoint = point;
+            var absoluteStringPoint = new Point3d(0, 0, 0);
             var totalHeightOfInverterModule = GetTotalHeightOfStringModules(inverterData);
             var groundWire1stNodeInitialEndpoint = GetGroundWire1stNodeInitialEndpoint(point, ed);
             var groundWire2ndNodeInitialEndpoint = GetGroundWire2ndNodeInitialEndpoint(point, ed);
@@ -434,8 +436,6 @@ namespace GMEPSolar
 
                 CreateGround2ndNodeInitialWire(point, ed);
 
-                CreateGround1stNodeInitialWire(point, ed);
-
                 CreateGroundConnectingWire(groundWire1stNodeInitialEndpoint, groundWire2ndNodeInitialEndpoint, ed);
 
                 groundWire1stNodeInitialEndpoint = GetGroundWire1stNodeInitialEndpoint(point, ed);
@@ -518,10 +518,18 @@ namespace GMEPSolar
 
                 var stringDataContainer = GetStringData(dcSolarData, smallStrings);
 
+                var stringDataContainerHasItems = StringDataContainerHasItems(stringDataContainer);
+
+                if (!firstStringContainerWithItems && stringDataContainerHasItems)
+                {
+                  firstStringContainerWithItems = true;
+
+                  absoluteStringPoint = GetAbsoluteStringPoint(point);
+                }
+
                 var stringTotalHeight = GetTotalHeightOfStringModule(stringDataContainer);
 
-                var lineStartPointX =
-                    point.X - (0.5673 + (0.6484 * (numberOfMPPTs - 1)));
+                var lineStartPointX = point.X - (0.5673 + (0.6484 * (numberOfMPPTs - 1)));
                 var lineStartPointY = point.Y - 0.6098;
 
                 var stringDefaultMidPointX = lineStartPointX - 3.3606;
@@ -529,9 +537,7 @@ namespace GMEPSolar
 
                 var topOfStringY = lineStartPointY + 2.9784 + 0.0539;
 
-                var shiftYDown = (
-                    topOfStringY - stringDefaultMidPointY - stringTotalHeight / 2
-                );
+                var shiftYDown = (topOfStringY - stringDefaultMidPointY - stringTotalHeight / 2);
 
                 DC_SOLAR_INPUT.CreateDCSolarObject(dcSolarData, shiftYDown.ToString(), X_DISTANCE_AWAY.ToString(), placement, smallStrings);
 
@@ -541,19 +547,25 @@ namespace GMEPSolar
 
                 if (stringTotalHeight > adjustedInverterHeight)
                 {
-                  point = new Point3d(
+                  if (inverterCount != inverterData.Count)
+                  {
+                    point = new Point3d(
                       point.X,
                       point.Y - (stringTotalHeight),
                       point.Z
                   );
+                  }
                 }
                 else
                 {
-                  point = new Point3d(
+                  if (inverterCount != inverterData.Count)
+                  {
+                    point = new Point3d(
                       point.X,
                       point.Y - (adjustedInverterHeight),
                       point.Z
                   );
+                  }
                 }
               }
               else
@@ -561,16 +573,49 @@ namespace GMEPSolar
                 numberOfConduit = 0;
                 oldPoint = point;
 
-                point = new Point3d(
+                if (inverterCount != inverterData.Count)
+                {
+                  point = new Point3d(
                     point.X,
                     point.Y - INVERTER_MINIMUM_HEIGHT,
                     point.Z
                 );
+                }
+              }
+
+              if (inverterCount == inverterData.Count)
+              {
+                if (absoluteStringPoint != new Point3d(0, 0, 0))
+                {
+                  CreateGround1stNodeInitialWire(point, ed);
+                }
               }
             }
           }
         }
       }
+    }
+
+    private Point3d GetAbsoluteStringPoint(Point3d point)
+    {
+      string path = "point data/FirstStringGroundPoint.json";
+      var json = BlockDataMethods.GetUnparsedJSONData(path);
+      var parsedData = JsonConvert.DeserializeObject<Dictionary<string, double>>(json);
+      var absoluteStringPoint = new Point3d(parsedData["X"] + point.X, parsedData["Y"] + point.Y, parsedData["Z"] + point.Z);
+      return absoluteStringPoint;
+    }
+
+    private bool StringDataContainerHasItems(List<Dictionary<string, object>> stringDataContainer)
+    {
+      foreach (var stringData in stringDataContainer)
+      {
+        if (stringData["items"] != null)
+        {
+          return true;
+        }
+      }
+
+      return false;
     }
 
     private void CreateGroundConnectingWire(Dictionary<string, double> groundWire1stNodeInitialEndpoint, Dictionary<string, double> groundWire2ndNodeInitialEndpoint, Editor ed)
