@@ -846,7 +846,7 @@ namespace GMEPSolar
           {
             numberOfConduit += 1;
           }
-          else
+          else if (Convert.ToBoolean(mpptData["Parallel"]))
           {
             numberOfConduit += 2;
           }

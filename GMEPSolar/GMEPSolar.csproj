@@ -167,6 +167,9 @@
     <None Include="block data\TopOfBusBar.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="point data\FirstStringGroundPoint.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="point data\OnlyGridOrLoadContinuationPoint.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
