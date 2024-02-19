@@ -465,9 +465,15 @@ namespace GMEPSolar
 
                   numberOfConduit = GetNumberOfConduit(dcSolarData);
                 }
+                else
+                {
+                  numberOfConduit = 0;
+                }
 
                 topOfArcY = point.Y - DISTANCE_TO_FIRST_CONDUIT + BUS_BAR_TO_CONDUIT_SPACING;
                 botOfArcY = topOfArcY - (numberOfConduit - 1) * CONDUIT_SPACING - 2 * BUS_BAR_TO_CONDUIT_SPACING;
+
+                HelperMethods.SaveDataToJsonFile(numberOfConduit, "numberOfConduit.json");
 
                 if (numberOfConduit == 0)
                 {
@@ -588,12 +594,25 @@ namespace GMEPSolar
                 if (absoluteStringPoint != new Point3d(0, 0, 0))
                 {
                   CreateGround1stNodeInitialWire(point, ed);
+                  CreateGroundWireBottomToTopOfString(absoluteStringPoint, point, ed);
                 }
               }
             }
           }
         }
       }
+    }
+
+    private void CreateGroundWireBottomToTopOfString(Point3d absoluteStringPoint, Point3d point, Editor ed)
+    {
+      /*
+       *
+       *
+       *
+       *
+       *
+       *
+       */
     }
 
     private Point3d GetAbsoluteStringPoint(Point3d point)
