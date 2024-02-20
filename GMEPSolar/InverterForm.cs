@@ -629,6 +629,24 @@ namespace GMEPSolar
       var rectangleData = BlockDataMethods.GetData(path);
       rectangleData = IncreaseHeightOfCombinationPanel(rectangleData, numberOfInverters, BREAKER_HEIGHT);
       BlockDataMethods.CreateObjectGivenData(rectangleData, ed, point);
+
+      path = "block data/CombinationPanelBottomText.json";
+      var bottomTextData = BlockDataMethods.GetData(path);
+      bottomTextData = AdjustPlacementOfBottomTextOnCombinationPanel(bottomTextData, numberOfInverters, BREAKER_HEIGHT);
+      BlockDataMethods.CreateObjectGivenData(bottomTextData, ed, point);
+    }
+
+    private List<Dictionary<string, Dictionary<string, object>>> AdjustPlacementOfBottomTextOnCombinationPanel(List<Dictionary<string, Dictionary<string, object>>> bottomTextData, int numberOfInverters, double BREAKER_HEIGHT)
+    {
+      HelperMethods.SaveDataToJsonFile(bottomTextData, "bottomTextData.json");
+      foreach (var text in bottomTextData)
+      {
+        var textData = JObject.FromObject(text["mtext"]).ToObject<MText>();
+        HelperMethods.SaveDataToJsonFile(textData, "textData.json");
+        textData.location = new Vertex(textData.location.x, textData.location.y - (BREAKER_HEIGHT * (numberOfInverters - 1)), textData.location.z);
+        text["mtext"] = JObject.FromObject(textData).ToObject<Dictionary<string, object>>();
+      }
+      return bottomTextData;
     }
 
     private List<Dictionary<string, Dictionary<string, object>>> IncreaseHeightOfCombinationPanel(List<Dictionary<string, Dictionary<string, object>>> rectangleData, int numberOfInverters, double BREAKER_HEIGHT)
@@ -1222,5 +1240,16 @@ namespace GMEPSolar
     public List<Vertex> vertices { get; set; }
     public string linetype { get; set; }
     public bool isClosed { get; set; }
+  }
+
+  public class MText
+  {
+    public string layer { get; set; }
+    public string style { get; set; }
+    public string justification { get; set; }
+    public string text { get; set; }
+    public double height { get; set; }
+    public double lineSpaceDistance { get; set; }
+    public Vertex location { get; set; }
   }
 }
