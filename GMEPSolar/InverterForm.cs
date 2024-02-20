@@ -336,6 +336,7 @@ namespace GMEPSolar
             var totalHeightOfInverterModule = GetTotalHeightOfStringModules(inverterData);
             var groundWire1stNodeInitialEndpoint = GetGroundWire1stNodeInitialEndpoint(point, ed);
             var groundWire2ndNodeInitialEndpoint = GetGroundWire2ndNodeInitialEndpoint(point, ed);
+            var configuration = inverterFormData["Configuration"] as string;
 
             CreateCombinationPanel(point, numberOfInverters, ed);
 
@@ -347,6 +348,10 @@ namespace GMEPSolar
             foreach (var currentInverterData in inverterData)
             {
               inverterCount += 1;
+
+              var is2P = Convert.ToBoolean(currentInverterData["is2P"]);
+
+              CreateInitialWiringToCombinationPanel(point, ed, is2P, configuration);
 
               if (Convert.ToBoolean(currentInverterData["isMaster"]))
               {
@@ -363,9 +368,12 @@ namespace GMEPSolar
               {
                 CreateTopOfBusBar(point, ed);
 
-                CreateFirstGroundingWire(point, ed);
+                if (inverterCount != inverterData.Count)
+                {
+                  CreateTopOfBusBarCOMWire(point, ed);
+                }
 
-                CreateGround1stNodeInitialWire(point, ed);
+                CreateFirstGroundingWire(point, ed);
 
                 if (inverterCount == inverterData.Count)
                 {
@@ -501,7 +509,7 @@ namespace GMEPSolar
 
                 if (numberOfConduit != 0)
                 {
-                  CreateNote1pt1(point, ed, numberOfConduit);
+                  CreateNote1pt1(point, ed);
                 }
 
                 var numberOfMPPTs = GetNumberOfMPPTs(dcSolarData);
@@ -607,6 +615,62 @@ namespace GMEPSolar
               }
             }
           }
+        }
+      }
+    }
+
+    private void CreateTopOfBusBarCOMWire(Point3d point, Editor ed)
+    {
+      string path = "block data/TopOfBusBarCOM.json";
+      var data = BlockDataMethods.GetData(path);
+      BlockDataMethods.CreateObjectGivenData(data, ed, point);
+    }
+
+    private void CreateInitialWiringToCombinationPanel(Point3d point, Editor ed, bool is2P, string configuration)
+    {
+      if (configuration == "GRID")
+      {
+        if (is2P)
+        {
+          string path = "block data/OnlyGridInitial2P.json";
+          var data = BlockDataMethods.GetData(path);
+          BlockDataMethods.CreateObjectGivenData(data, ed, point);
+        }
+        else
+        {
+          string path = "block data/OnlyGridInitial3P.json";
+          var data = BlockDataMethods.GetData(path);
+          BlockDataMethods.CreateObjectGivenData(data, ed, point);
+        }
+      }
+      else if (configuration == "LOAD")
+      {
+        if (is2P)
+        {
+          string path = "block data/OnlyLoadInitial2P.json";
+          var data = BlockDataMethods.GetData(path);
+          BlockDataMethods.CreateObjectGivenData(data, ed, point);
+        }
+        else
+        {
+          string path = "block data/OnlyLoadInitial3P.json";
+          var data = BlockDataMethods.GetData(path);
+          BlockDataMethods.CreateObjectGivenData(data, ed, point);
+        }
+      }
+      else if (configuration == "GRID_LOAD")
+      {
+        if (is2P)
+        {
+          string path = "block data/GridLoadInitial2P.json";
+          var data = BlockDataMethods.GetData(path);
+          BlockDataMethods.CreateObjectGivenData(data, ed, point);
+        }
+        else
+        {
+          string path = "block data/GridLoadInitial3P.json";
+          var data = BlockDataMethods.GetData(path);
+          BlockDataMethods.CreateObjectGivenData(data, ed, point);
         }
       }
     }
@@ -977,7 +1041,7 @@ namespace GMEPSolar
       CreateMiddleBusBarFilledCircles(point);
     }
 
-    private void CreateNote1pt1(Point3d point, Editor ed, int numberOfConduit)
+    private void CreateNote1pt1(Point3d point, Editor ed)
     {
       string path = "block data/Note1.1.json";
       var data = BlockDataMethods.GetData(path);
