@@ -536,7 +536,6 @@ namespace GMEPSolar
 
                 if (stringDataContainerHasItems)
                 {
-                  HelperMethods.SaveDataToJsonFile(stringTotalHeight, "stringTotalHeight.json");
                   var adjustedStringTotalHeight = stringTotalHeight - 0.8134999;
                   absoluteBottomOfString = new Point3d(point.X, point.Y - adjustedStringTotalHeight, point.Z);
                 }

@@ -1,0 +1,17 @@
+[
+  {
+    "mtext": {
+      "layer": "E-TEXT",
+      "style": "RPM",
+      "justification": "TopCenter",
+      "text": "\\A1;\\pxqc;800A AC\\PCOMBINER",
+      "height": 0.084375,
+      "lineSpaceDistance": 0.140625,
+      "location": {
+        "x": 4.4000328121877885,
+        "y": -4.4965271354517533,
+        "z": 0.0
+      }
+    }
+  }
+]
