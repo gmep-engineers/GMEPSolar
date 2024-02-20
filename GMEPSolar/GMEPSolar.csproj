@@ -137,7 +137,9 @@
     <None Include="block data\CombinationPanelRectangle.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="block data\CombinationPanelUpperWire.json" />
+    <None Include="block data\CombinationPanelUpperWire.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="block data\EMButton.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

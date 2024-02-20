@@ -624,6 +624,38 @@ namespace GMEPSolar
         var adjustedPoint = new Point3d(point.X, point.Y - (BREAKER_HEIGHT * i), point.Z);
         CreateBreaker(adjustedPoint, ed);
       }
+
+      path = "block data/CombinationPanelRectangle.json";
+      var rectangleData = BlockDataMethods.GetData(path);
+      rectangleData = IncreaseHeightOfCombinationPanel(rectangleData, numberOfInverters, BREAKER_HEIGHT);
+      BlockDataMethods.CreateObjectGivenData(rectangleData, ed, point);
+    }
+
+    private List<Dictionary<string, Dictionary<string, object>>> IncreaseHeightOfCombinationPanel(List<Dictionary<string, Dictionary<string, object>>> rectangleData, int numberOfInverters, double BREAKER_HEIGHT)
+    {
+      foreach (var rectangle in rectangleData)
+      {
+        if (rectangle.ContainsKey("polyline"))
+        {
+          var polyline = JObject.FromObject(rectangle["polyline"]).ToObject<Polyline>();
+          var newVertices = new List<Vertex>();
+
+          foreach (var vertex in polyline.vertices)
+          {
+            if (vertex.y < -4.4)
+            {
+              newVertices.Add(new Vertex(vertex.x, vertex.y - (BREAKER_HEIGHT * (numberOfInverters - 1)), vertex.z));
+            }
+            else
+            {
+              newVertices.Add(new Vertex(vertex.x, vertex.y, vertex.z));
+            }
+          }
+          polyline.vertices = newVertices;
+          rectangle["polyline"] = JObject.FromObject(polyline).ToObject<Dictionary<string, object>>();
+        }
+      }
+      return rectangleData;
     }
 
     private static void CreateBreaker(Point3d point, Editor ed)
@@ -1168,5 +1200,27 @@ namespace GMEPSolar
       var lengths = new List<double> { 3.1049, 6.0505 };
       data = GetLinesFromDataByLengthAndUpdateUpperPointYCoord(data, lengths, topOfMiddleBusBarY); return data;
     }
+  }
+
+  public class Vertex
+  {
+    public Vertex(double x, double y, double z)
+    {
+      this.x = x;
+      this.y = y;
+      this.z = z;
+    }
+
+    public double x { get; set; }
+    public double y { get; set; }
+    public double z { get; set; }
+  }
+
+  public class Polyline
+  {
+    public string layer { get; set; }
+    public List<Vertex> vertices { get; set; }
+    public string linetype { get; set; }
+    public bool isClosed { get; set; }
   }
 }
