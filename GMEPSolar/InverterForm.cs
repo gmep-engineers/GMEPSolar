@@ -338,7 +338,13 @@ namespace GMEPSolar
             var groundWire2ndNodeInitialEndpoint = GetGroundWire2ndNodeInitialEndpoint(point, ed);
             var configuration = inverterFormData["Configuration"] as string;
 
-            CreateCombinationPanel(point, numberOfInverters, ed);
+            CreateCombinationPanel(point, inverterData, ed);
+
+            if (configuration == "GRID_LOAD")
+            {
+              var fakePoint = new Point3d(point.X, point.Y - 7.0, point.Z);
+              CreateCombinationPanel(fakePoint, inverterData, ed);
+            }
 
             if (totalHeightOfInverterModule > 22.0)
             {
@@ -675,7 +681,7 @@ namespace GMEPSolar
       }
     }
 
-    private void CreateCombinationPanel(Point3d point, int numberOfInverters, Editor ed)
+    private void CreateCombinationPanel(Point3d point, List<Dictionary<string, object>> inverterData, Editor ed)
     {
       var BREAKER_HEIGHT = 0.3964;
 
@@ -683,20 +689,22 @@ namespace GMEPSolar
       var upperWireData = BlockDataMethods.GetData(path);
       BlockDataMethods.CreateObjectGivenData(upperWireData, ed, point);
 
-      for (var i = 0; i < numberOfInverters; i++)
+      for (var i = 0; i < inverterData.Count; i++)
       {
+        var currentInverterData = inverterData[i];
+        var is2P = Convert.ToBoolean(currentInverterData["is2P"]);
         var adjustedPoint = new Point3d(point.X, point.Y - (BREAKER_HEIGHT * i), point.Z);
-        CreateBreaker(adjustedPoint, ed);
+        CreateBreaker(adjustedPoint, is2P, ed);
       }
 
       path = "block data/CombinationPanelRectangle.json";
       var rectangleData = BlockDataMethods.GetData(path);
-      rectangleData = IncreaseHeightOfCombinationPanel(rectangleData, numberOfInverters, BREAKER_HEIGHT);
+      rectangleData = IncreaseHeightOfCombinationPanel(rectangleData, inverterData.Count, BREAKER_HEIGHT);
       BlockDataMethods.CreateObjectGivenData(rectangleData, ed, point);
 
       path = "block data/CombinationPanelBottomText.json";
       var bottomTextData = BlockDataMethods.GetData(path);
-      bottomTextData = AdjustPlacementOfBottomTextOnCombinationPanel(bottomTextData, numberOfInverters, BREAKER_HEIGHT);
+      bottomTextData = AdjustPlacementOfBottomTextOnCombinationPanel(bottomTextData, inverterData.Count, BREAKER_HEIGHT);
       BlockDataMethods.CreateObjectGivenData(bottomTextData, ed, point);
     }
 
@@ -738,10 +746,16 @@ namespace GMEPSolar
       return rectangleData;
     }
 
-    private static void CreateBreaker(Point3d point, Editor ed)
+    private static void CreateBreaker(Point3d point, bool is2P, Editor ed)
     {
       string path = "block data/CombinationPanelBreaker.json";
       var breakerData = BlockDataMethods.GetData(path);
+
+      if (is2P)
+      {
+        breakerData[0]["mtext"]["text"] = "200A/2P";
+      }
+
       BlockDataMethods.CreateObjectGivenData(breakerData, ed, point);
     }
 
