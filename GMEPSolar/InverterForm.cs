@@ -331,6 +331,7 @@ namespace GMEPSolar
             var firstStringContainerWithItems = false;
             var originalPoint = point;
             var absoluteStringPoint = new Point3d(0, 0, 0);
+            var absoluteBottomOfString = new Point3d(0, 0, 0);
             var totalHeightOfInverterModule = GetTotalHeightOfStringModules(inverterData);
             var groundWire1stNodeInitialEndpoint = GetGroundWire1stNodeInitialEndpoint(point, ed);
             var groundWire2ndNodeInitialEndpoint = GetGroundWire2ndNodeInitialEndpoint(point, ed);
@@ -473,8 +474,6 @@ namespace GMEPSolar
                 topOfArcY = point.Y - DISTANCE_TO_FIRST_CONDUIT + BUS_BAR_TO_CONDUIT_SPACING;
                 botOfArcY = topOfArcY - (numberOfConduit - 1) * CONDUIT_SPACING - 2 * BUS_BAR_TO_CONDUIT_SPACING;
 
-                HelperMethods.SaveDataToJsonFile(numberOfConduit, "numberOfConduit.json");
-
                 if (numberOfConduit == 0)
                 {
                   botOfArcY = topOfArcY;
@@ -526,6 +525,8 @@ namespace GMEPSolar
 
                 var stringDataContainerHasItems = StringDataContainerHasItems(stringDataContainer);
 
+                var stringTotalHeight = GetTotalHeightOfStringModule(stringDataContainer);
+
                 if (!firstStringContainerWithItems && stringDataContainerHasItems)
                 {
                   firstStringContainerWithItems = true;
@@ -533,7 +534,12 @@ namespace GMEPSolar
                   absoluteStringPoint = GetAbsoluteStringPoint(point);
                 }
 
-                var stringTotalHeight = GetTotalHeightOfStringModule(stringDataContainer);
+                if (stringDataContainerHasItems)
+                {
+                  HelperMethods.SaveDataToJsonFile(stringTotalHeight, "stringTotalHeight.json");
+                  var adjustedStringTotalHeight = stringTotalHeight - 0.8134999;
+                  absoluteBottomOfString = new Point3d(point.X, point.Y - adjustedStringTotalHeight, point.Z);
+                }
 
                 var lineStartPointX = point.X - (0.5673 + (0.6484 * (numberOfMPPTs - 1)));
                 var lineStartPointY = point.Y - 0.6098;
@@ -594,7 +600,7 @@ namespace GMEPSolar
                 if (absoluteStringPoint != new Point3d(0, 0, 0))
                 {
                   CreateGround1stNodeInitialWire(point, ed);
-                  CreateGroundWireBottomToTopOfString(absoluteStringPoint, point, ed);
+                  CreateGroundWireBottomToTopOfString(point, absoluteStringPoint, absoluteBottomOfString, ed);
                 }
               }
             }
@@ -603,16 +609,24 @@ namespace GMEPSolar
       }
     }
 
-    private void CreateGroundWireBottomToTopOfString(Point3d absoluteStringPoint, Point3d point, Editor ed)
+    private void CreateGroundWireBottomToTopOfString(Point3d point, Point3d absoluteStringPoint, Point3d absoluteBottomOfString, Editor ed)
     {
-      /*
-       *
-       *
-       *
-       *
-       *
-       *
-       */
+      var DISTANCE_BELOW_BOTTOM = 1.0;
+
+      var path = "point data/BottomOfBatteryPoint.json";
+      var json = BlockDataMethods.GetUnparsedJSONData(path);
+      var bottomBatteryPoint = JsonConvert.DeserializeObject<Dictionary<string, double>>(json);
+      var absoluteBottomBatteryPoint = new Point3d(bottomBatteryPoint["X"] + point.X, bottomBatteryPoint["Y"] + point.Y, bottomBatteryPoint["Z"] + point.Z);
+      var smallestAbsoluteY = Math.Min(absoluteBottomBatteryPoint.Y, absoluteBottomOfString.Y);
+
+      path = "point data/GroundWire1stNodeInitialEndpoint.json";
+      json = BlockDataMethods.GetUnparsedJSONData(path);
+
+      var groundWirePoint1Relative = JsonConvert.DeserializeObject<Dictionary<string, double>>(json);
+      var groundWirePoint2Absolute = new Point3d(groundWirePoint1Relative["X"] + point.X, smallestAbsoluteY - DISTANCE_BELOW_BOTTOM, groundWirePoint1Relative["Z"] + point.Z);
+      var groundWirePoint1Absolute = new Point3d(groundWirePoint1Relative["X"] + point.X, groundWirePoint1Relative["Y"] + point.Y, groundWirePoint1Relative["Z"] + point.Z);
+
+      BlockDataMethods.CreateHiddenLineInPaperspace(groundWirePoint1Absolute, groundWirePoint2Absolute, ed);
     }
 
     private Point3d GetAbsoluteStringPoint(Point3d point)
