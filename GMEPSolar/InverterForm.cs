@@ -34,30 +34,6 @@ namespace GMEPSolar
       tabPage.Controls.Add(control);
     }
 
-    public Point3d CreateIntermediatePoint(Point3d startPoint, Point3d endPoint, bool right)
-    {
-      // Calculate the midpoint
-      Point3d midPoint = new Point3d((startPoint.X + endPoint.X) / 2, (startPoint.Y + endPoint.Y) / 2, (startPoint.Z + endPoint.Z) / 2);
-
-      // Create vectors
-      Vector3d startToEnd = endPoint - startPoint;
-      Vector3d up = new Vector3d(0, 0, 1);
-
-      // Calculate the cross product
-      Vector3d crossProduct = startToEnd.CrossProduct(up);
-
-      // If left is true, we want the cross product, otherwise we want the negative of the cross product
-      Vector3d direction = right ? crossProduct : -crossProduct;
-
-      // Normalize the direction vector and scale it to desired length (e.g., a fourth the distance between start and end points)
-      direction = direction.GetNormal() * startToEnd.Length / 4;
-
-      // Calculate the intermediate point
-      Point3d intermediatePoint = midPoint + direction;
-
-      return intermediatePoint;
-    }
-
     public InverterUserControl CreateNewPanelTab(string tabName, bool is2P = true)
     {
       InverterUserControl inverterUserControl = new InverterUserControl(this, is2P);
@@ -338,7 +314,10 @@ namespace GMEPSolar
             var groundWire2ndNodeInitialEndpoint = GetGroundWire2ndNodeInitialEndpoint(point, ed);
             var configuration = inverterFormData["Configuration"] as string;
 
-            CreateCombinationPanel(point, inverterData, ed);
+            if (configuration != "EMPTY")
+            {
+              CreateCombinationPanel(point, inverterData, ed);
+            }
 
             if (configuration == "GRID_LOAD")
             {
@@ -377,9 +356,11 @@ namespace GMEPSolar
                 if (inverterCount != inverterData.Count)
                 {
                   CreateTopOfBusBarCOMWire(point, ed);
+                  CreateGround1stNodeInitialWire(point, ed);
                 }
 
                 CreateFirstGroundingWire(point, ed);
+                CreateFirstGroundingWireNote(point, ed);
 
                 if (inverterCount == inverterData.Count)
                 {
@@ -421,7 +402,7 @@ namespace GMEPSolar
 
                 CreateGround1stNodeInitialWire(point, ed);
 
-                CreateGroundConnectingWire(groundWire1stNodeInitialEndpoint, groundWire2ndNodeInitialEndpoint, ed);
+                CreateGroundConnectingWire(groundWire1stNodeInitialEndpoint, groundWire2ndNodeInitialEndpoint, point, ed);
 
                 groundWire1stNodeInitialEndpoint = GetGroundWire1stNodeInitialEndpoint(point, ed);
 
@@ -433,7 +414,7 @@ namespace GMEPSolar
                 {
                   var pt1 = new Point3d(point.X - COM_CONDUIT_X, topOfArcY, 0.0);
                   var pt2 = new Point3d(point.X - COM_CONDUIT_X, botOfArcY, 0.0);
-                  CreateArcBy2Points(pt1, pt2, true);
+                  BlockDataMethods.CreateArcBy2Points(pt1, pt2, true);
 
                   pt1 = new Point3d(point.X - NOTE1PT1_X, topOfArcY, 0.0);
                   pt2 = new Point3d(point.X - NOTE1PT1_X, botOfArcY, 0.0);
@@ -454,7 +435,7 @@ namespace GMEPSolar
 
                 CreateGround2ndNodeInitialWire(point, ed);
 
-                CreateGroundConnectingWire(groundWire1stNodeInitialEndpoint, groundWire2ndNodeInitialEndpoint, ed);
+                CreateGroundConnectingWire(groundWire1stNodeInitialEndpoint, groundWire2ndNodeInitialEndpoint, point, ed);
 
                 groundWire1stNodeInitialEndpoint = GetGroundWire1stNodeInitialEndpoint(point, ed);
 
@@ -466,7 +447,7 @@ namespace GMEPSolar
                 {
                   var pt1 = new Point3d(point.X - COM_CONDUIT_X, topOfArcY, 0.0);
                   var pt2 = new Point3d(point.X - COM_CONDUIT_X, botOfArcY, 0.0);
-                  CreateArcBy2Points(pt1, pt2, true);
+                  BlockDataMethods.CreateArcBy2Points(pt1, pt2, true);
 
                   pt1 = new Point3d(point.X - NOTE1PT1_X, topOfArcY, 0.0);
                   pt2 = new Point3d(point.X - NOTE1PT1_X, botOfArcY, 0.0);
@@ -625,6 +606,13 @@ namespace GMEPSolar
       }
     }
 
+    private void CreateFirstGroundingWireNote(Point3d point, Editor ed)
+    {
+      string path = "block data/Note2pt1.json";
+      var data = BlockDataMethods.GetData(path);
+      BlockDataMethods.CreateObjectGivenData(data, ed, point);
+    }
+
     private void CreateTopOfBusBarCOMWire(Point3d point, Editor ed)
     {
       string path = "block data/TopOfBusBarCOM.json";
@@ -778,6 +766,8 @@ namespace GMEPSolar
 
       BlockDataMethods.CreateHiddenLineInPaperspace(groundWirePoint1Absolute, groundWirePoint2Absolute, ed);
 
+      CreateBottomGroundWireNote(groundWirePoint2Absolute, ed);
+
       var groundWirePoint3Absolute = new Point3d(absoluteStringPoint.X, groundWirePoint2Absolute.Y, groundWirePoint2Absolute.Z);
 
       BlockDataMethods.CreateHiddenLineInPaperspace(groundWirePoint2Absolute, groundWirePoint3Absolute, ed);
@@ -785,6 +775,13 @@ namespace GMEPSolar
       var groundWirePoint4Absolute = new Point3d(absoluteStringPoint.X, absoluteStringPoint.Y, absoluteStringPoint.Z);
 
       BlockDataMethods.CreateHiddenLineInPaperspace(groundWirePoint3Absolute, groundWirePoint4Absolute, ed);
+    }
+
+    private void CreateBottomGroundWireNote(Point3d groundWirePoint2Absolute, Editor ed)
+    {
+      string path = "block data/Note1pt2.json";
+      var data = BlockDataMethods.GetData(path);
+      BlockDataMethods.CreateObjectGivenData(data, ed, groundWirePoint2Absolute);
     }
 
     private Point3d GetAbsoluteStringPoint(Point3d point)
@@ -809,12 +806,21 @@ namespace GMEPSolar
       return false;
     }
 
-    private void CreateGroundConnectingWire(Dictionary<string, double> groundWire1stNodeInitialEndpoint, Dictionary<string, double> groundWire2ndNodeInitialEndpoint, Editor ed)
+    private void CreateGroundConnectingWire(Dictionary<string, double> groundWire1stNodeInitialEndpoint, Dictionary<string, double> groundWire2ndNodeInitialEndpoint, Point3d point, Editor ed)
     {
       var startPoint = new Point3d(groundWire1stNodeInitialEndpoint["X"], groundWire1stNodeInitialEndpoint["Y"], groundWire1stNodeInitialEndpoint["Z"]);
       var endPoint = new Point3d(groundWire2ndNodeInitialEndpoint["X"], groundWire2ndNodeInitialEndpoint["Y"], groundWire2ndNodeInitialEndpoint["Z"]);
 
+      CreateConnectionWireNote(point, ed);
+
       BlockDataMethods.CreateHiddenLineInPaperspace(startPoint, endPoint, ed);
+    }
+
+    private void CreateConnectionWireNote(Point3d point, Editor ed)
+    {
+      string path = "block data/Note1pt2Left.json";
+      var data = BlockDataMethods.GetData(path);
+      BlockDataMethods.CreateObjectGivenData(data, ed, point);
     }
 
     private Dictionary<string, double> GetGroundWire2ndNodeInitialEndpoint(Point3d point, Editor ed)
@@ -864,39 +870,6 @@ namespace GMEPSolar
       string path = "block data/GroundWire1stNode1stInverter.json";
       var data = BlockDataMethods.GetData(path);
       BlockDataMethods.CreateObjectGivenData(data, ed, point);
-    }
-
-    private void CreateArcBy2Points(Point3d startPoint, Point3d endPoint, bool right)
-    {
-      Document doc = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument;
-      Database db = doc.Database;
-
-      using (Transaction trans = db.TransactionManager.StartTransaction())
-      {
-        BlockTable bt = (BlockTable)trans.GetObject(db.BlockTableId, OpenMode.ForRead);
-        BlockTableRecord btr = (BlockTableRecord)trans.GetObject(bt[BlockTableRecord.PaperSpace], OpenMode.ForWrite);
-
-        var intermediatePoint = CreateIntermediatePoint(startPoint, endPoint, right);
-        var pts = new Point3dCollection { startPoint, intermediatePoint, endPoint };
-        CircularArc3d arc3d = new CircularArc3d(startPoint, intermediatePoint, endPoint);
-
-        Point3d centerPoint = arc3d.Center;
-
-        double startAngle = Math.Atan2(startPoint.Y - centerPoint.Y, startPoint.X - centerPoint.X);
-        double endAngle = Math.Atan2(endPoint.Y - centerPoint.Y, endPoint.X - centerPoint.X);
-        if (!right)
-        {
-          startAngle = Math.Atan2(endPoint.Y - centerPoint.Y, endPoint.X - centerPoint.X);
-          endAngle = Math.Atan2(startPoint.Y - centerPoint.Y, startPoint.X - centerPoint.X);
-        }
-
-        Arc arc = new Arc(arc3d.Center, arc3d.Radius, startAngle, endAngle);
-
-        btr.AppendEntity(arc);
-        trans.AddNewlyCreatedDBObject(arc, true);
-
-        trans.Commit();
-      }
     }
 
     private void CreateEllipseBy2Points(Point3d startPoint, Point3d endPoint)

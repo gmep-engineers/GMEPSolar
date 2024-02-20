@@ -179,6 +179,15 @@
     <None Include="block data\Note1.1.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="block data\Note1pt2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="block data\Note1pt2Left.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="block data\Note2pt1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="block data\OnlyGridInitial2P.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

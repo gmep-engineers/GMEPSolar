@@ -27,13 +27,7 @@ namespace GMEPSolar
       NUMBER_ALL_MODULES_TEXTBOX.KeyDown += NUMBER_ALL_MODULES_TEXTBOX_KeyDown;
     }
 
-    public static void CreateDCSolarObject(
-        Dictionary<string, Dictionary<string, object>> formData,
-        string INCREASE_Y_TEXTBOX,
-        string INCREASE_X_TEXTBOX,
-        Point3d selectedPoint,
-        bool smallStrings = false
-    )
+    public static void CreateDCSolarObject(Dictionary<string, Dictionary<string, object>> formData, string INCREASE_Y_TEXTBOX, string INCREASE_X_TEXTBOX, Point3d selectedPoint, bool smallStrings = false)
     {
       Editor ed = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.Editor;
 
@@ -76,23 +70,9 @@ namespace GMEPSolar
       return numberOfMPPTs;
     }
 
-    private static void CreateStringsOffMPPTS(
-        Dictionary<string, Dictionary<string, object>> formData,
-        int numberOfMPPTs,
-        Point3d selectedPoint,
-        List<List<Dictionary<string, double>>> mpptEndPoints,
-        string INCREASE_TEXTBOX_Y,
-        string INCREASE_TEXTBOX_X,
-        bool smallStrings = false
-    )
+    private static void CreateStringsOffMPPTS(Dictionary<string, Dictionary<string, object>> formData, int numberOfMPPTs, Point3d selectedPoint, List<List<Dictionary<string, double>>> mpptEndPoints, string INCREASE_TEXTBOX_Y, string INCREASE_TEXTBOX_X, bool smallStrings = false)
     {
-      var ed = Autodesk
-          .AutoCAD
-          .ApplicationServices
-          .Application
-          .DocumentManager
-          .MdiActiveDocument
-          .Editor;
+      var ed = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.Editor;
 
       var lineStartPointX = selectedPoint.X - (0.5673 + (0.6484 * (numberOfMPPTs - 1)));
 
@@ -145,33 +125,16 @@ namespace GMEPSolar
 
       var stringsPerChunk = GetStringsPerChunk(stringDataContainer);
 
-      var connectionPoints = CreateStringsAndReturnConnectionPoints(
-          stringDataContainer,
-          stringStartPoint,
-          stringsPerChunk,
-          ed,
-          smallStrings
-      );
+      var connectionPoints = CreateStringsAndReturnConnectionPoints(stringDataContainer, stringStartPoint, stringsPerChunk, ed, smallStrings);
 
       var mpptEndPointsFlattened = mpptEndPoints.SelectMany(x => x).ToList();
 
-      var aboveAndBelow = GetNumberOfPointsAboveAndBelow(
-          connectionPoints,
-          mpptEndPointsFlattened
-      );
+      var aboveAndBelow = GetNumberOfPointsAboveAndBelow(connectionPoints, mpptEndPointsFlattened);
 
-      CreateConnectionLines(
-          connectionPoints,
-          mpptEndPointsFlattened,
-          aboveAndBelow,
-          stringMidPointX,
-          skipIndices
-      );
+      CreateConnectionLines(connectionPoints, mpptEndPointsFlattened, aboveAndBelow, stringMidPointX, skipIndices);
     }
 
-    private static List<int> GetStringsPerChunk(
-        List<Dictionary<string, object>> stringDataContainer
-    )
+    private static List<int> GetStringsPerChunk(List<Dictionary<string, object>> stringDataContainer)
     {
       var stringsPerChunk = new List<int>();
       int stringCount = 0;
@@ -203,9 +166,7 @@ namespace GMEPSolar
       return stringsPerChunk;
     }
 
-    private static List<int> GetIndicesToSkip(
-        Dictionary<string, Dictionary<string, object>> formData
-    )
+    private static List<int> GetIndicesToSkip(Dictionary<string, Dictionary<string, object>> formData)
     {
       var indices = new List<int>();
       var index = 0;
@@ -246,15 +207,8 @@ namespace GMEPSolar
       return true;
     }
 
-    private static void CreateConnectionLines(
-        List<Dictionary<string, double>> connectionPoints,
-        List<Dictionary<string, double>> mpptEndPointsFlattened,
-        Dictionary<string, int> aboveAndBelow,
-        double stringMidPointX,
-        List<int> skipIndices
-    )
+    private static void CreateConnectionLines(List<Dictionary<string, double>> connectionPoints, List<Dictionary<string, double>> mpptEndPointsFlattened, Dictionary<string, int> aboveAndBelow, double stringMidPointX, List<int> skipIndices)
     {
-      var STRING_X = stringMidPointX;
       var LINE_SPACING = 0.1621 / 2;
       var CLOSEST_DISTANCE_FROM_STRING = 0.1621 / 2;
       var initialBelowValue = aboveAndBelow["below"];
@@ -280,9 +234,7 @@ namespace GMEPSolar
 
         if (skipIndices.Contains(i))
         {
-          firstHorizontalLineStartPoint = CreateLineAndArcFromPoints(
-              firstHorizontalLineStartPoint
-          );
+          firstHorizontalLineStartPoint = CreateLineAndArcFromPoints(firstHorizontalLineStartPoint);
         }
 
         var firstHorizontalLineEndPoint = new Dictionary<string, double>
@@ -340,9 +292,7 @@ namespace GMEPSolar
       }
     }
 
-    private static Dictionary<string, double> CreateLineAndArcFromPoints(
-        Dictionary<string, double> firstHorizontalLineStartPoint
-    )
+    private static Dictionary<string, double> CreateLineAndArcFromPoints(Dictionary<string, double> firstHorizontalLineStartPoint)
     {
       var CELL_SPACING = 0.1621;
 
@@ -366,7 +316,10 @@ namespace GMEPSolar
                 { "y", firstHorizontalLineEndPoint["y"] }
             };
 
-      CreateArc(arcStartPoint, arcEndPoint, 0, 180);
+      var arcStartPoint3d = new Point3d(arcStartPoint["x"], arcStartPoint["y"], 0);
+      var arcEndPoint3d = new Point3d(arcEndPoint["x"], arcEndPoint["y"], 0);
+
+      BlockDataMethods.CreateArcBy2Points(arcStartPoint3d, arcEndPoint3d, true);
 
       return new Dictionary<string, double>
             {
@@ -375,18 +328,9 @@ namespace GMEPSolar
             };
     }
 
-    private static void CreateLineFromPoints(
-        Dictionary<string, double> firstHorizontalLineStartPoint,
-        Dictionary<string, double> firstHorizontalLineEndPoint
-    )
+    private static void CreateLineFromPoints(Dictionary<string, double> firstHorizontalLineStartPoint, Dictionary<string, double> firstHorizontalLineEndPoint)
     {
-      var ed = Autodesk
-          .AutoCAD
-          .ApplicationServices
-          .Application
-          .DocumentManager
-          .MdiActiveDocument
-          .Editor;
+      var ed = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.Editor;
 
       var line = new Line(
           new Point3d(
@@ -407,10 +351,7 @@ namespace GMEPSolar
       AddLineToPaperSpace(line);
     }
 
-    private static Dictionary<string, int> GetNumberOfPointsAboveAndBelow(
-        List<Dictionary<string, double>> connectionPoints,
-        List<Dictionary<string, double>> mpptEndPointsFlattened
-    )
+    private static Dictionary<string, int> GetNumberOfPointsAboveAndBelow(List<Dictionary<string, double>> connectionPoints, List<Dictionary<string, double>> mpptEndPointsFlattened)
     {
       var above = 0;
       var below = 0;
@@ -433,13 +374,7 @@ namespace GMEPSolar
       return new Dictionary<string, int>() { { "above", above }, { "below", below } };
     }
 
-    private static List<Dictionary<string, double>> CreateStringsAndReturnConnectionPoints(
-        List<Dictionary<string, object>> stringDataContainer,
-        Point3d stringStartPoint,
-        List<int> stringsPerChunk,
-        Editor ed,
-        bool smallStrings = false
-    )
+    private static List<Dictionary<string, double>> CreateStringsAndReturnConnectionPoints(List<Dictionary<string, object>> stringDataContainer, Point3d stringStartPoint, List<int> stringsPerChunk, Editor ed, bool smallStrings = false)
     {
       var TEXT_HEIGHT = 0.8334;
       var STRING_HEIGHT = 1.0695;
@@ -505,12 +440,7 @@ namespace GMEPSolar
       return connectionPoints;
     }
 
-    private static void CreateStringTextInCAD(
-        Editor ed,
-        Point3d startPoint,
-        int stringAmountPerChunk,
-        int module
-    )
+    private static void CreateStringTextInCAD(Editor ed, Point3d startPoint, int stringAmountPerChunk, int module)
     {
       var dllPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
       var jsonPath = Path.Combine(dllPath, $"block data/StringText.json");
@@ -529,11 +459,7 @@ namespace GMEPSolar
       BlockDataMethods.CreateObjectGivenData(stringTextData, ed, startPoint);
     }
 
-    private static void CreateStringObjectInCAD(
-        Editor ed,
-        Point3d stringStartPoint,
-        bool smallStrings = false
-    )
+    private static void CreateStringObjectInCAD(Editor ed, Point3d stringStartPoint, bool smallStrings = false)
     {
       var dllPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
       var jsonPath = Path.Combine(dllPath, $"block data/String.json");
@@ -689,11 +615,7 @@ namespace GMEPSolar
       }
     }
 
-    private static List<Dictionary<string, double>> CreateParallelFirstLines(
-        Dictionary<string, double> startPoint,
-        Dictionary<string, double> endPoint,
-        double CELL_SPACING
-    )
+    private static List<Dictionary<string, double>> CreateParallelFirstLines(Dictionary<string, double> startPoint, Dictionary<string, double> endPoint, double CELL_SPACING)
     {
       var endPoints = new List<Dictionary<string, double>>();
       for (var i = 0; i < 4; i++)
@@ -763,9 +685,7 @@ namespace GMEPSolar
       return endPoints;
     }
 
-    private static List<Dictionary<string, double>> SwapParallelEndPoints(
-        List<Dictionary<string, double>> endPoints
-    )
+    private static List<Dictionary<string, double>> SwapParallelEndPoints(List<Dictionary<string, double>> endPoints)
     {
       var temp = endPoints[1];
       endPoints[1] = endPoints[2];
@@ -773,20 +693,9 @@ namespace GMEPSolar
       return endPoints;
     }
 
-    private static void CreateArc(
-        Dictionary<string, double> startPoint,
-        Dictionary<string, double> endPoint,
-        int startDegrees,
-        int endDegrees
-    )
+    private static void CreateArc(Dictionary<string, double> startPoint, Dictionary<string, double> endPoint, int startDegrees, int endDegrees)
     {
-      Editor ed = Autodesk
-          .AutoCAD
-          .ApplicationServices
-          .Application
-          .DocumentManager
-          .MdiActiveDocument
-          .Editor;
+      Editor ed = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.Editor;
 
       Point3d startPt = new Point3d(startPoint["x"], startPoint["y"], 0);
       Point3d endPt = new Point3d(endPoint["x"], endPoint["y"], 0);
@@ -930,10 +839,7 @@ namespace GMEPSolar
       return endPoints;
     }
 
-    private static void CreateHorizontalLine(
-        Dictionary<string, double> endPointUpdated,
-        double CELL_SPACING
-    )
+    private static void CreateHorizontalLine(Dictionary<string, double> endPointUpdated, double CELL_SPACING)
     {
       var line = new Line(
           new Point3d(endPointUpdated["x"], endPointUpdated["y"], 0),
@@ -1016,9 +922,7 @@ namespace GMEPSolar
       }
     }
 
-    private static Dictionary<string, Dictionary<string, object>> GetFormData(
-        DC_SOLAR_INPUT form
-    )
+    private static Dictionary<string, Dictionary<string, object>> GetFormData(DC_SOLAR_INPUT form)
     {
       var data = new Dictionary<string, Dictionary<string, object>>
             {
@@ -1136,13 +1040,7 @@ namespace GMEPSolar
       CREATE_BUTTON.Text = "DONE";
     }
 
-    internal void UpdateValues(
-        string name,
-        bool mppt1Enabled,
-        bool mppt1Regular,
-        bool mppt1Parallel,
-        object mppt1Input
-    )
+    internal void UpdateValues(string name, bool mppt1Enabled, bool mppt1Regular, bool mppt1Parallel, object mppt1Input)
     {
       if (name == "MPPT1")
       {
