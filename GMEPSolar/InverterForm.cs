@@ -611,7 +611,7 @@ namespace GMEPSolar
 
     private void CreateGroundWireBottomToTopOfString(Point3d point, Point3d absoluteStringPoint, Point3d absoluteBottomOfString, Editor ed)
     {
-      var DISTANCE_BELOW_BOTTOM = 1.0;
+      var DISTANCE_BELOW_BOTTOM = 0.2;
 
       var path = "point data/BottomOfBatteryPoint.json";
       var json = BlockDataMethods.GetUnparsedJSONData(path);
@@ -627,6 +627,14 @@ namespace GMEPSolar
       var groundWirePoint1Absolute = new Point3d(groundWirePoint1Relative["X"] + point.X, groundWirePoint1Relative["Y"] + point.Y, groundWirePoint1Relative["Z"] + point.Z);
 
       BlockDataMethods.CreateHiddenLineInPaperspace(groundWirePoint1Absolute, groundWirePoint2Absolute, ed);
+
+      var groundWirePoint3Absolute = new Point3d(absoluteStringPoint.X, groundWirePoint2Absolute.Y, groundWirePoint2Absolute.Z);
+
+      BlockDataMethods.CreateHiddenLineInPaperspace(groundWirePoint2Absolute, groundWirePoint3Absolute, ed);
+
+      var groundWirePoint4Absolute = new Point3d(absoluteStringPoint.X, absoluteStringPoint.Y, absoluteStringPoint.Z);
+
+      BlockDataMethods.CreateHiddenLineInPaperspace(groundWirePoint3Absolute, groundWirePoint4Absolute, ed);
     }
 
     private Point3d GetAbsoluteStringPoint(Point3d point)
