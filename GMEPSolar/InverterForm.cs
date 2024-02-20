@@ -638,11 +638,9 @@ namespace GMEPSolar
 
     private List<Dictionary<string, Dictionary<string, object>>> AdjustPlacementOfBottomTextOnCombinationPanel(List<Dictionary<string, Dictionary<string, object>>> bottomTextData, int numberOfInverters, double BREAKER_HEIGHT)
     {
-      HelperMethods.SaveDataToJsonFile(bottomTextData, "bottomTextData.json");
       foreach (var text in bottomTextData)
       {
         var textData = JObject.FromObject(text["mtext"]).ToObject<MText>();
-        HelperMethods.SaveDataToJsonFile(textData, "textData.json");
         textData.location = new Vertex(textData.location.x, textData.location.y - (BREAKER_HEIGHT * (numberOfInverters - 1)), textData.location.z);
         text["mtext"] = JObject.FromObject(textData).ToObject<Dictionary<string, object>>();
       }
