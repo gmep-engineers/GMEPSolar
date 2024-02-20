@@ -322,6 +322,7 @@ namespace GMEPSolar
           if (inverterFormData.ContainsKey("InverterData"))
           {
             var inverterData = inverterFormData["InverterData"] as List<Dictionary<string, object>>;
+            var numberOfInverters = inverterData.Count;
             var numberOfMasters = 0;
             var numberOfSlaves = 0;
             var inverterCount = 0;
@@ -335,6 +336,8 @@ namespace GMEPSolar
             var totalHeightOfInverterModule = GetTotalHeightOfStringModules(inverterData);
             var groundWire1stNodeInitialEndpoint = GetGroundWire1stNodeInitialEndpoint(point, ed);
             var groundWire2ndNodeInitialEndpoint = GetGroundWire2ndNodeInitialEndpoint(point, ed);
+
+            CreateCombinationPanel(point, numberOfInverters, ed);
 
             if (totalHeightOfInverterModule > 22.0)
             {
@@ -606,6 +609,28 @@ namespace GMEPSolar
           }
         }
       }
+    }
+
+    private void CreateCombinationPanel(Point3d point, int numberOfInverters, Editor ed)
+    {
+      var BREAKER_HEIGHT = 0.3964;
+
+      var path = "block data/CombinationPanelUpperWire.json";
+      var upperWireData = BlockDataMethods.GetData(path);
+      BlockDataMethods.CreateObjectGivenData(upperWireData, ed, point);
+
+      for (var i = 0; i < numberOfInverters; i++)
+      {
+        var adjustedPoint = new Point3d(point.X, point.Y - (BREAKER_HEIGHT * i), point.Z);
+        CreateBreaker(adjustedPoint, ed);
+      }
+    }
+
+    private static void CreateBreaker(Point3d point, Editor ed)
+    {
+      string path = "block data/CombinationPanelBreaker.json";
+      var breakerData = BlockDataMethods.GetData(path);
+      BlockDataMethods.CreateObjectGivenData(breakerData, ed, point);
     }
 
     private void CreateGroundWireBottomToTopOfString(Point3d point, Point3d absoluteStringPoint, Point3d absoluteBottomOfString, Editor ed)
