@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 
 namespace GMEPSolar
@@ -13,9 +14,33 @@ namespace GMEPSolar
 
   public class Updateable
   {
-    public UpdateAction Action;
+    private UpdateAction _Action;
 
     public Updateable() { }
+
+    public UpdateAction Action
+    {
+      get { return _Action; }
+      set
+      {
+        if (value != _Action)
+        {
+          if (value == UpdateAction.Create)
+          {
+            _Action = UpdateAction.Create;
+          }
+          else if (_Action != UpdateAction.Create || value == UpdateAction.Delete)
+          {
+            _Action = value;
+          }
+        }
+      }
+    }
+
+    public void FinishCreate()
+    {
+      _Action = UpdateAction.Read;
+    }
   }
 
   public class PowerStation : Updateable
@@ -65,29 +90,32 @@ namespace GMEPSolar
   {
     public string Id;
     private string _Number;
-    private int _Kaic;
+    private string _Kaic;
+    private int _KaicId;
     private int _LoadVa;
     private int _VoltageId;
     private int _AmpId;
     public string PowerStationId;
+    private string _Voltage;
+    private string _Amp;
 
     public Lot(
       string Id,
       string Number,
-      int Kaic,
+      string Kaic,
       int LoadVa,
-      int VoltageId,
-      int AmpId,
+      string Voltage,
+      string Amp,
       string PowerStationId,
       UpdateAction Action
     )
     {
       this.Id = Id;
       _Number = Number;
-      _Kaic = Kaic;
+      Kaic = Kaic;
       _LoadVa = LoadVa;
-      _VoltageId = VoltageId;
-      _AmpId = AmpId;
+      this.Voltage = Voltage;
+      this.Amp = Amp;
       this.PowerStationId = PowerStationId;
       this.Action = Action;
     }
@@ -105,7 +133,7 @@ namespace GMEPSolar
       }
     }
 
-    public int Kaic
+    public string Kaic
     {
       get { return _Kaic; }
       set
@@ -113,6 +141,14 @@ namespace GMEPSolar
         if (value != _Kaic)
         {
           _Kaic = value;
+          if (_Kaic == "22")
+          {
+            _KaicId = 1;
+          }
+          if (_Kaic == "42")
+          {
+            _KaicId = 2;
+          }
           Action = UpdateAction.Update;
         }
       }
@@ -134,11 +170,36 @@ namespace GMEPSolar
     public int VoltageId
     {
       get { return _VoltageId; }
+    }
+
+    public string Voltage
+    {
+      get { return _Voltage; }
       set
       {
-        if (value != _VoltageId)
+        if (value != _Voltage)
         {
-          _VoltageId = value;
+          _Voltage = value;
+          if (_Voltage.StartsWith("120/208/3"))
+          {
+            _VoltageId = 1;
+          }
+          if (_Voltage.StartsWith("120/240/1"))
+          {
+            _VoltageId = 2;
+          }
+          if (_Voltage.StartsWith("277/480/3"))
+          {
+            _VoltageId = 3;
+          }
+          if (_Voltage.StartsWith("120/240/1"))
+          {
+            _VoltageId = 4;
+          }
+          if (_Voltage.StartsWith("120/208/1"))
+          {
+            _VoltageId = 5;
+          }
           Action = UpdateAction.Update;
         }
       }
@@ -152,6 +213,55 @@ namespace GMEPSolar
         if (value != _AmpId)
         {
           _AmpId = value;
+          Action = UpdateAction.Update;
+        }
+      }
+    }
+
+    public string Amp
+    {
+      get { return _Amp; }
+      set
+      {
+        if (value != _Amp)
+        {
+          _Amp = value;
+          switch (_Amp)
+          {
+            case "100":
+              _AmpId = 1;
+              break;
+            case "125":
+              _AmpId = 2;
+              break;
+            case "150":
+              _AmpId = 3;
+              break;
+            case "175":
+              _AmpId = 4;
+              break;
+            case "200":
+              _AmpId = 5;
+              break;
+            case "225":
+              _AmpId = 6;
+              break;
+            case "250":
+              _AmpId = 7;
+              break;
+            case "275":
+              _AmpId = 8;
+              break;
+            case "300":
+              _AmpId = 9;
+              break;
+            case "350":
+              _AmpId = 10;
+              break;
+            case "400":
+              _AmpId = 11;
+              break;
+          }
           Action = UpdateAction.Update;
         }
       }
@@ -205,12 +315,12 @@ namespace GMEPSolar
       return 0;
     }
 
-    public string GetProjectId(string projectNo)
+    public string GetProjectId(string projectName)
     {
-      string query = @"SELECT id FROM projects WHERE gmep_project_no = @projectNo";
+      string query = @"SELECT id FROM projects WHERE project_name = @projectName";
       OpenConnection();
       MySqlCommand command = new MySqlCommand(query, Connection);
-      command.Parameters.AddWithValue("@projectNo", projectNo);
+      command.Parameters.AddWithValue("@projectName", projectName);
       MySqlDataReader reader = command.ExecuteReader();
       string id = "";
       if (reader.Read())
@@ -221,12 +331,9 @@ namespace GMEPSolar
       return id;
     }
 
-    public void CreatePowerStations(List<PowerStation> powerStations, string projectId)
+    public void CreatePowerStation(PowerStation powerStation, string projectId)
     {
-      List<PowerStation> createPowerStations = powerStations.FindAll(ps =>
-        ps.Action == UpdateAction.Create
-      );
-      if (createPowerStations.Count == 0)
+      if (powerStation.Action != UpdateAction.Create)
       {
         return;
       }
@@ -244,16 +351,13 @@ namespace GMEPSolar
         @projectId
         )";
       OpenConnection();
-      foreach (PowerStation powerStation in createPowerStations)
-      {
-        MySqlCommand command = new MySqlCommand(query, Connection);
-        command.Parameters.AddWithValue("@id", powerStation.Id);
-        command.Parameters.AddWithValue("@kwId", powerStation.KwId);
-        command.Parameters.AddWithValue("@numBatts", powerStation.NumBatts);
-        command.Parameters.AddWithValue("@projectId", projectId);
-        command.ExecuteNonQuery();
-        powerStation.Action = UpdateAction.Read;
-      }
+      MySqlCommand command = new MySqlCommand(query, Connection);
+      command.Parameters.AddWithValue("@id", powerStation.Id);
+      command.Parameters.AddWithValue("@kwId", powerStation.KwId);
+      command.Parameters.AddWithValue("@numBatts", powerStation.NumBatts);
+      command.Parameters.AddWithValue("@projectId", projectId);
+      command.ExecuteNonQuery();
+      powerStation.FinishCreate();
       CloseConnection();
     }
 
@@ -284,12 +388,9 @@ namespace GMEPSolar
       return powerStations;
     }
 
-    public void UpdatePowerStations(List<PowerStation> powerStations)
+    public void UpdatePowerStation(PowerStation powerStation)
     {
-      List<PowerStation> updatePowerStations = powerStations.FindAll(ps =>
-        ps.Action == UpdateAction.Update
-      );
-      if (updatePowerStations.Count == 0)
+      if (powerStation.Action != UpdateAction.Update)
       {
         return;
       }
@@ -303,34 +404,29 @@ namespace GMEPSolar
         project_id = @projectId
         ";
       OpenConnection();
-      foreach (PowerStation powerStation in updatePowerStations)
-      {
-        MySqlCommand command = new MySqlCommand(query, Connection);
-        command.Parameters.AddWithValue("@kwId", powerStation.KwId);
-        command.Parameters.AddWithValue("numBatts", powerStation.NumBatts);
-        command.ExecuteNonQuery();
-        powerStation.Action = UpdateAction.Read;
-      }
+
+      MySqlCommand command = new MySqlCommand(query, Connection);
+      command.Parameters.AddWithValue("@kwId", powerStation.KwId);
+      command.Parameters.AddWithValue("numBatts", powerStation.NumBatts);
+      command.ExecuteNonQuery();
+      powerStation.Action = UpdateAction.Read;
+
       CloseConnection();
     }
 
-    public void DeletePowerStations(List<PowerStation> powerStations)
+    public void DeletePowerStation(PowerStation powerStation)
     {
-      List<PowerStation> deletePowerStations = powerStations.FindAll(ps =>
-        ps.Action == UpdateAction.Delete
-      );
-      if (deletePowerStations.Count == 0)
+      if (powerStation.Action != UpdateAction.Delete)
       {
         return;
       }
       string query = @"DELETE FROM power_stations WHERE id = @id";
       OpenConnection();
-      foreach (PowerStation powerStation in deletePowerStations)
-      {
-        MySqlCommand command = new MySqlCommand(query, Connection);
-        command.Parameters.AddWithValue("@Id", powerStation.Id);
-        command.ExecuteNonQuery();
-      }
+
+      MySqlCommand command = new MySqlCommand(query, Connection);
+      command.Parameters.AddWithValue("@Id", powerStation.Id);
+      command.ExecuteNonQuery();
+
       CloseConnection();
     }
 
@@ -375,7 +471,7 @@ namespace GMEPSolar
         command.Parameters.AddWithValue("@powerStationId", lot.PowerStationId);
         command.Parameters.AddWithValue("@projectId", projectId);
         command.ExecuteNonQuery();
-        lot.Action = UpdateAction.Read;
+        lot.FinishCreate();
       }
       CloseConnection();
     }
@@ -386,15 +482,21 @@ namespace GMEPSolar
       string query =
         @"
         SELECT
-        id,
-        number,
-        kaic,
-        load_va,
-        voltage_id,
-        amp_id,
-        power_station_id
+        lots.id as lot_id,
+        lots.number,
+        kaic_ratings.rating as kaic_rating,
+        lots.load_va,
+        service_voltage_types.type as voltage_type,
+        service_amp_ratings.rating as amp_rating,
+        lots.power_station_id
         FROM
         lots
+        LEFT JOIN 
+        service_voltage_types on service_voltage_types.id = lots.voltage_id
+        LEFT JOIN
+        service_amp_ratings on service_amp_ratings.id = lots.amp_id
+        LEFT JOIN
+        kaic_ratings on kaic_ratings.id = lots.kaic_id
         WHERE project_id = @projectId";
       OpenConnection();
       MySqlCommand command = new MySqlCommand(query, Connection);
@@ -404,12 +506,12 @@ namespace GMEPSolar
       {
         lots.Add(
           new Lot(
-            GetSafeString(reader, "id"),
+            GetSafeString(reader, "lot_id"),
             GetSafeString(reader, "number"),
-            GetSafeInt(reader, "kaic"),
+            GetSafeString(reader, "kaic_rating"),
             GetSafeInt(reader, "load_va"),
-            GetSafeInt(reader, "voltage_id"),
-            GetSafeInt(reader, "amp_id"),
+            GetSafeString(reader, "voltage_id"),
+            GetSafeString(reader, "amp_id"),
             GetSafeString(reader, "power_station_id"),
             UpdateAction.Read
           )

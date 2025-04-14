@@ -30,17 +30,17 @@
         {
       this.SystemComboBox = new System.Windows.Forms.ComboBox();
       this.LotDataGridView = new System.Windows.Forms.DataGridView();
+      this.Number = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.Voltage = new System.Windows.Forms.DataGridViewComboBoxColumn();
+      this.Amperage = new System.Windows.Forms.DataGridViewComboBoxColumn();
+      this.Kaic = new System.Windows.Forms.DataGridViewComboBoxColumn();
+      this.LoadVa = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.SystemLabel = new System.Windows.Forms.Label();
       this.NumBattsComboBox = new System.Windows.Forms.ComboBox();
       this.NumBatts = new System.Windows.Forms.Label();
       this.LotsLabel = new System.Windows.Forms.Label();
       this.RemoveButton = new System.Windows.Forms.Button();
-      this.Number = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.Voltage = new System.Windows.Forms.DataGridViewComboBoxColumn();
-      this.Amperage = new System.Windows.Forms.DataGridViewComboBoxColumn();
-      this.Kaic = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.LoadVa = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
       ((System.ComponentModel.ISupportInitialize)(this.LotDataGridView)).BeginInit();
       this.SuspendLayout();
       // 
@@ -68,8 +68,65 @@
             this.Id});
       this.LotDataGridView.Location = new System.Drawing.Point(216, 23);
       this.LotDataGridView.Name = "LotDataGridView";
-      this.LotDataGridView.Size = new System.Drawing.Size(445, 116);
+      this.LotDataGridView.Size = new System.Drawing.Size(551, 116);
       this.LotDataGridView.TabIndex = 1;
+      // 
+      // Number
+      // 
+      this.Number.HeaderText = "Number";
+      this.Number.Name = "Number";
+      // 
+      // Voltage
+      // 
+      this.Voltage.HeaderText = "Voltage";
+      this.Voltage.Items.AddRange(new object[] {
+            "",
+            "120/208-3Φ",
+            "120/240-1Φ",
+            "277/480-3Φ",
+            "120/240-3Φ",
+            "120/208-1Φ"});
+      this.Voltage.Name = "Voltage";
+      // 
+      // Amperage
+      // 
+      this.Amperage.HeaderText = "Amperage";
+      this.Amperage.Items.AddRange(new object[] {
+            "100",
+            "125",
+            "150",
+            "175",
+            "200",
+            "225",
+            "250",
+            "275",
+            "300",
+            "350",
+            "400"});
+      this.Amperage.Name = "Amperage";
+      // 
+      // Kaic
+      // 
+      this.Kaic.HeaderText = "KAIC";
+      this.Kaic.Items.AddRange(new object[] {
+            "22",
+            "42"});
+      this.Kaic.Name = "Kaic";
+      this.Kaic.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+      this.Kaic.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+      // 
+      // LoadVa
+      // 
+      this.LoadVa.HeaderText = "Load VA";
+      this.LoadVa.Name = "LoadVa";
+      this.LoadVa.ReadOnly = true;
+      // 
+      // Id
+      // 
+      this.Id.HeaderText = "Id";
+      this.Id.Name = "Id";
+      this.Id.ReadOnly = true;
+      this.Id.Visible = false;
       // 
       // SystemLabel
       // 
@@ -126,58 +183,7 @@
       this.RemoveButton.TabIndex = 6;
       this.RemoveButton.Text = "Remove";
       this.RemoveButton.UseVisualStyleBackColor = true;
-      // 
-      // Number
-      // 
-      this.Number.HeaderText = "Number";
-      this.Number.Name = "Number";
-      // 
-      // Voltage
-      // 
-      this.Voltage.HeaderText = "Voltage";
-      this.Voltage.Items.AddRange(new object[] {
-            "",
-            "120/208-3Φ",
-            "120/240-1Φ",
-            "277/480-3Φ",
-            "120/240-3Φ",
-            "120/208-1Φ"});
-      this.Voltage.Name = "Voltage";
-      // 
-      // Amperage
-      // 
-      this.Amperage.HeaderText = "Amperage";
-      this.Amperage.Items.AddRange(new object[] {
-            "",
-            "100",
-            "200",
-            "400",
-            "600",
-            "800",
-            "1000",
-            "1200",
-            "1600",
-            "2000"});
-      this.Amperage.Name = "Amperage";
-      // 
-      // Kaic
-      // 
-      this.Kaic.HeaderText = "KAIC";
-      this.Kaic.Name = "Kaic";
-      // 
-      // LoadVa
-      // 
-      this.LoadVa.HeaderText = "Load VA";
-      this.LoadVa.Name = "LoadVa";
-      this.LoadVa.ReadOnly = true;
-      this.LoadVa.Visible = false;
-      // 
-      // Id
-      // 
-      this.Id.HeaderText = "Id";
-      this.Id.Name = "Id";
-      this.Id.ReadOnly = true;
-      this.Id.Visible = false;
+      this.RemoveButton.Click += new System.EventHandler(this.RemoveButton_Click);
       // 
       // PowerStationUserControl
       // 
@@ -191,7 +197,7 @@
       this.Controls.Add(this.LotDataGridView);
       this.Controls.Add(this.SystemComboBox);
       this.Name = "PowerStationUserControl";
-      this.Size = new System.Drawing.Size(664, 142);
+      this.Size = new System.Drawing.Size(780, 142);
       ((System.ComponentModel.ISupportInitialize)(this.LotDataGridView)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -210,7 +216,7 @@
     private System.Windows.Forms.DataGridViewTextBoxColumn Number;
     private System.Windows.Forms.DataGridViewComboBoxColumn Voltage;
     private System.Windows.Forms.DataGridViewComboBoxColumn Amperage;
-    private System.Windows.Forms.DataGridViewTextBoxColumn Kaic;
+    private System.Windows.Forms.DataGridViewComboBoxColumn Kaic;
     private System.Windows.Forms.DataGridViewTextBoxColumn LoadVa;
     private System.Windows.Forms.DataGridViewTextBoxColumn Id;
   }
