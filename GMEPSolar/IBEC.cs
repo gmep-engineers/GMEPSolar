@@ -13,25 +13,25 @@ namespace GMEPSolar
   public partial class IBEC : Form
   {
     private List<PowerStation> PowerStations;
-    private List<Lot> Lots;
     private GmepDatabase GmepDatabase;
     private string ProjectId;
-    List<PowerStationUserControl> PowerStationUserControls;
 
     public IBEC()
     {
       GmepDatabase = new GmepDatabase();
       ProjectId = GmepDatabase.GetProjectId(CadObjectFunctions.GetProjectNameFromFileName());
+
       PowerStations = GmepDatabase.ReadPowerStations(ProjectId);
-      Lots = GmepDatabase.ReadLots(ProjectId);
-      PowerStationUserControls = new List<PowerStationUserControl>();
+
+      InitializeComponent();
       foreach (PowerStation powerStation in PowerStations)
       {
-        powerStation.Lots = Lots.FindAll(l => l.PowerStationId == powerStation.Id);
+        powerStation.Lots = GmepDatabase.ReadLots(powerStation.Id);
+
         PowerStationUserControl powerStationUserControl = new PowerStationUserControl(powerStation);
+
         PowerStationFlowLayoutPanel.Controls.Add(powerStationUserControl);
       }
-      InitializeComponent();
     }
 
     private void PopulatePowerStations() { }
@@ -58,9 +58,9 @@ namespace GMEPSolar
         GmepDatabase.CreatePowerStation(powerStationUserControl.PowerStation, ProjectId);
         GmepDatabase.UpdatePowerStation(powerStationUserControl.PowerStation);
         GmepDatabase.DeletePowerStation(powerStationUserControl.PowerStation);
-        GmepDatabase.CreateLots(powerStationUserControl.Lots, ProjectId);
-        GmepDatabase.UpdateLots(powerStationUserControl.Lots);
-        GmepDatabase.DeleteLots(powerStationUserControl.Lots);
+        GmepDatabase.CreateLots(powerStationUserControl.PowerStation.Lots, ProjectId);
+        GmepDatabase.UpdateLots(powerStationUserControl.PowerStation.Lots);
+        GmepDatabase.DeleteLots(powerStationUserControl.PowerStation.Lots);
       }
     }
   }

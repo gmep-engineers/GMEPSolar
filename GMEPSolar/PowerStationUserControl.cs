@@ -7,7 +7,6 @@ namespace GMEPSolar
   public partial class PowerStationUserControl : UserControl
   {
     public PowerStation PowerStation;
-    public List<Lot> Lots;
 
     public PowerStationUserControl(PowerStation powerStation)
     {
@@ -49,18 +48,43 @@ namespace GMEPSolar
       this.Visible = false;
     }
 
+    public void DeleteLot_Click(object sender, EventArgs e)
+    {
+      if (sender is DataGridView dataGridView)
+      {
+        string id =
+          dataGridView.SelectedRows[0].Cells[LotDataGridView.Rows[0].Cells.Count - 1].Value
+          as string;
+        Lot lot = PowerStation.Lots.Find(l =>
+          l.Id
+          == dataGridView.SelectedRows[0].Cells[LotDataGridView.Rows[0].Cells.Count - 1].Value
+            as string
+        );
+        if (lot != null)
+        {
+          lot.Action = UpdateAction.Delete;
+          dataGridView.SelectedRows[0].Visible = false;
+        }
+      }
+    }
+
     public void Save()
     {
-      Lots.Clear();
+      LotDataGridView.EndEdit();
       PowerStation.KwId = SystemComboBox.SelectedIndex;
       PowerStation.NumBatts = NumBattsComboBox.SelectedIndex;
-      for (int i = 0; i < LotDataGridView.Rows.Count; i++)
+      for (int i = 0; i < LotDataGridView.Rows.Count - 1; i++)
       {
         Lot lot = PowerStation.Lots.Find(l =>
           l.Id
           == LotDataGridView.Rows[i].Cells[LotDataGridView.Rows[i].Cells.Count - 1].Value as string
         );
-        if (lot != null)
+        if (lot != null && String.IsNullOrEmpty(LotDataGridView.Rows[i].Cells[0].Value as string))
+        {
+          lot.Action = UpdateAction.Delete;
+          LotDataGridView.Rows[i].Visible = false;
+        }
+        if (lot != null && lot.Action != UpdateAction.Delete)
         {
           // update previously saved lot
           lot.Number = LotDataGridView.Rows[i].Cells[0].Value as string;
@@ -69,7 +93,7 @@ namespace GMEPSolar
           lot.Kaic = LotDataGridView.Rows[i].Cells[3].Value as string;
           lot.LoadVa = GetSafeInt(LotDataGridView.Rows[i].Cells[4].Value as string);
         }
-        else
+        else if (lot == null)
         {
           // create new lot
           string id = Guid.NewGuid().ToString();
@@ -91,7 +115,6 @@ namespace GMEPSolar
           LotDataGridView.Rows[i].Cells[LotDataGridView.Rows[i].Cells.Count - 1].Value = id;
           PowerStation.Lots.Add(lot);
         }
-        Lots.Add(lot);
       }
     }
   }

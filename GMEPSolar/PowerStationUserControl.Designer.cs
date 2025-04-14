@@ -58,6 +58,7 @@
       // 
       // LotDataGridView
       // 
+      this.LotDataGridView.CausesValidation = false;
       this.LotDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.LotDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Number,
@@ -66,9 +67,10 @@
             this.Kaic,
             this.LoadVa,
             this.Id});
+      this.LotDataGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
       this.LotDataGridView.Location = new System.Drawing.Point(216, 23);
       this.LotDataGridView.Name = "LotDataGridView";
-      this.LotDataGridView.Size = new System.Drawing.Size(551, 116);
+      this.LotDataGridView.Size = new System.Drawing.Size(564, 116);
       this.LotDataGridView.TabIndex = 1;
       // 
       // Number
@@ -80,13 +82,13 @@
       // 
       this.Voltage.HeaderText = "Voltage";
       this.Voltage.Items.AddRange(new object[] {
-            "",
-            "120/208-3Φ",
-            "120/240-1Φ",
-            "277/480-3Φ",
-            "120/240-3Φ",
-            "120/208-1Φ"});
+            "120/240/1Φ-3W",
+            "120/208/1Φ-3W",
+            "120/240/3Φ-4W",
+            "120/208/3Φ-4W",
+            "277/480/3Φ-4W"});
       this.Voltage.Name = "Voltage";
+      this.Voltage.Width = 120;
       // 
       // Amperage
       // 
@@ -119,7 +121,6 @@
       // 
       this.LoadVa.HeaderText = "Load VA";
       this.LoadVa.Name = "LoadVa";
-      this.LoadVa.ReadOnly = true;
       // 
       // Id
       // 

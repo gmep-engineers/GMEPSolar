@@ -16,7 +16,10 @@ namespace GMEPSolar
   {
     private UpdateAction _Action;
 
-    public Updateable() { }
+    public Updateable()
+    {
+      _Action = UpdateAction.Read;
+    }
 
     public UpdateAction Action
     {
@@ -112,7 +115,7 @@ namespace GMEPSolar
     {
       this.Id = Id;
       _Number = Number;
-      Kaic = Kaic;
+      this.Kaic = Kaic;
       _LoadVa = LoadVa;
       this.Voltage = Voltage;
       this.Amp = Amp;
@@ -131,6 +134,10 @@ namespace GMEPSolar
           Action = UpdateAction.Update;
         }
       }
+    }
+    public int KaicId
+    {
+      get { return _KaicId; }
     }
 
     public string Kaic
@@ -192,7 +199,7 @@ namespace GMEPSolar
           {
             _VoltageId = 3;
           }
-          if (_Voltage.StartsWith("120/240/1"))
+          if (_Voltage.StartsWith("120/240/3"))
           {
             _VoltageId = 4;
           }
@@ -339,7 +346,7 @@ namespace GMEPSolar
       }
       string query =
         @"
-        INSERT INTO power_stations (
+        INSERT IGNORE INTO power_stations (
         id,
         kw_id,
         num_batts,
@@ -364,6 +371,7 @@ namespace GMEPSolar
     public List<PowerStation> ReadPowerStations(string projectId)
     {
       List<PowerStation> powerStations = new List<PowerStation>();
+
       string query =
         @"
         SELECT id, kw_id, num_batts FROM power_stations WHERE project_id = @projectId
@@ -396,16 +404,17 @@ namespace GMEPSolar
       }
       string query =
         @"
-        UPDATE powerstations
+        UPDATE power_stations
         SET
         kw_id = @kwId,
         num_batts = @numBatts,
         WHERE
-        project_id = @projectId
+        id = @id
         ";
       OpenConnection();
 
       MySqlCommand command = new MySqlCommand(query, Connection);
+      command.Parameters.AddWithValue("@id", powerStation.Id);
       command.Parameters.AddWithValue("@kwId", powerStation.KwId);
       command.Parameters.AddWithValue("numBatts", powerStation.NumBatts);
       command.ExecuteNonQuery();
@@ -439,10 +448,10 @@ namespace GMEPSolar
       }
       string query =
         @"
-        INSERT INTO lots (
+        INSERT IGNORE INTO lots (
         id,
         number,
-        kaic,
+        kaic_id,
         load_va,
         voltage_id,
         amp_id,
@@ -451,7 +460,7 @@ namespace GMEPSolar
         ) VALUES (
         @id,
         @number,
-        @kaic,
+        @kaicId,
         @loadVa,
         @voltageId,
         @ampId,
@@ -461,10 +470,14 @@ namespace GMEPSolar
       OpenConnection();
       foreach (Lot lot in createLots)
       {
+        if (lot.Number == null)
+        {
+          continue;
+        }
         MySqlCommand command = new MySqlCommand(query, Connection);
         command.Parameters.AddWithValue("@id", lot.Id);
         command.Parameters.AddWithValue("@number", lot.Number);
-        command.Parameters.AddWithValue("@kaic", lot.Kaic);
+        command.Parameters.AddWithValue("@kaicId", lot.KaicId);
         command.Parameters.AddWithValue("@loadVa", lot.LoadVa);
         command.Parameters.AddWithValue("@voltageId", lot.VoltageId);
         command.Parameters.AddWithValue("@ampId", lot.AmpId);
@@ -476,7 +489,7 @@ namespace GMEPSolar
       CloseConnection();
     }
 
-    public List<Lot> ReadLots(string projectId)
+    public List<Lot> ReadLots(string powerStationId)
     {
       List<Lot> lots = new List<Lot>();
       string query =
@@ -487,8 +500,7 @@ namespace GMEPSolar
         kaic_ratings.rating as kaic_rating,
         lots.load_va,
         service_voltage_types.type as voltage_type,
-        service_amp_ratings.rating as amp_rating,
-        lots.power_station_id
+        service_amp_ratings.rating as amp_rating
         FROM
         lots
         LEFT JOIN 
@@ -497,10 +509,10 @@ namespace GMEPSolar
         service_amp_ratings on service_amp_ratings.id = lots.amp_id
         LEFT JOIN
         kaic_ratings on kaic_ratings.id = lots.kaic_id
-        WHERE project_id = @projectId";
+        WHERE power_station_id = @powerStationId";
       OpenConnection();
       MySqlCommand command = new MySqlCommand(query, Connection);
-      command.Parameters.AddWithValue("projectId", projectId);
+      command.Parameters.AddWithValue("powerStationId", powerStationId);
       MySqlDataReader reader = command.ExecuteReader();
       while (reader.Read())
       {
@@ -508,11 +520,11 @@ namespace GMEPSolar
           new Lot(
             GetSafeString(reader, "lot_id"),
             GetSafeString(reader, "number"),
-            GetSafeString(reader, "kaic_rating"),
+            GetSafeInt(reader, "kaic_rating").ToString(),
             GetSafeInt(reader, "load_va"),
-            GetSafeString(reader, "voltage_id"),
-            GetSafeString(reader, "amp_id"),
-            GetSafeString(reader, "power_station_id"),
+            GetSafeString(reader, "voltage_type").Replace("PH", "\u03A6"),
+            GetSafeInt(reader, "amp_rating").ToString(),
+            powerStationId,
             UpdateAction.Read
           )
         );
@@ -530,17 +542,20 @@ namespace GMEPSolar
         UPDATE lots
         SET
         number = @number,
-        kaic = @kaic,
+        kaic_id = @kaicId,
         load_va = @loadVa,
         voltage_id = @voltageId,
         amp_id = @ampId
+        WHERE
+        id = @id
         ";
       OpenConnection();
       foreach (Lot lot in updateLots)
       {
         MySqlCommand command = new MySqlCommand(query, Connection);
+        command.Parameters.AddWithValue("@id", lot.Id);
         command.Parameters.AddWithValue("@number", lot.Number);
-        command.Parameters.AddWithValue("@kaic", lot.Kaic);
+        command.Parameters.AddWithValue("@kaicId", lot.KaicId);
         command.Parameters.AddWithValue("@loadVa", lot.LoadVa);
         command.Parameters.AddWithValue("@voltageId", lot.VoltageId);
         command.Parameters.AddWithValue("@ampId", lot.AmpId);

@@ -22,7 +22,7 @@ namespace GMEPSolar
         .Application
         .DocumentManager
         .MdiActiveDocument;
-      return Path.GetFileName(doc.Name);
+      return Path.GetFileName(doc.Name).Replace(".dwg", "").Replace(".DWG", "");
     }
   }
 }
