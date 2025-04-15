@@ -41,6 +41,7 @@
       this.NumBatts = new System.Windows.Forms.Label();
       this.LotsLabel = new System.Windows.Forms.Label();
       this.RemoveButton = new System.Windows.Forms.Button();
+      this.GenerateButton = new System.Windows.Forms.Button();
       ((System.ComponentModel.ISupportInitialize)(this.LotDataGridView)).BeginInit();
       this.SuspendLayout();
       // 
@@ -178,18 +179,29 @@
       // RemoveButton
       // 
       this.RemoveButton.ForeColor = System.Drawing.Color.Firebrick;
-      this.RemoveButton.Location = new System.Drawing.Point(15, 106);
+      this.RemoveButton.Location = new System.Drawing.Point(15, 116);
       this.RemoveButton.Name = "RemoveButton";
-      this.RemoveButton.Size = new System.Drawing.Size(75, 23);
+      this.RemoveButton.Size = new System.Drawing.Size(22, 23);
       this.RemoveButton.TabIndex = 6;
-      this.RemoveButton.Text = "Remove";
+      this.RemoveButton.Text = "✕";
       this.RemoveButton.UseVisualStyleBackColor = true;
       this.RemoveButton.Click += new System.EventHandler(this.RemoveButton_Click);
+      // 
+      // GenerateButton
+      // 
+      this.GenerateButton.Location = new System.Drawing.Point(123, 116);
+      this.GenerateButton.Name = "GenerateButton";
+      this.GenerateButton.Size = new System.Drawing.Size(75, 23);
+      this.GenerateButton.TabIndex = 7;
+      this.GenerateButton.Text = "Generate";
+      this.GenerateButton.UseVisualStyleBackColor = true;
+      this.GenerateButton.Click += new System.EventHandler(this.GenerateButton_Click);
       // 
       // PowerStationUserControl
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.GenerateButton);
       this.Controls.Add(this.RemoveButton);
       this.Controls.Add(this.LotsLabel);
       this.Controls.Add(this.NumBatts);
@@ -198,7 +210,7 @@
       this.Controls.Add(this.LotDataGridView);
       this.Controls.Add(this.SystemComboBox);
       this.Name = "PowerStationUserControl";
-      this.Size = new System.Drawing.Size(780, 142);
+      this.Size = new System.Drawing.Size(780, 148);
       ((System.ComponentModel.ISupportInitialize)(this.LotDataGridView)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -220,5 +232,6 @@
     private System.Windows.Forms.DataGridViewComboBoxColumn Kaic;
     private System.Windows.Forms.DataGridViewTextBoxColumn LoadVa;
     private System.Windows.Forms.DataGridViewTextBoxColumn Id;
+    private System.Windows.Forms.Button GenerateButton;
   }
 }

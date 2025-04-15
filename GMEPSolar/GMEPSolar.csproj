@@ -118,6 +118,7 @@
     <Compile Include="IBEC.Designer.cs">
       <DependentUpon>IBEC.cs</DependentUpon>
     </Compile>
+    <Compile Include="IBECSingleLine.cs" />
     <Compile Include="InverterForm.cs">
       <SubType>Form</SubType>
     </Compile>

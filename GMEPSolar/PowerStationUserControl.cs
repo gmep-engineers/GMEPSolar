@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.EditorInput;
+using Autodesk.AutoCAD.Geometry;
 
 namespace GMEPSolar
 {
@@ -46,6 +50,326 @@ namespace GMEPSolar
     {
       PowerStation.Action = UpdateAction.Delete;
       this.Visible = false;
+    }
+
+    private List<Lot> GetActiveLots()
+    {
+      return PowerStation.Lots.FindAll(l => l.Action != UpdateAction.Delete);
+    }
+
+    private void MakeSingleLine45kw(Point3d startingPoint)
+    {
+      List<Lot> ActiveLots = GetActiveLots();
+      Point3d panelPoint = new Point3d(
+        startingPoint.X + 4.0365,
+        startingPoint.Y
+          - 6.3512
+          - (PowerStation.NumBatts > 4 ? 0.7026 * (PowerStation.NumBatts - 4) : 0),
+        0
+      );
+      if (ActiveLots.Count > 1)
+      {
+        CadObjectFunctions.MakeBlock(panelPoint, "IBEC 200A PANEL");
+        Point3d upperLeft = new Point3d(panelPoint.X - 0.35, panelPoint.Y, 0);
+        Point3d upperRight = new Point3d(panelPoint.X + 0.35, panelPoint.Y, 0);
+        Point3d lowerLeft = new Point3d(
+          panelPoint.X - 0.35,
+          panelPoint.Y - 1.1282 - ((ActiveLots.Count - 2) * 0.2934),
+          0
+        );
+        Point3d lowerRight = new Point3d(
+          panelPoint.X + 0.35,
+          panelPoint.Y - 1.1282 - ((ActiveLots.Count - 2) * 0.2934),
+          0
+        );
+        CadObjectFunctions.MakeLine(upperLeft, upperRight, "E-SYM1");
+        CadObjectFunctions.MakeLine(upperLeft, lowerLeft, "E-SYM1");
+        CadObjectFunctions.MakeLine(lowerLeft, lowerRight, "E-SYM1");
+        CadObjectFunctions.MakeLine(upperRight, lowerRight, "E-SYM1");
+        Point3d feederStart = new Point3d(
+          panelPoint.X,
+          panelPoint.Y
+            + 1.7885
+            + (PowerStation.NumBatts > 5 ? 0.7026 * (PowerStation.NumBatts - 5) : 0),
+          0
+        );
+        CadObjectFunctions.MakeLine(feederStart, panelPoint);
+        CadObjectFunctions.MakeText(
+          new Point3d(panelPoint.X - 0.0625, panelPoint.Y + 0.5, 0),
+          "3WG200",
+          true
+        );
+      }
+      else
+      {
+        // HERE make single conduit to metercombo
+      }
+
+      List<Point3d> panelBreakerPoints = new List<Point3d>();
+      List<Point3d> meterComboPoints = new List<Point3d>();
+      double panelBreakerPointYOffset = 0;
+      double meterComboPointXOffset = 0;
+      for (int i = 0; i < ActiveLots.Count; i++)
+      {
+        Point3d meterComboPoint = new Point3d(
+          startingPoint.X + 8.0855 + meterComboPointXOffset,
+          startingPoint.Y - 4.2534,
+          0
+        );
+        meterComboPoints.Add(meterComboPoint);
+        if (ActiveLots.Count > 1)
+        {
+          Point3d panelBreakerPoint = new Point3d(
+            panelPoint.X + 0.1416,
+            panelPoint.Y - 0.6151 + panelBreakerPointYOffset,
+            0
+          );
+          panelBreakerPoints.Add(panelBreakerPoint);
+          Point3d intersectionPoint = new Point3d(meterComboPoint.X, panelBreakerPoint.Y, 0);
+          CadObjectFunctions.MakeLine(panelBreakerPoint, intersectionPoint);
+          CadObjectFunctions.MakeLine(intersectionPoint, meterComboPoint);
+        }
+        CadObjectFunctions.MakeText(
+          new Point3d(meterComboPoint.X + 0.2076, meterComboPoint.Y + 4.928, 0),
+          "(E)METER COMBINATION AT LOT " + ActiveLots[i].Number
+        );
+        CadObjectFunctions.MakeText(
+          new Point3d(meterComboPoint.X + 0.2076, meterComboPoint.Y + 4.7373, 0),
+          $"{ActiveLots[i].Voltage}, {ActiveLots[i].Amp}A"
+        );
+        CadObjectFunctions.MakeText(
+          new Point3d(meterComboPoint.X + 0.2076, meterComboPoint.Y + 4.5823, 0),
+          ActiveLots[i].Kaic + " KAIC"
+        );
+        CadObjectFunctions.MakeText(
+          new Point3d(meterComboPoint.X + 1.3979, meterComboPoint.Y + 2.4252, 0),
+          $"{ActiveLots[i].Amp}A/" + (ActiveLots[i].Voltage.Contains("3") ? "3P" : "2P")
+        );
+        if (i == ActiveLots.Count - 1)
+        {
+          CadObjectFunctions.MakeBlock(
+            new Point3d(meterComboPoint.X + 1.1472, meterComboPoint.Y + 1.3900, 0),
+            "IBEC 60A-2P TEMP POWER BREAKER"
+          );
+          if (ActiveLots.Count > 1)
+          {
+            CadObjectFunctions.MakeText(
+              new Point3d(meterComboPoint.X + 2.6945, meterComboPoint.Y + 0.2734, 0),
+              "(TYP.)"
+            );
+          }
+        }
+
+        meterComboPointXOffset += 3.0941;
+        panelBreakerPointYOffset -= 0.2934;
+      }
+
+      List<Point3d> batteryPoints = new List<Point3d>();
+      double batteryPointYOffset = 0;
+      for (int i = 0; i < PowerStation.NumBatts; i++)
+      {
+        batteryPoints.Add(
+          new Point3d(startingPoint.X + 6.7770, startingPoint.Y - 4.0957 + batteryPointYOffset, 0)
+        );
+        if (i < PowerStation.NumBatts - 1)
+        {
+          Point3d line1Start = new Point3d(
+            startingPoint.X + 6.7770,
+            startingPoint.Y - 4.0957 - 0.4748 + batteryPointYOffset,
+            0
+          );
+          Point3d line1End = new Point3d(line1Start.X, line1Start.Y - 0.2278, 0);
+          CadObjectFunctions.MakeLine(line1Start, line1End);
+
+          Point3d line2Start = new Point3d(line1Start.X + 0.3514, line1Start.Y, 0);
+          Point3d line2End = new Point3d(line2Start.X, line2Start.Y - 0.2278, 0);
+          CadObjectFunctions.MakeLine(line2Start, line2End);
+        }
+        batteryPointYOffset -= 0.7026;
+      }
+
+      CadObjectFunctions.MakeBlock(startingPoint, "IBEC 45KW POWER STATION");
+      panelBreakerPoints.ForEach(p => CadObjectFunctions.MakeBlock(p, "IBEC 60A-2P PANEL BREAKER"));
+      meterComboPoints.ForEach(p => CadObjectFunctions.MakeBlock(p, "IBEC METER COMBO EXISTING"));
+      batteryPoints.ForEach(p => CadObjectFunctions.MakeBlock(p, "IBEC 30KWH BATTERY BANK"));
+    }
+
+    private void MakeSingleLine30kw(Point3d startingPoint)
+    {
+      List<Lot> ActiveLots = GetActiveLots();
+      Point3d panelPoint = new Point3d(
+        startingPoint.X + 2.3873,
+        startingPoint.Y
+          - 6.3512
+          - (PowerStation.NumBatts > 4 ? 0.7026 * (PowerStation.NumBatts - 4) : 0),
+        0
+      );
+      if (ActiveLots.Count > 1)
+      {
+        CadObjectFunctions.MakeBlock(panelPoint, "IBEC 100A PANEL");
+        Point3d upperLeft = new Point3d(panelPoint.X - 0.35, panelPoint.Y, 0);
+        Point3d upperRight = new Point3d(panelPoint.X + 0.35, panelPoint.Y, 0);
+        Point3d lowerLeft = new Point3d(
+          panelPoint.X - 0.35,
+          panelPoint.Y - 1.1282 - ((ActiveLots.Count - 2) * 0.2934),
+          0
+        );
+        Point3d lowerRight = new Point3d(
+          panelPoint.X + 0.35,
+          panelPoint.Y - 1.1282 - ((ActiveLots.Count - 2) * 0.2934),
+          0
+        );
+        CadObjectFunctions.MakeLine(upperLeft, upperRight, "E-SYM1");
+        CadObjectFunctions.MakeLine(upperLeft, lowerLeft, "E-SYM1");
+        CadObjectFunctions.MakeLine(lowerLeft, lowerRight, "E-SYM1");
+        CadObjectFunctions.MakeLine(upperRight, lowerRight, "E-SYM1");
+        Point3d feederStart = new Point3d(
+          panelPoint.X,
+          panelPoint.Y
+            + 1.7885
+            + (PowerStation.NumBatts > 5 ? 0.7026 * (PowerStation.NumBatts - 5) : 0),
+          0
+        );
+        CadObjectFunctions.MakeLine(feederStart, panelPoint);
+        CadObjectFunctions.MakeText(
+          new Point3d(panelPoint.X - 0.0625, panelPoint.Y + 0.5, 0),
+          "3WG100",
+          true
+        );
+      }
+      List<Point3d> meterComboPoints = new List<Point3d>();
+      List<Point3d> panelBreakerPoints = new List<Point3d>();
+      double meterComboPointXOffset = 0;
+      double panelBreakerPointYOffset = 0;
+      for (int i = 0; i < ActiveLots.Count; i++)
+      {
+        Point3d meterComboPoint = new Point3d(
+          startingPoint.X + 6.4373 + meterComboPointXOffset,
+          startingPoint.Y - 4.2534,
+          0
+        );
+        meterComboPoints.Add(meterComboPoint);
+        if (ActiveLots.Count > 1)
+        {
+          Point3d panelBreakerPoint = new Point3d(
+            panelPoint.X + 0.1416,
+            panelPoint.Y - 0.6151 + panelBreakerPointYOffset,
+            0
+          );
+          panelBreakerPoints.Add(panelBreakerPoint);
+          Point3d intersectionPoint = new Point3d(meterComboPoint.X, panelBreakerPoint.Y, 0);
+          CadObjectFunctions.MakeLine(panelBreakerPoint, intersectionPoint);
+          CadObjectFunctions.MakeLine(intersectionPoint, meterComboPoint);
+        }
+        CadObjectFunctions.MakeText(
+          new Point3d(meterComboPoint.X + 0.2076, meterComboPoint.Y + 4.928, 0),
+          "(E)METER COMBINATION AT LOT " + ActiveLots[i].Number
+        );
+        CadObjectFunctions.MakeText(
+          new Point3d(meterComboPoint.X + 0.2076, meterComboPoint.Y + 4.7373, 0),
+          $"{ActiveLots[i].Voltage}, {ActiveLots[i].Amp}A"
+        );
+        CadObjectFunctions.MakeText(
+          new Point3d(meterComboPoint.X + 0.2076, meterComboPoint.Y + 4.5823, 0),
+          ActiveLots[i].Kaic + " KAIC"
+        );
+        CadObjectFunctions.MakeText(
+          new Point3d(meterComboPoint.X + 1.3979, meterComboPoint.Y + 2.4252, 0),
+          $"{ActiveLots[i].Amp}A/" + (ActiveLots[i].Voltage.Contains("4W") ? "3P" : "2P")
+        );
+        if (i == ActiveLots.Count - 1)
+        {
+          CadObjectFunctions.MakeBlock(
+            new Point3d(meterComboPoint.X + 1.1472, meterComboPoint.Y + 1.3900, 0),
+            "IBEC 60A-2P TEMP POWER BREAKER"
+          );
+          if (ActiveLots.Count > 1)
+          {
+            CadObjectFunctions.MakeText(
+              new Point3d(meterComboPoint.X + 2.6945, meterComboPoint.Y + 0.2734, 0),
+              "(TYP.)"
+            );
+          }
+        }
+        meterComboPointXOffset += 3.0941;
+      }
+      List<Point3d> batteryPoints = new List<Point3d>();
+      double batteryPointYOffset = 0;
+      for (int i = 0; i < PowerStation.NumBatts; i++)
+      {
+        batteryPoints.Add(
+          new Point3d(startingPoint.X + 5.1288, startingPoint.Y - 4.0957 + batteryPointYOffset, 0)
+        );
+        if (i < PowerStation.NumBatts - 1)
+        {
+          Point3d line1Start = new Point3d(
+            startingPoint.X + 5.1288,
+            startingPoint.Y - 4.0957 - 0.4748 + batteryPointYOffset,
+            0
+          );
+          Point3d line1End = new Point3d(line1Start.X, line1Start.Y - 0.2278, 0);
+          CadObjectFunctions.MakeLine(line1Start, line1End);
+
+          Point3d line2Start = new Point3d(line1Start.X + 0.3514, line1Start.Y, 0);
+          Point3d line2End = new Point3d(line2Start.X, line2Start.Y - 0.2278, 0);
+          CadObjectFunctions.MakeLine(line2Start, line2End);
+        }
+        batteryPointYOffset -= 0.7026;
+      }
+      CadObjectFunctions.MakeBlock(startingPoint, "IBEC 30KW POWER STATION");
+      panelBreakerPoints.ForEach(p => CadObjectFunctions.MakeBlock(p, "IBEC 60A-2P PANEL BREAKER"));
+      meterComboPoints.ForEach(p => CadObjectFunctions.MakeBlock(p, "IBEC METER COMBO EXISTING"));
+      batteryPoints.ForEach(p => CadObjectFunctions.MakeBlock(p, "IBEC 30KWH BATTERY BANK"));
+    }
+
+    public void GenerateButton_Click(object sender, EventArgs args)
+    {
+      Save();
+      Document doc = Autodesk
+        .AutoCAD
+        .ApplicationServices
+        .Application
+        .DocumentManager
+        .MdiActiveDocument;
+      Database db = doc.Database;
+      Editor ed = doc.Editor;
+      var currentView = ed.GetCurrentView();
+      using (
+        DocumentLock docLock =
+          Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.LockDocument()
+      )
+      {
+        Autodesk.AutoCAD.ApplicationServices.Application.MainWindow.WindowState = Autodesk
+          .AutoCAD
+          .Windows
+          .Window
+          .State
+          .Maximized;
+        Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.Window.Focus();
+        Point3d startingPoint;
+
+        using (Transaction tr = db.TransactionManager.StartTransaction())
+        {
+          var promptOptions = new PromptPointOptions("\nSelect upper left point:");
+          var promptResult = ed.GetPoint(promptOptions);
+          currentView = ed.GetCurrentView();
+          if (promptResult.Status == PromptStatus.OK)
+            startingPoint = promptResult.Value;
+          else
+          {
+            return;
+          }
+        }
+        if (PowerStation.KwId == 1)
+        {
+          MakeSingleLine30kw(startingPoint);
+        }
+        if (PowerStation.KwId == 2)
+        {
+          MakeSingleLine45kw(startingPoint);
+        }
+      }
+      ed.SetCurrentView(currentView);
     }
 
     public void DeleteLot_Click(object sender, EventArgs e)

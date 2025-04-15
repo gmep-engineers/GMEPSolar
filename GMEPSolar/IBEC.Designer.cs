@@ -59,7 +59,7 @@
       // saveToolStripMenuItem
       // 
       this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-      this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.saveToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
       this.saveToolStripMenuItem.Text = "Save";
       this.saveToolStripMenuItem.Click += new System.EventHandler(this.SaveButton_Click);
       // 
@@ -71,7 +71,8 @@
       // 
       // AddPowerStationButton
       // 
-      this.AddPowerStationButton.Location = new System.Drawing.Point(12, 619);
+      this.AddPowerStationButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.AddPowerStationButton.Location = new System.Drawing.Point(12, 388);
       this.AddPowerStationButton.Name = "AddPowerStationButton";
       this.AddPowerStationButton.Size = new System.Drawing.Size(124, 23);
       this.AddPowerStationButton.TabIndex = 2;
@@ -85,7 +86,7 @@
       this.PowerStationFlowLayoutPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
       this.PowerStationFlowLayoutPanel.Location = new System.Drawing.Point(12, 34);
       this.PowerStationFlowLayoutPanel.Name = "PowerStationFlowLayoutPanel";
-      this.PowerStationFlowLayoutPanel.Size = new System.Drawing.Size(809, 579);
+      this.PowerStationFlowLayoutPanel.Size = new System.Drawing.Size(809, 348);
       this.PowerStationFlowLayoutPanel.TabIndex = 0;
       this.PowerStationFlowLayoutPanel.WrapContents = false;
       // 
@@ -93,7 +94,7 @@
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(833, 652);
+      this.ClientSize = new System.Drawing.Size(833, 421);
       this.Controls.Add(this.AddPowerStationButton);
       this.Controls.Add(this.PowerStationFlowLayoutPanel);
       this.Controls.Add(this.menuStrip1);
