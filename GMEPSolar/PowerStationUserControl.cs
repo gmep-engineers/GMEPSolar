@@ -317,6 +317,7 @@ namespace GMEPSolar
           }
         }
         meterComboPointXOffset += 3.0941;
+        panelBreakerPointYOffset -= 0.2934;
       }
       List<Point3d> batteryPoints = new List<Point3d>();
       double batteryPointYOffset = 0;
