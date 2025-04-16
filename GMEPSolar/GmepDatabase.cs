@@ -428,7 +428,7 @@ namespace GMEPSolar
         UPDATE power_stations
         SET
         kw_id = @kwId,
-        num_batts = @numBatts,
+        num_batts = @numBatts
         WHERE
         id = @id
         ";
@@ -454,7 +454,7 @@ namespace GMEPSolar
       OpenConnection();
 
       MySqlCommand command = new MySqlCommand(query, Connection);
-      command.Parameters.AddWithValue("@Id", powerStation.Id);
+      command.Parameters.AddWithValue("@id", powerStation.Id);
       command.ExecuteNonQuery();
 
       CloseConnection();

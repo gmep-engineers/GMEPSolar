@@ -31,16 +31,18 @@
       this.menuStrip1 = new System.Windows.Forms.MenuStrip();
       this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.AddPowerStationButton = new System.Windows.Forms.Button();
       this.PowerStationFlowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
+      this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.loadSummaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.menuStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
       // menuStrip1
       // 
       this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.toolsToolStripMenuItem});
       this.menuStrip1.Location = new System.Drawing.Point(0, 0);
       this.menuStrip1.Name = "menuStrip1";
       this.menuStrip1.Size = new System.Drawing.Size(833, 24);
@@ -50,8 +52,7 @@
       // fileToolStripMenuItem
       // 
       this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.saveToolStripMenuItem,
-            this.closeToolStripMenuItem});
+            this.saveToolStripMenuItem});
       this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
       this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
       this.fileToolStripMenuItem.Text = "File";
@@ -59,15 +60,9 @@
       // saveToolStripMenuItem
       // 
       this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-      this.saveToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+      this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
       this.saveToolStripMenuItem.Text = "Save";
       this.saveToolStripMenuItem.Click += new System.EventHandler(this.SaveButton_Click);
-      // 
-      // closeToolStripMenuItem
-      // 
-      this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-      this.closeToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
-      this.closeToolStripMenuItem.Text = "Close";
       // 
       // AddPowerStationButton
       // 
@@ -89,6 +84,21 @@
       this.PowerStationFlowLayoutPanel.Size = new System.Drawing.Size(809, 348);
       this.PowerStationFlowLayoutPanel.TabIndex = 0;
       this.PowerStationFlowLayoutPanel.WrapContents = false;
+      // 
+      // toolsToolStripMenuItem
+      // 
+      this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.loadSummaryToolStripMenuItem});
+      this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+      this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
+      this.toolsToolStripMenuItem.Text = "Tools";
+      // 
+      // loadSummaryToolStripMenuItem
+      // 
+      this.loadSummaryToolStripMenuItem.Name = "loadSummaryToolStripMenuItem";
+      this.loadSummaryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+      this.loadSummaryToolStripMenuItem.Text = "Load Summary";
+      this.loadSummaryToolStripMenuItem.Click += new System.EventHandler(this.LoadSummaryButton_Click);
       // 
       // IBEC
       // 
@@ -112,8 +122,9 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
         private System.Windows.Forms.Button AddPowerStationButton;
     private System.Windows.Forms.FlowLayoutPanel PowerStationFlowLayoutPanel;
+    private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem loadSummaryToolStripMenuItem;
   }
 }

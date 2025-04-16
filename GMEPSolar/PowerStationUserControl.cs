@@ -28,7 +28,7 @@ namespace GMEPSolar
         LotDataGridView.Rows[i].Cells[1].Value = powerStation.Lots[i].Voltage;
         LotDataGridView.Rows[i].Cells[2].Value = powerStation.Lots[i].Amp;
         LotDataGridView.Rows[i].Cells[3].Value = powerStation.Lots[i].Kaic;
-        LotDataGridView.Rows[i].Cells[4].Value = powerStation.Lots[i].LoadVa;
+        LotDataGridView.Rows[i].Cells[4].Value = powerStation.Lots[i].LoadVa.ToString();
 
         // the last cell is hidden and reserved for Lot ID
         LotDataGridView.Rows[i].Cells[LotDataGridView.Rows[i].Cells.Count - 1].Value = powerStation
