@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.EditorInput;
 
 namespace GMEPSolar
 {
@@ -19,8 +21,40 @@ namespace GMEPSolar
     public IBEC()
     {
       GmepDatabase = new GmepDatabase();
-      ProjectId = GmepDatabase.GetProjectId(CadObjectFunctions.GetProjectNameFromFileName());
+      string projectName = CadObjectFunctions.GetProjectNameFromFileName();
+      ProjectId = GmepDatabase.GetProjectId(projectName);
 
+      if (String.IsNullOrEmpty(ProjectId))
+      {
+        Autodesk.AutoCAD.ApplicationServices.Document doc = Autodesk
+          .AutoCAD
+          .ApplicationServices
+          .Application
+          .DocumentManager
+          .MdiActiveDocument;
+        Editor ed = doc.Editor;
+        string path = Autodesk
+          .AutoCAD
+          .ApplicationServices
+          .Application
+          .DocumentManager
+          .CurrentDocument
+          .Database
+          .Filename;
+        string[] directories = path.Split('\\');
+        string year = "";
+        string client = "";
+        for (int i = 0; i < directories.Length; i++)
+        {
+          if (directories[i].Contains(" Jobs"))
+          {
+            year = directories[i].Replace(" Jobs", "");
+            client = directories[i - 1];
+          }
+        }
+        ProjectId = GmepDatabase.CreateProject(projectName, client.ToUpper(), year, path);
+        ed.WriteMessage($"Project {projectName} has been created in the database.");
+      }
       PowerStations = GmepDatabase.ReadPowerStations(ProjectId);
 
       InitializeComponent();

@@ -24,7 +24,7 @@ namespace GMEPSolar
         .Application
         .DocumentManager
         .MdiActiveDocument;
-      return Path.GetFileName(doc.Name).Replace(".dwg", "").Replace(".DWG", "");
+      return Path.GetFileName(doc.Name).Replace(".dwg", "").Replace(".DWG", "").ToUpper();
     }
 
     public static void MakeBlock(Point3d point, string blockName, string layerName = "E-CONDUIT")

@@ -102,7 +102,17 @@ namespace GMEPSolar
       }
       else
       {
-        // HERE make single conduit to metercombo
+        Point3d point1 = new Point3d(startingPoint.X + 4.0355, startingPoint.Y - 5.2653, 0);
+        Point3d point2 = new Point3d(
+          point1.X,
+          point1.Y - 1.7 - (PowerStation.NumBatts > 4 ? 0.7026 * (PowerStation.NumBatts - 4) : 0),
+          0
+        );
+        Point3d point3 = new Point3d(point2.X + 4.0490, point2.Y, 0);
+        Point3d point4 = new Point3d(startingPoint.X + 8.0855, startingPoint.Y - 4.2534, 0);
+        CadObjectFunctions.MakeLine(point1, point2);
+        CadObjectFunctions.MakeLine(point2, point3);
+        CadObjectFunctions.MakeLine(point3, point4);
       }
 
       List<Point3d> panelBreakerPoints = new List<Point3d>();
@@ -237,10 +247,25 @@ namespace GMEPSolar
           true
         );
       }
+      else
+      {
+        Point3d point1 = new Point3d(startingPoint.X + 2.3883, startingPoint.Y - 5.2653, 0);
+        Point3d point2 = new Point3d(
+          point1.X,
+          point1.Y - 1.7 - (PowerStation.NumBatts > 4 ? 0.7026 * (PowerStation.NumBatts - 4) : 0),
+          0
+        );
+        Point3d point3 = new Point3d(point2.X + 4.0491, point2.Y, 0);
+        Point3d point4 = new Point3d(startingPoint.X + 6.4373, startingPoint.Y - 4.2534, 0);
+        CadObjectFunctions.MakeLine(point1, point2);
+        CadObjectFunctions.MakeLine(point2, point3);
+        CadObjectFunctions.MakeLine(point3, point4);
+      }
       List<Point3d> meterComboPoints = new List<Point3d>();
       List<Point3d> panelBreakerPoints = new List<Point3d>();
       double meterComboPointXOffset = 0;
       double panelBreakerPointYOffset = 0;
+
       for (int i = 0; i < ActiveLots.Count; i++)
       {
         Point3d meterComboPoint = new Point3d(

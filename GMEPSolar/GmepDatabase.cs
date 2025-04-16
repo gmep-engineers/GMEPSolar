@@ -338,6 +338,27 @@ namespace GMEPSolar
       return id;
     }
 
+    public string CreateProject(string projectName, string client, string year, string path)
+    {
+      string id = Guid.NewGuid().ToString();
+      string query =
+        @"
+        INSERT INTO projects
+        (id, client, year, project_name, path)
+        VALUES
+        (@id, @client, @year, @projectName, @path)";
+      OpenConnection();
+      MySqlCommand command = new MySqlCommand(query, Connection);
+      command.Parameters.AddWithValue("@id", id);
+      command.Parameters.AddWithValue("@client", client);
+      command.Parameters.AddWithValue("@year", year);
+      command.Parameters.AddWithValue("@projectName", projectName);
+      command.Parameters.AddWithValue("@path", path);
+      command.ExecuteNonQuery();
+      CloseConnection();
+      return id;
+    }
+
     public void CreatePowerStation(PowerStation powerStation, string projectId)
     {
       if (powerStation.Action != UpdateAction.Create)
