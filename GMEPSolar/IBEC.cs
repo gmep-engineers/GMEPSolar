@@ -70,8 +70,6 @@ namespace GMEPSolar
       }
     }
 
-    private void PopulatePowerStations() { }
-
     private void AddPowerStationButton_Click(object sender, EventArgs e)
     {
       PowerStation powerStation = new PowerStation(
