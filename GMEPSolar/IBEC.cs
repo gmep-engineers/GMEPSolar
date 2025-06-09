@@ -44,14 +44,22 @@ namespace GMEPSolar
           .Database
           .Filename;
         string[] directories = path.Split('\\');
-        string year = "";
+        string year = "2025";
         string client = "";
         for (int i = 0; i < directories.Length; i++)
         {
           if (directories[i].Contains(" Jobs"))
           {
-            year = directories[i].Replace(" Jobs", "");
-            client = directories[i - 1];
+            if (directories[i].Contains(" Jobs"))
+            {
+              year = directories[i].Replace(" Jobs", "");
+              client = directories[i - 1];
+            }
+            if (directories[i].Contains("jobs"))
+            {
+              year = directories[i].Replace("jobs", "");
+              client = directories[i + 1];
+            }
           }
         }
         ProjectId = GmepDatabase.CreateProject(projectName, client.ToUpper(), year, path);
